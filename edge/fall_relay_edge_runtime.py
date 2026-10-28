@@ -282,7 +282,7 @@ def main():
     if bad:
         raise SystemExit(f"bundle files changed: {bad}")
     d = manifest["decision"]
-    params = DecisionParams(theta=d["theta"], k=d["k"], n=d["n"], m=d["m"], cooldown_s=d.get("cooldown_s", 30.0))
+    params = DecisionParams(theta=d["theta"], k=d["k"], n=d["n"], m=d["m"], cooldown_s=d.get("cooldown_s", 0.0))
     cv2.setNumThreads(1)
     net = ncnn.Net()
     net.opt.num_threads = cfg["pose_threads"]

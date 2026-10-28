@@ -1,7 +1,7 @@
 # Fall detection model (bundled detector)
 
-The detector shipped with Fall-Relay is a case study for the event delivery and alert handling software, not a
-contribution in itself. Any detector can replace it as long as the runtime emits the event contract
+The detector shipped with Fall-Relay is the reference detector whose NTU RGB+D results are reported in the article;
+it is a component behind the event contract, not a contribution in itself. Any detector can replace it as long as the runtime emits the event contract
 ([docs/EVENT_PROTOCOL.md](../docs/EVENT_PROTOCOL.md)). Training code and the full evaluation procedure are in
 [`training/README.md`](../training/README.md). The trained weights are not distributed with the source; see
 [NOTICE](../NOTICE).
@@ -56,10 +56,11 @@ shorter than the cooldown and offline replays carry no posture flags, so the tes
 | Detection | An alert in a fall (A043) sequence that opens after onset − 0.3 s; every other alert is a false alarm |
 | Procedure | Operating point chosen on validation and frozen (`training/tcn_v2_meta/frozen_operating_point_v2.json`) before the test pose was extracted; test evaluated once, 10 Hz, single camera view per sequence |
 
-| Metric (test) | Value |
+| Metric (test; 272 fall and 13,184 non-fall sequences) | Value |
 |---|---|
-| Recall | 0.886 (241 of 272 fall sequences, 91 capture groups; 95% CI 0.839–0.930, bootstrap over capture groups) |
-| False alarms | 1.38 per hour (16 in 11.58 h of non-fall sequences) |
+| Recall (sensitivity) | 0.886 (241 of 272 fall sequences, 91 capture groups; 95% CI 0.839–0.930, bootstrap over capture groups) |
+| False alarms | 15 of 13,184 non-fall sequences (16 events); specificity 99.9 % |
+| Per-sequence accuracy, precision, F1 | 99.66 %, 94.1 %, 91.3 % (with a 1:1 balanced negative set the accuracy would be 94.2 %) |
 | Alert time | Median 0.07 s after impact |
 
 The rule parameters were chosen and audited against AI-assisted visual estimates on development groups, not against
@@ -69,21 +70,21 @@ two AI-estimated groups; the figures above use rule-generated times only.
 
 ## On the devices
 
-NTU RGB+D replay through the deployed bundle, clip upload off (3 × 40 min per device; median / 95th percentile):
+NTU RGB+D replay through the deployed bundle on the released software, clip upload off (2 × 20 min per device; median / 95th percentile; `docs/evidence/replay`):
 
 | Device | Decision rate | Processing per slot | CPU | Peak temperature |
 |---|---|---|---|---|
-| Raspberry Pi 5, Camera Module 3 | 10.11 Hz | 47.8 / 60.5 ms | 26 % | 61.7 °C |
-| Raspberry Pi 4 (8 GB, fan), IMX519 | 7.33 Hz | 129.2 / 146.1 ms | 39 % | 49.2 °C |
+| Raspberry Pi 5 (BCM2712, 4 GB, active cooler), Camera Module 3 | 10.11 Hz | 47.6 / 61.0 ms | 26 % | 62.2 °C |
+| Raspberry Pi 4 Model B (BCM2711, 8 GB, armour case with two fans), Arducam IMX519 | 7.32 Hz | 129.4 / 146.6 ms | 39 % | 52.1 °C |
 
-The Pi 4 misses about 28 % of the 10 Hz slots; missed slots enter the window as invalid, so it raises fewer events
+The Pi 4 misses 27.6 % of the 10 Hz slots; missed slots enter the window as invalid, so it raises fewer events
 from the same input. The benchmark procedure is in [`edge/ntu_benchmark/README.md`](ntu_benchmark/README.md).
 
 ## Limitations
 
 1. **False alarms in daily activities.** On NTU most false alarms came from picking up an object (A006) and staggering
    (A042); lying down and long stillness are absent from NTU, so behaviour on them is known only from operation.
-2. **NTU hours are not monitoring hours.** False alarms per hour are computed over short action clips.
+2. **NTU sequences are short clips, not monitoring time.** False alarms are counted per sequence of a few seconds.
 3. **Late detections are not counted.** A clip ends about 0.9 s after impact, which bounds the detection time.
 4. **Reference times are rule-generated**, not human annotations.
 5. **No field evaluation.** The software has not been evaluated with responders in a field setting and is not

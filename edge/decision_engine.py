@@ -24,6 +24,11 @@ STATES = ("IDLE", "SUSPECT", "ALERT", "POST_FALL", "COOLDOWN")
 
 @dataclass
 class DecisionParams:
+    # These field defaults are the first (v1) operating point and are never used by the deployed runtime, the
+    # benchmark, the example or the evaluation scripts, which all pass the operating point explicitly; the deployed
+    # point is the `decision` block of edge/bundle_manifest.json (theta 0.95, k/n/m 3/5/3, cooldown 0), frozen on the
+    # NTU RGB+D validation split before the test evaluation. The defaults stay unchanged so that the executed code of
+    # this module keeps the hash recorded at training time (edge/code_provenance.json).
     theta: float = 0.932
     k: int = 8
     n: int = 10

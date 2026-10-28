@@ -18,6 +18,15 @@ This page gives the detector operating point and event rule used by the bundled 
 | Close rules | upright ≥ 3 s; no eligible input ≥ 10 s; age 600 s; runtime stop | the event is latched until one of these holds |
 | Cooldown after close | 0 s | the deployment and the replay trials use no cooldown |
 
+## Table E1b. Devices of the reference deployment and the replay trials
+
+| Device | SoC, memory, cooling | OS, Python | Camera |
+|---|---|---|---|
+| Raspberry Pi 5 | BCM2712, 4 cores, 4 GB RAM, active cooler | Debian 13, Python 3.13 | Raspberry Pi Camera Module 3 |
+| Raspberry Pi 4 Model B | BCM2711, 4 cores, 8 GB RAM, aluminium armour case with two fans | Raspberry Pi OS Bookworm (Debian 12) 64-bit, Python 3.11 | Arducam IMX519 |
+
+Server host of the trials: the laboratory workstation that also runs the bridge and the web application (WSL2; `replay/uptime_start.json` records its kernel). No thermal throttling was recorded on either device during the trials.
+
 ## Table E2. Deterministic checks: conditions and observations
 
 **Table E2.** Full conditions, observations and scope of the checks summarised in Table 2(A) of the article (SoftwareX submission). All 29 check scripts passed on 27 October 2026 (local time; the report records 2026-10-27T10:49 UTC) in an isolated environment with temporary databases; `server/bridge/run_checks.py --report` writes the report included with this page.

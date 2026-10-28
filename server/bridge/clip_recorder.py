@@ -30,8 +30,8 @@ class ClipRecorder:
     def __init__(
         self,
         clip_dir: str | Path,
-        pre_s: float = 6.0,
-        post_s: float = 4.0,
+        pre_s: float = 3.0,
+        post_s: float = 2.0,
         fps: float = 10.0,
         retention_days: int = 30,
         max_workers: int = 2,

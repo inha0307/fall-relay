@@ -1,7 +1,7 @@
 # Fall-Relay
 
 [![Reproducibility (synthetic, no Pi)](https://github.com/inha0307/fall-relay/actions/workflows/reproducibility.yml/badge.svg)](https://github.com/inha0307/fall-relay/actions/workflows/reproducibility.yml)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23719977.svg)](https://doi.org/10.5281/zenodo.23719977)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23719976.svg)](https://doi.org/10.5281/zenodo.23719976)
 
 Fall-Relay is open-source edge–server software that carries fall events from camera devices to the people who
 respond to them, and records how each alert is handled. A Raspberry Pi runs the detector and a latched decision
@@ -18,8 +18,8 @@ keeps what the device observed.
   model used and, optionally, a short clip around each detected fall.
 - **Device operation:** telemetry, health against per-device profiles, watchdog alerts for cameras that stop detecting
   and remote actions, on Raspberry Pi 5 and Raspberry Pi 4.
-- **Replaceable detector:** the bundled pose-based detector ([edge/MODEL.md](edge/MODEL.md)) is a case study; any
-  detector that emits the event contract can be used.
+- **Replaceable detector:** the bundled pose-based detector ([edge/MODEL.md](edge/MODEL.md)) is the reference
+  detector whose NTU RGB+D results are reported in the article; any detector that emits the event contract can be used.
 
 The bundled detector has known false positives during daily activities. The software is not clinically validated.
 
@@ -162,6 +162,7 @@ Model files are not in this repository and carry their own terms: the Ultralytic
 and the fall models trained on NTU RGB+D are not redistributed; see [NOTICE](NOTICE). The demo draws artificial
 points with OpenCV; it contains no NTU frames and no recording of a person.
 
-Release v1.0.0 is archived on Zenodo under DOI [10.5281/zenodo.23719977](https://doi.org/10.5281/zenodo.23719977)
-(all versions: [10.5281/zenodo.23719976](https://doi.org/10.5281/zenodo.23719976)). To cite the software, use
+Releases are archived on Zenodo; the DOI [10.5281/zenodo.23719976](https://doi.org/10.5281/zenodo.23719976) resolves to
+the latest version (v1.0.0: [10.5281/zenodo.23719977](https://doi.org/10.5281/zenodo.23719977); v1.0.1 aligns code
+defaults and documentation with the article, the measured behaviour is unchanged). To cite the software, use
 [CITATION.cff](CITATION.cff) or the "Cite this repository" button on GitHub.
