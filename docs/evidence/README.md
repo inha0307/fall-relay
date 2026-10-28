@@ -70,8 +70,8 @@ In each trial the nine events decided during a cut were classified for manual re
 calibration taken at the decision failed while the link was dead (recorded round trip 60 s, the failure value), one
 because the event was more than 120 s old at receipt. In the Pi 4 trial one further event, decided 2 s after the second
 restore and delivered at once, was classified for review because the device had not yet re-calibrated its clock. Both
-devices had been running for about 4 h before the trials and the server host for about 5 h (`uptime_start.json`); the
-bridge process had been started about 3.5 h earlier, when the released software version was deployed. The raw device records
+devices had been up for 3.9 h before the Pi 4 trial and 4.3 h before the Pi 5 trial, and the server host for 4.9 h and 5.3 h (`uptime_start.json`); the
+bridge process had been started 3.0 h and 3.4 h earlier, when the released software version was deployed. The raw device records
 (slots, transport attempts, outbox database, resource log) and the browser and server logs are kept outside the
 repository with the records of the replay trials.
 
