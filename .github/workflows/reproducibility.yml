@@ -9,9 +9,14 @@ jobs:
   synthetic-workflow:
     runs-on: ubuntu-22.04
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        postgres: ['14', '16']
+    name: synthetic-workflow (PostgreSQL ${{ matrix.postgres }})
     services:
       postgres:
-        image: postgres:14
+        image: postgres:${{ matrix.postgres }}
         env:
           POSTGRES_USER: fall_relay
           POSTGRES_PASSWORD: fall_relay_ci
