@@ -1,5 +1,7 @@
 # Fall-Relay
 
+[![Reproducibility (synthetic, no Pi)](https://github.com/inha0307/fall-relay/actions/workflows/reproducibility.yml/badge.svg)](https://github.com/inha0307/fall-relay/actions/workflows/reproducibility.yml)
+
 Fall-Relay is open-source edge–server software that carries fall events from camera devices to the people who
 respond to them, and records how each alert is handled. A Raspberry Pi runs the detector and a latched decision
 engine; every event message is stored in a local outbox before it is sent and is accepted by the server idempotently,
@@ -128,11 +130,11 @@ hardware-free example does not supply them, and a successful example run does no
 
 ## Checks, CI and local review bundle
 
-The Python runner executes 27 bounded check scripts. The workflow at
+The Python runner executes 29 bounded check scripts. The workflow at
 [`.github/workflows/reproducibility.yml`](.github/workflows/reproducibility.yml)
 adds the real HTTP demo, clean `npm ci`, production build and web API verification.
-It needs no repository secrets or device access. Its commands have been run locally; a hosted GitHub Actions run
-follows the publication of the repository.
+It needs no repository secrets or device access. The first hosted run passed on 28 October 2026 (see the badge
+above and the Actions tab).
 
 To build a **local review bundle**, which explicitly excludes operational databases,
 credentials, captures and installed dependencies:

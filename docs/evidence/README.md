@@ -20,7 +20,7 @@ This page gives the detector operating point and event rule used by the bundled 
 
 ## Table E2. Deterministic checks: conditions and observations
 
-**Table E2.** Full conditions, observations and scope of the checks summarised in Table 2(A) of the article (SoftwareX submission). All 29 check scripts passed on 27 October 2026 (local time; the report records 2026-10-23T15:22 UTC) in an isolated environment with temporary databases; `server/bridge/run_checks.py --report` writes the report included with this page.
+**Table E2.** Full conditions, observations and scope of the checks summarised in Table 2(A) of the article (SoftwareX submission). All 29 check scripts passed on 27 October 2026 (local time; the report records 2026-10-27T10:49 UTC) in an isolated environment with temporary databases; `server/bridge/run_checks.py --report` writes the report included with this page.
 
 | Check | Condition | Observed result | Scope |
 |---|---|---|---|
