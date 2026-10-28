@@ -25,7 +25,7 @@ The bundled detector has known false positives during daily activities. The soft
 
 ## Try the workflow without a Raspberry Pi
 
-Tested on Linux x86_64, Python 3.10.12, Node.js 24.21.0 and PostgreSQL 14. Run from this directory.
+Tested on Linux x86_64, Python 3.10.12, Node.js 24.21.0 and PostgreSQL 14; the CI workflow runs the checks on PostgreSQL 14 and 16. Run from this directory.
 The example needs no camera, trained weights or cloud account. It needs a PostgreSQL database in which
 the connecting role may create schemas (see the PostgreSQL section of [server/bridge/INSTALL.md](server/bridge/INSTALL.md)
 for a local setup): the demo creates a schema of its own, `demo_<random>`, and drops it when it stops, so an
