@@ -1,0 +1,20 @@
+# systemd user unit for one camera; edge/make_bundle.py fills in the install directory, Python, camera and options.
+[Unit]
+Description=Fall-Relay edge detection runtime (camera {camera})
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory={install_dir}
+Environment=PYTHONUNBUFFERED=1
+# FALLRELAY_CAMERA_TOKEN=... issued on the Server page (Camera registration); keep the file mode 600.
+EnvironmentFile=-{install_dir}/camera_token_cam{camera}.env
+ExecStart={python} {install_dir}/fall_relay_edge_runtime.py --config {install_dir}/edge_config.json{extra_args}
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:{install_dir}/edge_runtime.log
+StandardError=append:{install_dir}/edge_runtime.log
+
+[Install]
+WantedBy=default.target

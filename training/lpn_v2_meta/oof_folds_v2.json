@@ -1,0 +1,59 @@
+{
+ "seed_rule": "greedy balance by valid paired train frames (largest first)",
+ "folds": [
+  {
+   "heldout": [
+    8,
+    27,
+    31
+   ],
+   "frames": 569314
+  },
+  {
+   "heldout": [
+    1,
+    4,
+    5,
+    9,
+    19
+   ],
+   "frames": 587165
+  },
+  {
+   "heldout": [
+    14,
+    17,
+    18,
+    28
+   ],
+   "frames": 571717
+  },
+  {
+   "heldout": [
+    15,
+    16,
+    35,
+    38
+   ],
+   "frames": 590427
+  }
+ ],
+ "all_train_subjects": [
+  1,
+  4,
+  5,
+  8,
+  9,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  27,
+  28,
+  31,
+  35,
+  38
+ ]
+}

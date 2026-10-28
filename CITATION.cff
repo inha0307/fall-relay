@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use Fall-Relay, please cite it as below. A DOI for the archived release will be added when the release is published."
+title: "Fall-Relay: edge-server software for durable fall-event delivery and responder alert handling"
+type: software
+version: 1.0.0
+date-released: 2026-10-28
+license: AGPL-3.0-only
+repository-code: "https://github.com/inha0307/fall-relay"
+abstract: "Fall-Relay carries fall events from edge cameras to responders and keeps a record of each alert from delivery to outcome: a device-side outbox with per-event sequence numbers, an idempotent server that stores events and returns receipts bound to the stored record, a responder alert whose lifecycle is separate from the detection event, a fixed policy for late-arriving events, and role-scoped access. A hardware-free example and deterministic checks recreate the failure cases."
+keywords:
+  - fall detection
+  - edge computing
+  - reliable event delivery
+  - transactional outbox
+  - alert management
+  - Raspberry Pi
+# TODO before release: add the doi of the archived release.
+authors:
+  - family-names: "Choe"
+    given-names: "InHa"
+    affiliation: "Kangwon National University"
+    email: "emforhs033@kangwon.ac.kr"
+  - family-names: "Lee"
+    given-names: "Sukwon"
+    affiliation: "Kangwon National University"
+    email: "sukwonlee@kangwon.ac.kr"

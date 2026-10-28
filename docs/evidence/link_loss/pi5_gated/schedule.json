@@ -1,0 +1,10 @@
+{
+  "start_at": 1793096410.7000124,
+  "measure_start": 1793096473.7000124,
+  "measure_end": 1793097673.7000124,
+  "inter_phase_gap_s": 3,
+  "warmup_s": 60,
+  "measure_s": 1200,
+  "clips": false,
+  "replicate": 1
+}

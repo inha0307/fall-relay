@@ -1,0 +1,5 @@
+# Includes video recording and all current Python check scripts, and pytest (repository root: pytest).
+-r requirements-server.txt
+numpy==1.26.4
+opencv-python-headless==4.11.0.86
+pytest==9.1.1

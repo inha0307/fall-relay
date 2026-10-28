@@ -1,0 +1,14 @@
+# Device-local credentials, live research captures and operational state.
+deploy.env
+.postgres.pgpass
+*.local.json
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+research_data/
+fall_clips/
+decision_logs/
+model_management/
+.venv/
+__pycache__/
+*.pyc

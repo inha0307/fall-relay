@@ -1,0 +1,12 @@
+{
+  "name": "Fall-Relay",
+  "short_name": "Fall-Relay",
+  "description": "Fall-event delivery and alert handling for edge fall detection",
+  "start_url": "/overview",
+  "display": "standalone",
+  "background_color": "#f4f6f9",
+  "theme_color": "#2563eb",
+  "icons": [
+    { "src": "/fall-relay.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

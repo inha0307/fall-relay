@@ -1,0 +1,26 @@
+# Validated on Linux x86_64, CPython 3.10.12; includes bridge and recording checks.
+annotated-doc==0.0.5
+annotated-types==0.8.0
+anyio==4.15.1
+click==8.5.0
+exceptiongroup==1.3.1
+fastapi==0.143.1
+h11==0.16.0
+idna==3.20
+iniconfig==2.3.1
+numpy==1.26.4
+opencv-python-headless==4.11.0.86
+opentelemetry-api==1.45.1
+packaging==26.3
+pluggy==1.7.0
+psycopg-binary==3.2.13
+psycopg-pool==3.2.8
+psycopg==3.2.13
+pydantic_core==2.50.1
+pydantic==2.14.1
+pytest==9.1.1
+starlette==1.7.0
+tomli==2.5.0
+typing_extensions==4.16.0
+typing-inspection==0.4.4
+uvicorn==0.54.0

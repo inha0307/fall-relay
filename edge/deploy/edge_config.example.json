@@ -1,0 +1,14 @@
+{
+  "schema_version": 2,
+  "server_url": "http://127.0.0.1:15001",
+  "camera_id": "1",
+  "camera_index": 0,
+  "sensor_mode": "full",
+  "capture_fps": 30,
+  "width": 1280,
+  "height": 720,
+  "inference_hz": 10,
+  "pose_threads": 4,
+  "pose_model_dir": "yolo26n-pose_ncnn_model",
+  "stream_jpeg_quality": 80
+}

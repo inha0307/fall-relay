@@ -1,0 +1,28 @@
+{
+ "ssh_key": "~/.ssh/<edge-key>",
+ "devices": [
+  {
+   "device": "pi5",
+   "camera": "1",
+   "target": "<user>@<pi5-host>",
+   "home": "/home/<user>",
+   "original": "/home/<user>/fall-relay",
+   "config": "/home/<user>/fall-relay/edge_config.json",
+   "python": "/usr/bin/python3",
+   "service": "fall-relay-edge-cam1.service"
+  },
+  {
+   "device": "pi4",
+   "camera": "2",
+   "target": "<user>@<pi4-host>",
+   "home": "/home/<user>",
+   "original": "/home/<user>/fall-relay",
+   "config": "/home/<user>/fall-relay/edge_config.json",
+   "python": "/home/<user>/fall-relay-venv/bin/python",
+   "service": "fall-relay-edge-cam2.service",
+   "unrelated_services": ["docker.socket", "docker.service", "containerd.service", "mosquitto.service"]
+  }
+ ],
+ "playwright_module": "<path>/node_modules/playwright/index.mjs",
+ "chromium": "<path>/chrome-linux64/chrome"
+}

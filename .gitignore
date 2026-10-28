@@ -1,0 +1,25 @@
+# Generated environments and private operational state. Release uses an explicit allowlist.
+.env
+.env.*
+!.env.example
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+.next*/
+demo-output/
+web-demo-output/
+artifacts/
+demo.env
+
+# Local backups, runtime captures and logs (never versioned)
+/backups/
+server/bridge/backups/
+server/bridge/migration_backups/
+edge/decision_logs/
+server/_backup/
+server/data/
+*.log

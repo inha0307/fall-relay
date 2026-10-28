@@ -1,0 +1,66 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {pathToFileURL} from 'node:url';
+const cfg=JSON.parse(fs.readFileSync(process.argv[2],'utf8'));
+const {chromium}=await import(pathToFileURL(cfg.playwright));
+const browser=await chromium.launch({headless:true,executablePath:cfg.chromium,args:['--no-sandbox','--disable-dev-shm-usage']});
+const result={synthetic_transport:true,physical_notifications_tested:false,checks:[],errors:[]};
+try {
+ const context=await browser.newContext();
+ const response=await context.request.post(cfg.web+'/api/auth/login',{data:{userid:'pgverify-admin',password:cfg.password}});
+ assert(response.ok());
+ await context.route('**/api/alerts/status',r=>r.fulfill({json:{enabled:true,notification_policy_version:1}}));
+ const base={type:'fall',camera_id:'1',state:'pending',created_at:Date.now()/1000,server_received_at:Date.now()/1000,clock_usable:1,event_decided_at:Date.now()/1000-600};
+ const cases=[{...base,id:9001,notification_mode:'manual_review',late_arrival:1,suppression_reason:'event_too_old'}, {...base,id:9002,notification_mode:'manual_review',late_arrival:1,suppression_reason:'clock_unreliable',clock_usable:0,event_decided_at:null}];
+ await context.route(/\/api\/alerts\/\d+\/(ack|resolve|received)$/,async r=>{
+  const [,id,action]=r.request().url().match(/alerts\/(\d+)\/(\w+)$/);
+  const a=cases.find(a=>a.id===Number(id));
+  if(action==='ack')a.state='acknowledged';
+  if(action==='resolve'){a.state='resolved';a.resolution='uncertain';}
+  await r.fulfill({json:a});
+ });
+ const page=await context.newPage();page.on('pageerror',e=>result.errors.push(e.message));
+ await page.clock.install();
+ await page.addInitScript(()=>{
+  window.counts={tones:0,notifications:0};
+  window.AudioContext=class {currentTime=0;destination={};async resume(){} createOscillator(){return{connect(){},frequency:{},start(){window.counts.tones++},stop(){}}}createGain(){return{connect(){},gain:{}}}};
+  window.Notification=class {static permission='granted';constructor(){window.counts.notifications++}close(){}};
+  window.EventSource=class {constructor(url){window.stream=this;window.streamURL=url;this.listeners={};setTimeout(()=>this.onopen?.(),0)}addEventListener(n,fn){this.listeners[n]=fn}close(){}};
+  window.emit=(name,data)=>window.stream.listeners[name]({data:JSON.stringify(data)});
+ });
+ await page.goto(cfg.web+'/alerts');
+ await page.waitForFunction(()=>window.stream);
+ assert((await page.evaluate(()=>window.streamURL)).includes('policy=1'));
+ await page.getByRole('button',{name:'Sound off',exact:true}).click();
+ await page.getByRole('button',{name:'Desktop notifications off',exact:true}).click();
+ await page.evaluate(alerts=>window.emit('snapshot',{cursor:0,alerts,truncated:false}),cases);
+ await page.locator('[data-alert-id="9001"]').waitFor();
+ await page.evaluate(alert=>window.emit('alert',{cursor:1,alert}),cases[0]);
+ await page.clock.fastForward(150000);
+ assert.deepEqual(await page.evaluate(()=>window.counts),{tones:0,notifications:0});
+ assert.equal(await page.locator('.alert-waiting').count(),0);
+ assert(!(await page.title()).startsWith('('));
+ assert((await page.locator('[data-alert-id="9002"]').innerText()).includes('Reliable event time is unavailable'));
+ result.checks.push('manual cases: initial, 30-second reminders and 120-second escalation suppressed; no urgent styling/title; clock uncertainty shown');
+ const normal={...base,id:9003,created_at:await page.evaluate(()=>Date.now()/1000),notification_mode:'live',late_arrival:0,suppression_reason:null};cases.push(normal);
+ await page.evaluate(alert=>window.emit('alert',{cursor:2,alert}),normal);
+ await page.locator('[data-alert-id="9003"]').waitFor();
+ assert.deepEqual(await page.evaluate(()=>window.counts),{tones:3,notifications:1});
+ await page.clock.fastForward(150000);
+ assert.deepEqual(await page.evaluate(()=>window.counts),{tones:6,notifications:2});
+ await page.locator('[data-alert-id="9003"]').getByRole('button',{name:'Acknowledge',exact:true}).click();
+ await page.locator('[data-alert-id="9003"]').getByRole('button',{name:'Record outcome'}).waitFor();
+ const before=await page.evaluate(()=>window.counts);
+ await page.clock.fastForward(150000);
+ assert.deepEqual(await page.evaluate(()=>window.counts),before);
+ result.checks.push('live initial notification, reminder and escalation preserved; acknowledgement stops reminders');
+ await page.locator('[data-alert-id="9001"]').getByRole('button',{name:'Start review'}).click();
+ await page.locator('[data-alert-id="9001"]').getByRole('button',{name:'Record outcome'}).click();
+ await page.getByRole('button',{name:'Save outcome'}).click();
+ await page.getByRole('button',{name:/^Resolved/}).click();
+ await page.locator('[data-alert-id="9001"]').waitFor();
+ result.checks.push('manual review acknowledgement and outcome available in resolved history');
+ assert.equal(result.errors.length,0);
+ await page.screenshot({path:cfg.out+'/browser.png',fullPage:true});
+ result.passed=true;
+} finally {await browser.close();fs.writeFileSync(cfg.out+'/browser-verification.json',JSON.stringify(result,null,2));}

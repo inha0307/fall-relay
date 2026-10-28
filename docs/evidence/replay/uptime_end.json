@@ -1,0 +1,38 @@
+{
+  "server": {
+    "uptime_s": 12202.08,
+    "booted_at": 1793077245.696614,
+    "loadavg": [
+      "0.12",
+      "0.21",
+      "0.20"
+    ],
+    "now": 1793089447.7766252,
+    "hostname": "server",
+    "release": "6.18.33.2-microsoft-standard-WSL2"
+  },
+  "pi5": {
+    "uptime_s": 8648.69,
+    "booted_at": 1793080799.3457448,
+    "loadavg": [
+      "1.32",
+      "1.40",
+      "1.36"
+    ],
+    "now": 1793089448.03578,
+    "hostname": "pi5",
+    "release": "6.12.75+rpt-rpi-2712"
+  },
+  "pi4": {
+    "uptime_s": 8669.0,
+    "booted_at": 1793080779.469302,
+    "loadavg": [
+      "2.02",
+      "2.04",
+      "1.98"
+    ],
+    "now": 1793089448.4694183,
+    "hostname": "pi4",
+    "release": "6.12.20+rpt-rpi-v8"
+  }
+}

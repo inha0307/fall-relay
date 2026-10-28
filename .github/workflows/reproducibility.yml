@@ -1,0 +1,83 @@
+name: Reproducibility (synthetic, no Pi)
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  synthetic-workflow:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: fall_relay
+          POSTGRES_PASSWORD: fall_relay_ci
+          POSTGRES_DB: fall_relay
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U fall_relay"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      # Throwaway service container: the password is not a secret. The checks and the demo use temporary schemas.
+      FALLRELAY_DATABASE_URL: host=127.0.0.1 port=5432 dbname=fall_relay user=fall_relay password=fall_relay_ci
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.10'
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Install pinned server and check dependencies
+        run: |
+          python -m pip install -r server/bridge/requirements-test.lock.txt
+          python -m pip check
+      - name: Code style (ruff)
+        run: |
+          python -m pip install ruff==0.17.1
+          ruff format --check .
+          ruff check .
+      - name: Code style (web, Prettier)
+        working-directory: server/frontend
+        run: |
+          npm ci --no-audit --no-fund
+          npm run format:check
+      - name: Bounded Python checks
+        run: python server/bridge/run_checks.py --report /tmp/python-checks.json
+      - name: Same checks through pytest
+        run: python -m pytest -q
+      - name: Synthetic HTTP and clean web reproduction
+        shell: bash
+        run: |
+          set -euo pipefail
+          python server/bridge/demo.py --output /tmp/fall-relay-demo --serve > /tmp/demo-console.log 2>&1 &
+          demo_pid=$!
+          trap 'kill "$demo_pid" 2>/dev/null || true; wait "$demo_pid" 2>/dev/null || true' EXIT
+          for attempt in {1..150}; do
+            if [ -f /tmp/fall-relay-demo/report.json ]; then break; fi
+            if ! kill -0 "$demo_pid" 2>/dev/null; then cat /tmp/demo-console.log; exit 1; fi
+            sleep 0.2
+          done
+          test -f /tmp/fall-relay-demo/report.json
+          python server/bridge/verify_web_demo.py --demo-output /tmp/fall-relay-demo --output /tmp/fall-relay-web
+          cat /tmp/fall-relay-demo/report.json
+          cat /tmp/fall-relay-web/report.json
+          cat /tmp/fall-relay-web/demo-web-check.log
+          cat /tmp/fall-relay-web/account-check.log
+          cat /tmp/fall-relay-web/account-store.log
+          cat /tmp/fall-relay-web/responder-check.log
+      - name: Failure diagnostics (no credentials or databases)
+        if: failure()
+        run: |
+          for log in /tmp/demo-console.log /tmp/fall-relay-demo/bridge.log /tmp/fall-relay-web/build.log /tmp/fall-relay-web/demo-web-check.log /tmp/fall-relay-web/account-check.log; do
+            if [ -f "$log" ]; then tail -n 60 "$log"; fi
+          done

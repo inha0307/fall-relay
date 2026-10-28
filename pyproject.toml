@@ -1,0 +1,16 @@
+# Code style for the Python sources (ruff). Run: uvx ruff format && uvx ruff check
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.ruff.format]
+quote-style = "preserve"
+
+[tool.ruff.lint]
+# Syntax errors and pyflakes (unused or undefined names). Import sorting is left off on purpose: several scripts
+# extend sys.path before importing project modules.
+select = ["E9", "F"]
+
+[tool.pytest.ini_options]
+# Only the entry point is collected; the check scripts themselves run as standalone programs.
+testpaths = ["tests"]

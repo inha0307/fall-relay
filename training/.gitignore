@@ -1,0 +1,11 @@
+# Everything derived from NTU RGB+D stays local (the dataset terms do not allow redistribution).
+source_inventory_v2/paired_manifest_v2.csv
+source_inventory_v2/source_summary_v2.json
+source_inventory_v2/integrity*
+annotation_v2/auto_labels_v2.csv
+annotation_v2/event_labels_v2.csv
+annotation_v2/event_labels_v2_summary.json
+annotation_v2/audit/
+lpn_v2_meta/kinect_projection_v2.json
+tcn_v2_meta/test_result_v2.json
+__pycache__/

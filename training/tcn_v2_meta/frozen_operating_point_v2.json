@@ -1,0 +1,48 @@
+{
+  "frozen_at_unix": 1792393502.0681038,
+  "frozen_at": "2026-10-19 (before any test-split pose extraction)",
+  "decision": {
+    "theta": 0.95,
+    "k": 3,
+    "n": 5,
+    "m": 3,
+    "rule": "decision_engine.DecisionParams, other fields default"
+  },
+  "tcn": {
+    "run": "v2_s43",
+    "selection_rule": "highest val window AP among seeds 42/43/44 (0.905)",
+    "weights_sha256": "61038d5af807eff6833eb85ca0769d656eb5262328d05a058bd3a7df77e3b379",
+    "tflite_sha256": "8e4446b180062ba17e62fe8502258934849bebef4d78de8e8844f8ce9958370f"
+  },
+  "lpn": {
+    "run": "final_v2/full",
+    "weights_sha256": "7b4f46909a1d6c2872f79ad4c20d49557436aa9ab9aebbee17c04805aec93e0e",
+    "tflite_sha256": "3ac9c4213cfefd893ac964bc2e7b9ffa8f9b6f44994dcfb4f7cb43d333e0daca"
+  },
+  "features": {
+    "contract": "fallscope-pose13-feature59-v2",
+    "code_sha256": {
+      "features_v2.py": "6b3d2bfcede7b1b29dbbb1216efdca28277cabd2ecfc0cf16ae03cb126b14509",
+      "head_point.py": "c18de20a8892653f8a0f23d011336d49ec337be4c07c9aa6438551da77c08957",
+      "shape_features_v2.py": "c315ae3334ff65f22116bbedf30998f7d32bd499a32257b1ddfac47785e23f39",
+      "decision_engine.py": "441194fd3b710f9e5e0d8e528331d5afbe251f52d08df5030609c48823e7869f",
+      "pose17.py": "419c6267f0e5f3005de57a9eb2af75242974ac0112eaf20fb470d3a0f10eb5a6",
+      "causal_tracker.py": "9a4898b9acee68ad1d8ce0ca95298e2245111cbe0ea718c642f0bf6040615dae"
+    },
+    "head_table_sha256": "ca10ea48e33ff6c25ecb4b8d9acf48c83da1e41c3880dd87b36a79a02b006538"
+  },
+  "labels": {
+    "file": "annotation_v2/event_labels_v2.csv",
+    "sha256": "ef8d04170f645d21a86f3f0cff4a1bbffa3f5b9d5ff4ea40ef2222a992aef9ab"
+  },
+  "protocol": {
+    "primary": "test split, phase-0 10 Hz sequences, single camera; TP = event opened at t >= onset - 0.3 s in an A043 sequence; any other open is a false alarm; recall with capture-group bootstrap 95% CI (5000 resamples); FA/hour over all sequence time with exact Poisson 95% CI; latency = first TP open - impact",
+    "secondary": [
+      "phases 1 and 2",
+      "per camera",
+      "excluding label flags weak_fall_performance/low_confidence",
+      "v1 deployed pipeline (8 consecutive >= 0.932) on the same tracked primaries"
+    ],
+    "no_changes_after_unblinding": "any change after looking at test results must be reported as post hoc"
+  }
+}

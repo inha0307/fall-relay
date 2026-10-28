@@ -1,0 +1,9 @@
+# Model weights and runtime state are not versioned (distributed with the deploy bundle)
+*.tflite
+edge_events.sqlite3*
+run_identity.json
+# NTU-derived head-point calibration (training/calibrate_head_point.py); not redistributed, see NOTICE
+head_point_v2/head_point_v2.json
+head_point_v2/head_point_v2_report.json
+# Lab-specific benchmark setup (hosts, SSH key, browser paths); see ntu_benchmark/setup.example.json
+ntu_benchmark/setup.json

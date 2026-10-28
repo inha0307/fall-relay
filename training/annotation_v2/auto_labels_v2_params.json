@@ -1,0 +1,29 @@
+{
+  "rule": "auto_labels.py v2",
+  "params": {
+    "onset_fraction": 0.2,
+    "contact_m": 0.08,
+    "contact_frames": 2,
+    "min_drop_m": 0.5
+  },
+  "fps": 30.0,
+  "contact_joints": [
+    13,
+    17,
+    7,
+    11,
+    12,
+    16,
+    5,
+    9,
+    3
+  ],
+  "dev_groups": [
+    "S001P002R001A043",
+    "S004P008R002A043",
+    "S008P033R001A043",
+    "S013P007R002A043",
+    "S013P025R001A043",
+    "S017P007R002A043"
+  ]
+}

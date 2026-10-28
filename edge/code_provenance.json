@@ -1,0 +1,47 @@
+{
+  "purpose": "Links the byte hashes recorded when the bundled models were trained and evaluated (training/tcn_v2_meta/frozen_operating_point_v2.json, edge/bundle_manifest.json) to the current files. The files were reformatted and their docstrings edited on 2026-10-23; ast_sha256 (code_identity.py: syntax tree without docstrings) is unchanged, so the executed code is the code that was trained and evaluated.",
+  "checked_by": "edge/test_code_provenance.py",
+  "modules": {
+    "causal_tracker.py": {
+      "frozen_sha256": "9a4898b9acee68ad1d8ce0ca95298e2245111cbe0ea718c642f0bf6040615dae",
+      "current_sha256": "8a911f838ac09ba6ffae02ec0b3c09234896d57a172f5227efbaf673aa89fad7",
+      "ast_sha256": "06b4799dda439735f00580706338f6ae0832bf9438d5cb3206fdbe5c0281cef2",
+      "frozen_ast_sha256": "51bd762bb9ea16e8bbe23f70fa35f9bff04f97ea20b35cc5c96829406ec0e47e",
+      "description_change": {
+        "from": "geometric association can still swap identity; not patient recognition",
+        "to": "geometric association can still swap identity; no person identification",
+        "where": "RULE['identity_limit'], a description that no computation reads"
+      }
+    },
+    "decision_engine.py": {
+      "frozen_sha256": "441194fd3b710f9e5e0d8e528331d5afbe251f52d08df5030609c48823e7869f",
+      "current_sha256": "86e317b9f3abca93df2ef145b52b5a3b73318fe54a979c6f9f0736e5fb314d84",
+      "ast_sha256": "b02f0d3aba1eea988ea2ac5db195db088b00373c60f606c7cf5ddd3a952d5610"
+    },
+    "edge_runtime_v2_core.py": {
+      "frozen_sha256": "111f7f52608f96671c030e31b417a679a44311e1f4e0d44d25f0d89f7dd73fa6",
+      "current_sha256": "6fded886ff6eabcbfcd0eb8cb67e33001089a22e5cf953cfba3a6a51fbab3c9b",
+      "ast_sha256": "c0f2fcf0d14b1c492f80d74d3eb7bd5eb365921eb0dafca588dfe247b785cfec"
+    },
+    "features_v2.py": {
+      "frozen_sha256": "6b3d2bfcede7b1b29dbbb1216efdca28277cabd2ecfc0cf16ae03cb126b14509",
+      "current_sha256": "fe49a45901e9fd521043f6f26313db80b94d63c42df4782c4225e732a98a3139",
+      "ast_sha256": "9c9cf76e512c23c5cf68c8cbe238d0d2ad5467366c47b042bcdfac89c52812f5"
+    },
+    "head_point.py": {
+      "frozen_sha256": "c18de20a8892653f8a0f23d011336d49ec337be4c07c9aa6438551da77c08957",
+      "current_sha256": "b9b06b49499b8e10c6f7d3a2d5c7b6f193b9e23a9bf18c7a4a711178c1e5ec5b",
+      "ast_sha256": "07f49409613531dc868d37f7ac5562083c9cb9779acfe89b1658eb0e0eb5adc3"
+    },
+    "pose17.py": {
+      "frozen_sha256": "419c6267f0e5f3005de57a9eb2af75242974ac0112eaf20fb470d3a0f10eb5a6",
+      "current_sha256": "8fd0c49e8321792698fd0c73fe1aa2385c81b6217a1f833b2000bb85fd715735",
+      "ast_sha256": "e18210fb1560eaec99e233ec17978ae8ae7d4e92fc8e19a54b7cd3619780a894"
+    },
+    "shape_features_v2.py": {
+      "frozen_sha256": "c315ae3334ff65f22116bbedf30998f7d32bd499a32257b1ddfac47785e23f39",
+      "current_sha256": "3f88d77ba84bfee3560daf901b45d5189b0f4e23805b07c9e5ce771c7aa4a313",
+      "ast_sha256": "74234f702807f98f19eb6992401e8cdb08e20f92e89ecb94fde24cc7e17c5e46"
+    }
+  }
+}

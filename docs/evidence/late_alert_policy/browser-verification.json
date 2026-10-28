@@ -1,0 +1,11 @@
+{
+  "synthetic_transport": true,
+  "physical_notifications_tested": false,
+  "checks": [
+    "manual cases: initial, 30-second reminders and 120-second escalation suppressed; no urgent styling/title; clock uncertainty shown",
+    "live initial notification, reminder and escalation preserved; acknowledgement stops reminders",
+    "manual review acknowledgement and outcome available in resolved history"
+  ],
+  "errors": [],
+  "passed": true
+}

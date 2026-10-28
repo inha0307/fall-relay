@@ -1,0 +1,106 @@
+[
+  {
+    "contract": "fallscope-edge-event-v1",
+    "event_uid": "5139afe5daf0472e97e5c62c2d333a25:7",
+    "camera_id": "1",
+    "run_id": "5139afe5daf0472e97e5c62c2d333a25",
+    "onset_sensor_ns": 1000000000,
+    "clock": {
+      "offset_s": 0.018,
+      "rtt_s": 0.004
+    },
+    "max_score": 0.97,
+    "confirm": {
+      "k": 8,
+      "n": 10,
+      "m": 8
+    },
+    "track_id": 4,
+    "attempt": 1,
+    "message_seq": 1,
+    "kind": "open",
+    "state": "ALERT",
+    "close_reason": null,
+    "decided_sensor_ns": 2000000000,
+    "decided_at": 1792357332.0,
+    "sent_at": 1792357332.1
+  },
+  {
+    "contract": "fallscope-edge-event-v1",
+    "event_uid": "5139afe5daf0472e97e5c62c2d333a25:7",
+    "camera_id": "1",
+    "run_id": "5139afe5daf0472e97e5c62c2d333a25",
+    "onset_sensor_ns": 1000000000,
+    "clock": {
+      "offset_s": 0.018,
+      "rtt_s": 0.004
+    },
+    "max_score": 0.97,
+    "confirm": {
+      "k": 8,
+      "n": 10,
+      "m": 8
+    },
+    "track_id": 4,
+    "attempt": 1,
+    "message_seq": 2,
+    "kind": "update",
+    "state": "ALERT",
+    "close_reason": null,
+    "decided_sensor_ns": 3000000000,
+    "decided_at": 1792357333.0,
+    "sent_at": 1792357333.1
+  },
+  {
+    "contract": "fallscope-edge-event-v1",
+    "event_uid": "5139afe5daf0472e97e5c62c2d333a25:7",
+    "camera_id": "1",
+    "run_id": "5139afe5daf0472e97e5c62c2d333a25",
+    "onset_sensor_ns": 1000000000,
+    "clock": {
+      "offset_s": 0.018,
+      "rtt_s": 0.004
+    },
+    "max_score": 0.97,
+    "confirm": {
+      "k": 8,
+      "n": 10,
+      "m": 8
+    },
+    "track_id": 4,
+    "attempt": 1,
+    "message_seq": 3,
+    "kind": "update",
+    "state": "POST_FALL",
+    "close_reason": null,
+    "decided_sensor_ns": 4000000000,
+    "decided_at": 1792357334.0,
+    "sent_at": 1792357334.1
+  },
+  {
+    "contract": "fallscope-edge-event-v1",
+    "event_uid": "5139afe5daf0472e97e5c62c2d333a25:7",
+    "camera_id": "1",
+    "run_id": "5139afe5daf0472e97e5c62c2d333a25",
+    "onset_sensor_ns": 1000000000,
+    "clock": {
+      "offset_s": 0.018,
+      "rtt_s": 0.004
+    },
+    "max_score": 0.97,
+    "confirm": {
+      "k": 8,
+      "n": 10,
+      "m": 8
+    },
+    "track_id": 4,
+    "attempt": 1,
+    "message_seq": 4,
+    "kind": "close",
+    "state": "COOLDOWN",
+    "close_reason": "recovered",
+    "decided_sensor_ns": 5000000000,
+    "decided_at": 1792357335.0,
+    "sent_at": 1792357335.1
+  }
+]

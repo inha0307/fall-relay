@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "host": "0.0.0.0",
+  "port": 5001,
+  "cors_origins": [
+    "*"
+  ],
+  "edge_stale_after_s": 3.0,
+  "video_stale_after_s": 5.0,
+  "clip_dir": "../data/fall_clips",
+  "clip_pre_s": 3.0,
+  "clip_post_s": 2.0,
+  "clip_fps": 10.0,
+  "clip_retention_days": 3,
+  "archive_dir": "../data/decision_logs",
+  "metrics_interval_s": 10.0,
+  "metrics_retention_days": 30,
+  "write_token_env": "FALLRELAY_WRITE_TOKEN",
+  "require_camera_tokens": true,
+  "require_media_token": true,
+  "cameras": [
+    {
+      "id": "1",
+      "label": "CAM 1",
+      "location": ""
+    },
+    {
+      "id": "2",
+      "label": "CAM 2",
+      "location": ""
+    }
+  ],
+  "database_url_env": "FALLRELAY_DATABASE_URL",
+  "features": {
+    "alerts": true,
+    "watchdog": true
+  }
+}

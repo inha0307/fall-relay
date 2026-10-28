@@ -1,0 +1,240 @@
+{
+  "at_utc": "2026-10-27T10:49:48.900811+00:00",
+  "python": "3.10.12 (main, Aug 31 2026, 10:18:17) [GCC 11.4.0]",
+  "executable": "<repo>/.venv/bin/python",
+  "timeout_s": 60,
+  "results": [
+    {
+      "check": "tests/test_v2_foundation.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS open/multiple-update/close fixture, semantic retry hashes and malformed contracts\nPASS baseline schema: legacy row defaults, uniqueness, resolution and policy constraints\nPASS checksum refusal, pending-migration refusal at startup and whole-batch rollback\nPASS multiple-update outbox schema on the device\n",
+      "stderr": "",
+      "duration_s": 0.732
+    },
+    {
+      "check": "tests/test_notification_policy.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS stored policies read back, classification boundaries, latched retries/updates, receipts and old/new SSE clients\nPASS classifications survive a restart of the store\n",
+      "stderr": "",
+      "duration_s": 0.724
+    },
+    {
+      "check": "tests/test_identity_v2.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS v2 identity accepted and stored; other contracts, implementation sets and undeclared overrides refused\n",
+      "stderr": "",
+      "duration_s": 0.395
+    },
+    {
+      "check": "../../edge/test_result_transport.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS failed send, acknowledgement, refresh, lost registry recovery, legacy server and baseline\nPASS real video decode, timestamps, scaling, tail and cancellation\n",
+      "stderr": "",
+      "duration_s": 0.45
+    },
+    {
+      "check": "../../edge/test_bundle.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS edge bundle is self-contained (21 files, 18 modules)\n",
+      "stderr": "",
+      "duration_s": 0.108
+    },
+    {
+      "check": "../../edge/test_code_provenance.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS 7 frozen modules: records agree and the executed code matches the trained version\n",
+      "stderr": "",
+      "duration_s": 0.029
+    },
+    {
+      "check": "tests/test_watchdog.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS synthetic 29s video/inference/telemetry outages, one open warning, restart latch, manual-resolution suppression, 600s fresh-only recovery, unknown reset, recurrent fault and recovery timers immune to wall-clock steps\n",
+      "stderr": "",
+      "duration_s": 3.996
+    },
+    {
+      "check": "tests/test_alerts.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS atomic first-ack, late receipts, resolve/review, 1105-log catch-up and camera/role/read/media authorization\n",
+      "stderr": "",
+      "duration_s": 0.996
+    },
+    {
+      "check": "tests/test_alert_stream.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS SSE initial snapshot, delivery IDs, 1102-log pagination, interrupted resume, restart, camera isolation and future-cursor resync\n",
+      "stderr": "",
+      "duration_s": 1.636
+    },
+    {
+      "check": "tests/test_edge_events.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS ordered multiple updates, response-loss retry, one event/alert/dispatch, semantic conflict, terminal state and bridge restart\nPASS actual host SIGKILL recovery and simulated 600-second outage; no lost/duplicate events, late delivery suppressed\nPASS permanent auth failures retained/blocked, explicit retry, invalid receipt refusal and reserved close under queue capacity\n[clips] saved fall_00000001_cam1_20261027_194909.webm (25 frames, 0.0 MB)\nPASS device clip upload: auth, event matching, validation, one encoded clip, idempotent resend\nPASS authenticated explicit-event API, schema/sequence conflicts, context, heartbeats never create events, heartbeats without the event protocol refused\n",
+      "stderr": "OpenCV: FFMPEG: tag 0x30385056/'VP80' is not supported with codec id 139 and format 'webm / WebM'\n",
+      "duration_s": 1.918
+    },
+    {
+      "check": "tests/test_edge_event_http.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS real loopback HTTP: device decision engine/outbox \u2192 authenticated bridge, lost-response retry, bridge restart, retained open event and persisted runtime_stop close; one event/alert\n",
+      "stderr": "",
+      "duration_s": 2.422
+    },
+    {
+      "check": "../../edge/test_event_bridge_v2.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS v2 engine -> outbox -> bridge: events [('recovered', 7), ('runtime_stop', 2)], alerts 2, messages of event 1 ['open', 'update', 'update', 'update', 'update', 'update', 'close'], runs 2, duplicate resend acknowledged\n",
+      "stderr": "",
+      "duration_s": 1.434
+    },
+    {
+      "check": "../../edge/test_any_detector_adapter.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS any-detector adapter -> outbox -> bridge: 1 event (['open', 'update', 'update', 'update', 'update', 'update', 'close']), 1 fall alert, no run identity\n",
+      "stderr": "",
+      "duration_s": 1.1
+    },
+    {
+      "check": "tests/test_edge_config.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS shipped example config loads; pose model folder resolved from the config folder\nPASS second camera on the other CSI port\nPASS missing camera fields take their defaults\nPASS rejects: 16:9\nPASS rejects: camera_id\nPASS rejects: camera_index\nPASS rejects: sensor_mode\nPASS rejects: schema_version\nPASS rejects: no longer supported\nPASS rejects: pose_model_dir\nPASS sensor-mode selection (IMX708 matches former full-field rule; other sensors work)\nPASS bbox scale follows stream resolution (former fixed x2 only for 1280x720)\nAll edge_config checks passed.\n",
+      "stderr": "",
+      "duration_s": 0.017
+    },
+    {
+      "check": "tests/test_event_store.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS no events before the first open message\nPASS one event per camera\nPASS event keeps the maximum score\nPASS closed event is not ongoing; its duration is decision to close\nPASS an event without close is ongoing\nPASS each event_uid is its own event\nPASS camera filter\nPASS review-status filter: every new event\nPASS metrics store latency percentiles\nPASS metrics older than the retention window are pruned\nPASS events survive a restart; an event the device has not closed stays open\nAll event-store checks passed.\n",
+      "stderr": "",
+      "duration_s": 0.452
+    },
+    {
+      "check": "tests/smoke_test_edge_api.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS underfilled window is forced to WAIT\nPASS Pi NORMAL decision is preserved on cam 1\nPASS Pi FALL decision is preserved on cam 2\nPASS cam 1 status holds only cam 1 decision\nPASS cam 2 status holds only cam 2 decision\nPASS unknown camera result is rejected\nPASS out-of-range score is rejected\nPASS invalid status is rejected\nPASS cam 2 frame accepted\nPASS unknown camera frame is rejected\nPASS non-JPEG frame is rejected\nPASS camera list exposes both configured cameras\nPASS only cam 2 has live video\nPASS frame location updates camera location\nPASS connection API reports both edges connected\nPASS legacy top-level fields describe default camera\nPASS unknown camera status returns 404\nPASS reads without the server token are refused\nPASS stale FALL decision is no longer shown as a live track\nPASS stale result is kept only as a flagged diagnostic\nPASS a FALL heartbeat alone creates no event\nPASS explicit open accepted\nPASS the open message created exactly one ongoing event\nPASS research review labels are no longer editable through the bridge\nPASS invalid review_status filter is rejected\nPASS metrics API responds\nAll bridge checks passed.\n",
+      "stderr": "",
+      "duration_s": 1.029
+    },
+    {
+      "check": "tests/test_camera_registry.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS seed fills default labels\nPASS tokenless camera verifies as open\nPASS unknown camera verifies as unknown\nPASS token verification\nPASS disabled camera verifies as unknown\nPASS re-seed only adds missing cameras\nPASS seeded cameras are live\nPASS admin list needs the write token\nPASS token issue needs the write token\nPASS camera added\nPASS duplicate camera refused\nPASS invalid camera id refused\nPASS new camera accepts frames without restart\nPASS new camera appears in live view\nPASS tokenless camera is accepted and marked unauthenticated\nPASS token issued once in plain text\nPASS admin list shows token_set but never the token\nPASS frame without token refused once a token exists\nPASS frame with wrong token refused\nPASS edge result without token refused\nPASS frame and result with the token accepted\nPASS connection reports token auth and rejects\nPASS one camera's token does not open another camera\nPASS camera 1's token is rejected by camera 2\nPASS disabled camera leaves the live view and is refused\nPASS label and location edits reach the live view\nPASS invalid update refused\nPASS update of unknown camera is 404\nPASS clearing a token works\nPASS registry survives a restart without being re-seeded\nPASS issued token still valid after restart\nPASS require_camera_tokens refuses tokenless cameras\nAll camera registry checks passed.\n",
+      "stderr": "",
+      "duration_s": 0.95
+    },
+    {
+      "check": "tests/test_monitor_api.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS live lists every configured camera\nPASS live reports nothing connected yet\nPASS grid rejects unknown camera\nPASS grid rejects duplicate cameras\nPASS grid rejects more than 16 cameras\nPASS grid stream responds 200\nPASS grid parts are valid JPEGs with lengths\nPASS grid sends about fps frames per live camera\nPASS grid skips a camera without video\nPASS live sees pushed video\nPASS video_feed fps limit drops frames\nPASS video_feed without fps keeps every frame\nPASS stream client counters return to zero after disconnect\nAll monitor API checks passed.\n",
+      "stderr": "",
+      "duration_s": 7.218
+    },
+    {
+      "check": "tests/test_system_api.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS connection counts the live viewer\nPASS ingress bandwidth measured\nPASS egress bandwidth measured\nPASS last frame age reported\nPASS viewer count drops after disconnect\nPASS system API reports process memory and DB size\nPASS system API totals per-camera traffic\nPASS disabled camera hidden by default\nPASS include_disabled keeps names of disabled cameras\nAll system API checks passed.\n",
+      "stderr": "",
+      "duration_s": 2.155
+    },
+    {
+      "check": "tests/test_clip_recorder.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS recorder enabled with OpenCV\nPASS ring buffer is sampled to clip fps and bounded in time\nPASS trigger accepted\nPASS clip reports recording while collecting\n[clips] saved fall_00000007_cam1_20261027_194930.webm (24 frames, 0.0 MB)\nPASS clip finished\nPASS clip file name carries event and camera\nPASS sidecar links the event\nPASS clip covers pre and post window\nPASS WebM decodes with real-time frame count\nPASS no temporary files left\nPASS trigger without pushed video is refused (device uploads its own clip)\nPASS refused clip is reported as none\nPASS device clip accepted\nPASS second submit while encoding is refused\n[clips] saved fall_00000009_cam2_20261027_194930.webm (25 frames, 0.0 MB)\nPASS device clip saved\nPASS device clip keeps every uploaded frame\nPASS device clip plays in real time at the recorder fps\nPASS retention removes only expired clip files\nPASS explicit open accepted by the bridge\nPASS update of the same event accepted (no second clip)\n[clips] saved fall_00000001_cam2_20261027_194933.webm (14 frames, 0.0 MB)\nPASS event lists a clip state\nPASS bridge clip finished\nPASS event links its clip\nPASS one clip per episode\nPASS clip listing carries event and camera\nPASS clip is served as video/webm\nAll clip checks passed.\n",
+      "stderr": "OpenCV: FFMPEG: tag 0x30385056/'VP80' is not supported with codec id 139 and format 'webm / WebM'\nOpenCV: FFMPEG: tag 0x30385056/'VP80' is not supported with codec id 139 and format 'webm / WebM'\nOpenCV: FFMPEG: tag 0x30385056/'VP80' is not supported with codec id 139 and format 'webm / WebM'\n",
+      "duration_s": 4.145
+    },
+    {
+      "check": "tests/test_hardware.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS current flags, boot history and unavailable state remain distinct\nPASS unavailable firmware command and first CPU sample never become healthy zeroes\nPASS malformed / nonfinite / out-of-range telemetry rejected\nPASS physical interface counters collected, virtual ones skipped, malformed counters rejected\nPASS deduplication, staleness, binding, restart persistence and retention window\nPASS telemetry API authentication, malformed input, history bounds and JSON/CSV export\nAll hardware checks passed.\n",
+      "stderr": "",
+      "duration_s": 0.909
+    },
+    {
+      "check": "tests/test_device_profiles.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "All device profile checks passed.\n",
+      "stderr": "",
+      "duration_s": 0.029
+    },
+    {
+      "check": "tests/test_device_commands.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS allow-list, open-event confirmation, one command at a time, pickup, device binding, expiry and result timeout\nPASS admin request needs write token and actor; device picks the command up in its telemetry reply and reports with its camera token\nPASS agent runs only allow-listed commands on its own service, returns the last 200 log lines, reboots only when allowed\n",
+      "stderr": "",
+      "duration_s": 3.407
+    },
+    {
+      "check": "tests/test_decision_logs.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS dynamic start/stop, snapshot continuation, duplicate/expired commands, duration and size limits, restart seals session and defaults off\nPASS command options, authentication/device binding, bad hash rejection, protected HTTP download, exact byte/row verification; agent retries after lost server ACK without deleting local data or creating duplicate archives\n",
+      "stderr": "",
+      "duration_s": 3.073
+    },
+    {
+      "check": "tests/test_dashboard_stats.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS counts, time to acknowledge/resolve, outcomes and precision, monitored time without bridge gaps, outages, rates, device limits\nPASS dashboard API on an empty database and range validation\n",
+      "stderr": "",
+      "duration_s": 1.005
+    },
+    {
+      "check": "tests/test_traffic.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS refused push is not counted\nPASS video bytes include the JPEG body and headers\nPASS a rejected result is counted once the token is accepted\nPASS device telemetry counted as health\nPASS drain empties the meter\nPASS kbit/s over the observed minute\nPASS camera without observation has no rate\nPASS a request checked twice is counted once\nPASS unknown paths are not counted\nPASS device send rate skips reboots and gaps\nPASS dashboard carries per-camera traffic and device counters\nAll traffic checks passed.\n",
+      "stderr": "",
+      "duration_s": 0.622
+    },
+    {
+      "check": "tests/test_model_management.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS run identities are immutable and bound to one camera\nPASS identity registration, compact references, settings and decision checks, score validation, attribution\nPASS compact heartbeats survive a bridge restart without re-registration\nAll model management checks passed.\n",
+      "stderr": "",
+      "duration_s": 0.955
+    },
+    {
+      "check": "tests/test_postgres.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "PASS concurrent duplicate open, ordered update/close, changed duplicate refusal\nPASS concurrent events from two cameras have unique events, alerts and receipts\nPASS atomic event/alert/receipt rollback and retry, one winning ACK, resolution and browser receipt\nPASS one command request/pickup, hardware deduplication, diagnostics traffic, event listing\nPASS connection-pool restart preserves exact event receipt and pending state\n",
+      "stderr": "",
+      "duration_s": 0.712
+    },
+    {
+      "check": "tests/test_postgres_http.py",
+      "status": "passed",
+      "exit_code": 0,
+      "stdout": "HTTP 503 /api/admin/cameras/1/token b'{\"error\":\"database cutover verification in progress\"}'\nPASS HTTP commit/response-loss retry across actual process restart, ordered event close\nHTTP 404 /api/alerts/1/clip b'{\"error\":\"clip unavailable\"}'\nPASS SSE protocol fixture, receipt/ACK/resolution, device commands, diagnostic upload/download and dashboard\n",
+      "stderr": "",
+      "duration_s": 3.114
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "pi5": {
+    "before": {},
+    "after_stop": {},
+    "after_start": {}
+  },
+  "pi4": {
+    "before": {
+      "docker.socket": "active",
+      "docker.service": "active",
+      "containerd.service": "active",
+      "mosquitto.service": "active"
+    },
+    "after_stop": {
+      "docker.socket": "inactive",
+      "docker.service": "inactive",
+      "containerd.service": "inactive",
+      "mosquitto.service": "inactive"
+    },
+    "after_start": {
+      "docker.socket": "active",
+      "docker.service": "active",
+      "containerd.service": "active",
+      "mosquitto.service": "active"
+    }
+  }
+}

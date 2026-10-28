@@ -1,0 +1,24 @@
+{
+  "device_id": "edge-pi-1",
+  "camera_id": "1",
+  "server_url": "http://127.0.0.1:15001",
+  "interval_s": 5,
+  "disk_path": "/",
+  "services": ["fall-relay-edge-cam1.service"],
+  "camera": "Camera Module 3",
+  "cooling": "active cooler",
+  "power_supply_rating": "5 V 5 A",
+  "control": {
+    "inference_service": "fall-relay-edge-cam1.service",
+    "log_file": "/home/<user>/fall-relay/edge_runtime.log",
+    "allow_reboot": false
+  },
+  "model_paths": {
+    "pose_param": "/home/<user>/fall-relay/yolo26n-pose_ncnn_model/model.ncnn.param",
+    "pose_weights": "/home/<user>/fall-relay/yolo26n-pose_ncnn_model/model.ncnn.bin",
+    "lpn": "/home/<user>/fall-relay/lpn13_fp32.tflite",
+    "tcn": "/home/<user>/fall-relay/event_tcn_v2_fp32.tflite",
+    "edge_config": "/home/<user>/fall-relay/edge_config.json",
+    "runtime": "/home/<user>/fall-relay/fall_relay_edge_runtime.py"
+  }
+}

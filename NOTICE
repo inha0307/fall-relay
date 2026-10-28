@@ -1,0 +1,53 @@
+Fall-Relay
+Copyright (C) 2026 InHa Choe and Sukwon Lee, Kangwon National University
+
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU Affero General Public License as published by the Free
+Software Foundation, version 3 (SPDX: AGPL-3.0-only). See LICENSE.
+
+If you run a modified version of the bridge or the web application as a network
+service, AGPL-3.0 section 13 requires you to offer its source code to the users
+of that service.
+
+Model files (not stored in this repository)
+-------------------------------------------
+The Raspberry Pi runtime needs model files that git does not track. They are
+not covered by the statement above, except where noted.
+
+1. Pose model: Ultralytics YOLO26n-pose, exported to NCNN (fp32, 320 x 320).
+   Licence: AGPL-3.0 (https://www.ultralytics.com/license). Reproduce it from
+   the Ultralytics release (the deployed export was made with ultralytics 8.4.37):
+       yolo export model=yolo26n-pose.pt format=ncnn imgsz=320
+   Commercial use without releasing source requires an Ultralytics Enterprise
+   License.
+
+2. Fall models: lpn13_fp32.tflite, event_tcn_v2_fp32.tflite and
+   edge/head_point_v2/head_point_v2.json were trained or calibrated on the
+   NTU RGB+D dataset. NTU RGB+D may be used for non-commercial research only,
+   and redistribution or derivation requires permission from the ROSE Lab
+   (https://rose1.ntu.edu.sg/dataset/actionRecognition/). These files, and the
+   reference fall times and other data derived from NTU RGB+D, are therefore not
+   distributed. The training code in training/ (AGPL-3.0, see training/README.md)
+   lets users who hold an NTU RGB+D licence regenerate them.
+
+The hardware-free example (README, "Try the workflow without a Raspberry Pi")
+uses generated scores and keypoints and needs none of these files; without the
+calibrated head-point table it uses a neutral one.
+
+Third-party data file
+---------------------
+edge/camera_tuning/imx519_af.json is a camera tuning file in the Raspberry Pi
+libcamera format for the Arducam IMX519 module, adapted from the tuning file
+that Arducam distributes with its libcamera packages. It is used only when the
+device runs that sensor; it carries the terms of its source, not AGPL-3.0.
+
+Acknowledgement
+---------------
+The research in this work used the NTU RGB+D Action Recognition Dataset made
+available by the ROSE Lab at the Nanyang Technological University, Singapore.
+
+Third-party dependencies
+------------------------
+Dependencies keep their own licences, for example ncnn (BSD-3-Clause),
+LiteRT (Apache-2.0), FastAPI (MIT), Uvicorn (BSD-3-Clause), psycopg (LGPL-3.0),
+Next.js (MIT) and React (MIT). See the lock files for the exact packages.

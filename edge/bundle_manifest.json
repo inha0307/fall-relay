@@ -1,0 +1,46 @@
+{
+ "bundle_id": "fallscope-v2-20261019",
+ "contract": "fallscope-pose13-feature59-v2",
+ "decision": {
+  "theta": 0.95,
+  "k": 3,
+  "n": 5,
+  "m": 3,
+  "rule": "decision_engine.DecisionParams, other fields default",
+  "cooldown_s": 0.0
+ },
+ "sha256": {
+  "edge_runtime_v2_core.py": "111f7f52608f96671c030e31b417a679a44311e1f4e0d44d25f0d89f7dd73fa6",
+  "features_v2.py": "6b3d2bfcede7b1b29dbbb1216efdca28277cabd2ecfc0cf16ae03cb126b14509",
+  "head_point.py": "c18de20a8892653f8a0f23d011336d49ec337be4c07c9aa6438551da77c08957",
+  "shape_features_v2.py": "c315ae3334ff65f22116bbedf30998f7d32bd499a32257b1ddfac47785e23f39",
+  "decision_engine.py": "441194fd3b710f9e5e0d8e528331d5afbe251f52d08df5030609c48823e7869f",
+  "pose17.py": "419c6267f0e5f3005de57a9eb2af75242974ac0112eaf20fb470d3a0f10eb5a6",
+  "causal_tracker.py": "9a4898b9acee68ad1d8ce0ca95298e2245111cbe0ea718c642f0bf6040615dae",
+  "lpn13_fp32.tflite": "3ac9c4213cfefd893ac964bc2e7b9ffa8f9b6f44994dcfb4f7cb43d333e0daca",
+  "event_tcn_v2_fp32.tflite": "8e4446b180062ba17e62fe8502258934849bebef4d78de8e8844f8ce9958370f",
+  "head_point_v2/head_point_v2.json": "ca10ea48e33ff6c25ecb4b8d9acf48c83da1e41c3880dd87b36a79a02b006538"
+ },
+ "pose_sha256": {
+  "pose_param": "189c56e17dc2cc7773806dcad7334f2d66ca2effbac4f39245ed643db8ca1de2",
+  "pose_weights": "54f59d78974b26ab634bc3358f4d41f279b37a2e89425d076b69b4797c8ee00c"
+ },
+ "provenance": {
+  "frozen_operating_point_sha256": "64775bb8a4fdc902456d997ce287424a85019c0e4aca7cdacf71b6105f452084",
+  "tcn_run": "v2_s43",
+  "lpn_run": "final_v2/full",
+  "ntu_test": "recall 0.884 [0.833,0.928], FA/h 1.38 [0.79,2.24] (tcn_v2_meta/test_result_v2.json)",
+  "pi_trial": "9.995 Hz, p95 57.5 ms (pi_v2_trial/trial_result_20261019.json)"
+ },
+ "post_test_runtime_changes": [
+  {
+   "date": "2026-10-19",
+   "by": "user decision",
+   "changes": [
+    "recovery upright also requires person box height/width >= 1.3 (edge_runtime_v2_core.upright_min_aspect)",
+    "cooldown_s 30 -> 0"
+   ],
+   "note": "after the NTU test; theta/k/n/m and models unchanged; NTU test sequences are shorter than the cooldown and offline replays carry no posture flags, so the reported NTU test numbers do not depend on these two settings"
+  }
+ ]
+}

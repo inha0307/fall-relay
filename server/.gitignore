@@ -1,0 +1,82 @@
+# 1. Ignore every file, but keep walking the folders
+/*
+!/**/
+
+# 2. Allow source code and documents
+!*.py
+!*.md
+!*.js
+!*.jsx
+!*.css
+!*.json
+!*.svg
+!*.html
+!*.sh
+!*.yml
+!*.yaml
+
+# 3. The same extensions in every subfolder
+!**/*.py
+!**/*.md
+!**/*.js
+!**/*.jsx
+!**/*.css
+!**/*.json
+!**/*.svg
+!**/*.html
+!**/*.sh
+!**/*.yml
+!**/*.yaml
+
+# 4. Other required files
+!/requirements.txt
+!/frontend/
+!/.gitignore
+!/assets/
+
+# 5. Frontend dependencies and builds
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.vercel/
+
+# 6. Model weights and model folders
+*.pt
+*.h5
+*.ckpt
+*.bin
+*.param
+models/
+
+# 7. Videos and images (SVG files are allowed above)
+*.mp4
+*.jpg
+*.png
+*.gif
+*.jpeg
+fall_clips/
+
+# 8. Logs, caches and credentials
+*.log
+*.pyc
+__pycache__/
+.env
+ssl/
+test_results/
+.vscode/
+.idea/
+.DS_Store
+node_modules/
+build/
+dist/
+
+.venv/
+.config-backups/
+.env.*
+!frontend/.env.local.example
+
+.bootstrap/
+
+# Local backups and runtime data (never versioned)
+_backup/
+data/

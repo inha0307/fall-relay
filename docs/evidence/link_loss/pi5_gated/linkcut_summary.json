@@ -1,0 +1,244 @@
+{
+  "trial": "main_01_clips_off_linkcut",
+  "schedule": {
+    "start_at": 1793096410.7000124,
+    "measure_start": 1793096473.7000124,
+    "measure_end": 1793097673.7000124,
+    "inter_phase_gap_s": 3,
+    "warmup_s": 60,
+    "measure_s": 1200,
+    "clips": false,
+    "replicate": 1
+  },
+  "cuts": [
+    {
+      "offset_s": 300,
+      "duration_s": 180,
+      "cut_at": 1793096774.3855658,
+      "restored_at": 1793096954.8022857
+    },
+    {
+      "offset_s": 720,
+      "duration_s": 180,
+      "cut_at": 1793097194.3339014,
+      "restored_at": 1793097374.7958496
+    }
+  ],
+  "gated_device": "pi5",
+  "control_device": "pi4",
+  "gate": {
+    "cut_start": [
+      {
+        "wall": 1793096774.582054,
+        "kind": "cut_start",
+        "closed_connections": 4
+      },
+      {
+        "wall": 1793097194.3613293,
+        "kind": "cut_start",
+        "closed_connections": 4
+      }
+    ],
+    "cut_end": [
+      1793096954.9546716,
+      1793097374.944602
+    ],
+    "held_connections": 433,
+    "held_seconds": {
+      "n": 433,
+      "p50": 1.005,
+      "p95": 3.0164,
+      "min": 0.501,
+      "max": 3.044
+    },
+    "relayed_connections": 778,
+    "upstream_failed": 0
+  },
+  "devices": {
+    "pi4": {
+      "run_id": "1bcfbe9202d242b0b70ef47682e5f817",
+      "processed_slots": 3956,
+      "expected_slots": 5489,
+      "missing_slots": 1533,
+      "achieved_hz": 7.283662697925618,
+      "processing_ms": {
+        "n": 3956,
+        "p50": 130.2939445,
+        "p95": 148.29409275,
+        "min": 113.65709,
+        "max": 190.598633
+      },
+      "events_decided": 32,
+      "events_decided_in_cuts": 8,
+      "server_events": 32,
+      "browser_events": 32,
+      "late_arrival_events": 0,
+      "notification_modes": {
+        "live": 32
+      },
+      "receipts_in_order_all": true,
+      "server_events_for_run": 37,
+      "outbox_messages": 65,
+      "outbox_retried_messages": 0,
+      "outbox_max_attempts": 1,
+      "outbox_attempts_total": 65,
+      "outbox_blocked": 0,
+      "outbox_unacked": 0,
+      "outbox_pending_end": 0,
+      "created_to_ack_s": {
+        "n": 65,
+        "p50": 0.07254719734191895,
+        "p95": 0.2838260650634765,
+        "min": 0.016230106353759766,
+        "max": 0.31624937057495117
+      },
+      "created_to_ack_s_outside_cuts": {
+        "n": 49,
+        "p50": 0.06685686111450195,
+        "p95": 0.2820574283599853,
+        "min": 0.016230106353759766,
+        "max": 0.31624937057495117
+      },
+      "transport_attempts": 65,
+      "transport_failed": 0,
+      "transport_failed_in_cuts": 0,
+      "transport_failed_errors": {},
+      "duplicate_replies": 0,
+      "outbox_pending_max": 1,
+      "decision_to_server_s_outside_cuts": {
+        "n": 24,
+        "p50": 0.1531592607498169,
+        "p95": 0.16373976469039916,
+        "min": 0.009590625762939453,
+        "max": 0.16588211059570312
+      },
+      "cuts": [
+        {
+          "cut": 0,
+          "peak_pending": 1,
+          "pending_zero_after_restore_s": 0.8894383907318115,
+          "messages_created_during_cut": 14,
+          "messages_acked_after_restore_s": {
+            "n": 14,
+            "p50": -141.45113790035248,
+            "p95": -71.3015580534935,
+            "min": -178.18507647514343,
+            "max": -69.70640087127686
+          },
+          "events_decided_during_cut": 7,
+          "failed_attempts_during_cut": 0
+        },
+        {
+          "cut": 1,
+          "peak_pending": 1,
+          "pending_zero_after_restore_s": 1.0344562530517578,
+          "messages_created_during_cut": 2,
+          "messages_acked_after_restore_s": {
+            "n": 2,
+            "p50": -100.13901507854462,
+            "p95": -98.9165600180626,
+            "min": -101.4972984790802,
+            "max": -98.78073167800903
+          },
+          "events_decided_during_cut": 1,
+          "failed_attempts_during_cut": 0
+        }
+      ],
+      "completed": true
+    },
+    "pi5": {
+      "run_id": "c9968e269e4d46c7b843b19a525ec229",
+      "processed_slots": 5489,
+      "expected_slots": 5489,
+      "missing_slots": 0,
+      "achieved_hz": 10.10617405179821,
+      "processing_ms": {
+        "n": 5489,
+        "p50": 48.069531,
+        "p95": 60.933401199999984,
+        "min": 43.542828,
+        "max": 93.459686
+      },
+      "events_decided": 38,
+      "events_decided_in_cuts": 9,
+      "server_events": 38,
+      "browser_events": 29,
+      "late_arrival_events": 9,
+      "notification_modes": {
+        "live": 29,
+        "manual_review": 9
+      },
+      "receipts_in_order_all": true,
+      "server_events_for_run": 43,
+      "outbox_messages": 86,
+      "outbox_retried_messages": 9,
+      "outbox_max_attempts": 9,
+      "outbox_attempts_total": 152,
+      "outbox_blocked": 0,
+      "outbox_unacked": 0,
+      "outbox_pending_end": 0,
+      "created_to_ack_s": {
+        "n": 86,
+        "p50": 0.05612814426422119,
+        "p95": 194.70693695545197,
+        "min": 0.011877298355102539,
+        "max": 203.55611991882324
+      },
+      "created_to_ack_s_outside_cuts": {
+        "n": 66,
+        "p50": 0.050505757331848145,
+        "p95": 0.10061019659042358,
+        "min": 0.011877298355102539,
+        "max": 0.1215817928314209
+      },
+      "transport_attempts": 152,
+      "transport_failed": 66,
+      "transport_failed_in_cuts": 66,
+      "transport_failed_errors": {
+        "TimeoutError": 66
+      },
+      "duplicate_replies": 0,
+      "outbox_pending_max": 17,
+      "decision_to_server_s_outside_cuts": {
+        "n": 29,
+        "p50": 0.012369632720947266,
+        "p95": 0.0657442569732666,
+        "min": -0.011917352676391602,
+        "max": 0.09793686866760254
+      },
+      "cuts": [
+        {
+          "cut": 0,
+          "peak_pending": 17,
+          "pending_zero_after_restore_s": 60.718143701553345,
+          "messages_created_during_cut": 17,
+          "messages_acked_after_restore_s": {
+            "n": 17,
+            "p50": 28.87840509414673,
+            "p95": 60.119861888885495,
+            "min": 3.890249729156494,
+            "max": 60.1262993812561
+          },
+          "events_decided_during_cut": 8,
+          "failed_attempts_during_cut": 59
+        },
+        {
+          "cut": 1,
+          "peak_pending": 3,
+          "pending_zero_after_restore_s": 30.872087955474854,
+          "messages_created_during_cut": 3,
+          "messages_acked_after_restore_s": {
+            "n": 3,
+            "p50": 30.559500694274902,
+            "p95": 30.565851736068726,
+            "min": 30.550230264663696,
+            "max": 30.56655740737915
+          },
+          "events_decided_during_cut": 1,
+          "failed_attempts_during_cut": 7
+        }
+      ],
+      "completed": true
+    }
+  }
+}

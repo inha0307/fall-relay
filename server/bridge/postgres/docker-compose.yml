@@ -1,0 +1,23 @@
+# A throwaway PostgreSQL 14 for the hardware-free example and the checks (not for deployment).
+#   docker compose -f server/bridge/postgres/docker-compose.yml up -d
+#   export FALLRELAY_DATABASE_URL='host=127.0.0.1 port=54320 dbname=fall_relay user=fall_relay password=fall_relay_local'
+# The role may create schemas in its own database, which is all demo.py and run_checks.py need. The password is
+# local to this container; the data volume is removed with `docker compose ... down -v`.
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: fall_relay
+      POSTGRES_PASSWORD: fall_relay_local
+      POSTGRES_DB: fall_relay
+    ports:
+      - "127.0.0.1:54320:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fall_relay"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - fall_relay_pg:/var/lib/postgresql/data
+volumes:
+  fall_relay_pg:

@@ -1,0 +1,1 @@
+{"completed_at": 1793096270.4986296, "main_completed": true, "pilot_only": false, "replicates": 1, "warmup_s": 60, "measure_s": 1200, "cuts": [[300, 180], [720, 180]], "gated_devices": ["pi4"]}

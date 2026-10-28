@@ -1,0 +1,7 @@
+# CPU environment: manifest, pose extraction, tracking, labels, head point, LPN pairs.
+# Tested with CPython 3.10.12 on Linux x86_64.
+ai-edge-litert==2.3.0
+h5py==3.16.0
+ncnn==1.0.20260526
+numpy==2.2.6
+opencv-python-headless==5.0.0.93

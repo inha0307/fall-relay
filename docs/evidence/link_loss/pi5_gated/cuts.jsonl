@@ -1,0 +1,4 @@
+{"wall": 1793096774.385865, "kind": "cut_start", "devices": ["pi5"], "offset_s": 300, "duration_s": 180, "state": "on", "cut_at": 1793096774.3855658}
+{"wall": 1793096954.802377, "kind": "cut_end", "devices": ["pi5"], "offset_s": 300, "duration_s": 180, "state": "done", "cut_at": 1793096774.3855658, "restored_at": 1793096954.8022857}
+{"wall": 1793097194.3340921, "kind": "cut_start", "devices": ["pi5"], "offset_s": 720, "duration_s": 180, "state": "on", "cut_at": 1793097194.3339014}
+{"wall": 1793097374.7960114, "kind": "cut_end", "devices": ["pi5"], "offset_s": 720, "duration_s": 180, "state": "done", "cut_at": 1793097194.3339014, "restored_at": 1793097374.7958496}

@@ -1,0 +1,10 @@
+# Python packages for the edge runtime: the versions the Raspberry Pi 4 reference virtual environment loads
+# (Raspberry Pi OS bookworm, Python 3.11). The Pi 5 reference uses its system Python 3.13 instead (numpy 2.2.4,
+# OpenCV 4.13.0, same ncnn and ai-edge-litert). Picamera2 and libcamera come from the system packages
+# (sudo apt install python3-picamera2); edge_config.json "extra_python_paths" adds /usr/lib/python3/dist-packages.
+#   python3 -m venv ~/fall-relay-venv && ~/fall-relay-venv/bin/pip install -r requirements-edge.txt
+ai-edge-litert==2.3.0
+ncnn==1.0.20260114
+numpy==2.4.3
+opencv-python==5.0.0.93
+requests==2.34.2
