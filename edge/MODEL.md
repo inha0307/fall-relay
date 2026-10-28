@@ -74,8 +74,8 @@ NTU RGB+D replay through the deployed bundle on the released software, clip uplo
 
 | Device | Decision rate | Processing per slot | CPU | Peak temperature |
 |---|---|---|---|---|
-| Raspberry Pi 5 (BCM2712, 4 GB, active cooler), Camera Module 3 | 10.11 Hz | 47.6 / 61.0 ms | 26 % | 62.2 °C |
-| Raspberry Pi 4 Model B (BCM2711, 8 GB, armour case with two fans), Arducam IMX519 | 7.32 Hz | 129.4 / 146.6 ms | 39 % | 52.1 °C |
+| Raspberry Pi 5 (BCM2712 at 2.0 GHz as configured, 4 GB, active cooler), Camera Module 3 | 10.11 Hz | 47.6 / 61.0 ms | 26 % | 62.2 °C |
+| Raspberry Pi 4 Model B (BCM2711 at 1.8 GHz, 8 GB, armour case with two fans), Arducam IMX519 | 7.32 Hz | 129.4 / 146.6 ms | 39 % | 52.1 °C |
 
 The Pi 4 misses 27.6 % of the 10 Hz slots; missed slots enter the window as invalid, so it raises fewer events
 from the same input. The benchmark procedure is in [`edge/ntu_benchmark/README.md`](ntu_benchmark/README.md).

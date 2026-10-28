@@ -22,8 +22,8 @@ This page gives the detector operating point and event rule used by the bundled 
 
 | Device | SoC, memory, cooling | OS, Python | Camera |
 |---|---|---|---|
-| Raspberry Pi 5 | BCM2712, 4 cores, 4 GB RAM, active cooler | Debian 13, Python 3.13 | Raspberry Pi Camera Module 3 |
-| Raspberry Pi 4 Model B | BCM2711, 4 cores, 8 GB RAM, aluminium armour case with two fans | Raspberry Pi OS Bookworm (Debian 12) 64-bit, Python 3.11 | Arducam IMX519 |
+| Raspberry Pi 5 | BCM2712, 4 cores at 2.0 GHz (`arm_freq=2000` in `config.txt`; the board default is 2.4 GHz), 4 GB RAM, active cooler | Debian 13, Python 3.13 | Raspberry Pi Camera Module 3 |
+| Raspberry Pi 4 Model B | BCM2711, 4 cores at 1.8 GHz, 8 GB RAM, aluminium armour case with two fans | Raspberry Pi OS Bookworm (Debian 12) 64-bit, Python 3.11 | Arducam IMX519 |
 
 Server host of the trials: the laboratory workstation that also runs the bridge and the web application (WSL2; `replay/uptime_start.json` records its kernel). No thermal throttling was recorded on either device during the trials.
 
