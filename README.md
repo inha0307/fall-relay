@@ -1,6 +1,7 @@
 # Fall-Relay
 
 [![Reproducibility (synthetic, no Pi)](https://github.com/inha0307/fall-relay/actions/workflows/reproducibility.yml/badge.svg)](https://github.com/inha0307/fall-relay/actions/workflows/reproducibility.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23719977.svg)](https://doi.org/10.5281/zenodo.23719977)
 
 Fall-Relay is open-source edge–server software that carries fall events from camera devices to the people who
 respond to them, and records how each alert is handled. A Raspberry Pi runs the detector and a latched decision
@@ -161,4 +162,6 @@ Model files are not in this repository and carry their own terms: the Ultralytic
 and the fall models trained on NTU RGB+D are not redistributed; see [NOTICE](NOTICE). The demo draws artificial
 points with OpenCV; it contains no NTU frames and no recording of a person.
 
-The repository is being prepared for a SoftwareX submission; a versioned release and an archival DOI are pending.
+Release v1.0.0 is archived on Zenodo under DOI [10.5281/zenodo.23719977](https://doi.org/10.5281/zenodo.23719977)
+(all versions: [10.5281/zenodo.23719976](https://doi.org/10.5281/zenodo.23719976)). To cite the software, use
+[CITATION.cff](CITATION.cff) or the "Cite this repository" button on GitHub.
