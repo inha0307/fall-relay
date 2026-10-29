@@ -1,6 +1,7 @@
 # Contributing to Fall-Relay
 
 Thank you for considering a contribution. Fall-Relay is research software; the rules below keep it reproducible.
+Participation is governed by the [code of conduct](CODE_OF_CONDUCT.md).
 
 ## Reporting a problem
 
