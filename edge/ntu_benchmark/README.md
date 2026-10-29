@@ -30,7 +30,7 @@ fixed across all runs. The frontend is a separately built source snapshot; produ
 Both Pis run simultaneously. Four paired trials alternate clip off/on, two repeats
 each. Each trial loads the deployed models once, then runs 60 seconds of warmup
 (excluded from every measurement), a marked 3-second phase boundary, and 1200 seconds
-of measurement. The isolated bridge runs on PostgreSQL like the reference deployment:
+of measurement. The isolated bridge runs on PostgreSQL like the laboratory deployment:
 the controller creates a schema of its own (`bench_<random>`) in the database named by
 `BENCHMARK_PG_URL`, initialised empty from the current migrations, and records it in
 `database.json`; a dedicated local PostgreSQL instance keeps the operational database
@@ -95,7 +95,7 @@ and body bytes, separately for result/event/clip/health/context/etc. eth0 is the
 device counter, including TCP/IP, SSH, the retained operational device agent and
 other projects. Its rate uses the actual first/last sample span. Services named in
 `setup.json` are stopped for the trials and restarted afterwards; the device's own
-Fall-Relay detector is stopped and restored by the remote supervisor. NTU has an
+Fall-Relay fall detector service is stopped and restored by the remote supervisor. NTU has an
 artificially enriched event rate;
 these rates must not be presented as average field bandwidth.
 
@@ -120,7 +120,7 @@ is reached by a separate SSH reverse port 15992. Test tokens travel on SSH stdin
 owner-only remote job files, never command lines or reported logs.
 
 The remote supervisor records the service's prior active state, stops only that Pi's
-Fall-Relay detector, and restores the state after success, child failure, controller
+Fall-Relay fall detector service, and restores the state after success, child failure, controller
 abort/disconnect or 90-second lease expiry. A controller-disconnect recovery was
 exercised during preparation; both original services were verified active afterwards.
 The improved signal path uses KeyboardInterrupt rather than InterruptedError, which

@@ -101,5 +101,5 @@ In the reference setup each device reaches the bridge through a reverse SSH tunn
 ## Scope
 
 One bridge process per installation (connection state is held in memory); browsers must be open and signed in to
-receive alerts; there is no push, SMS or escalation channel. The detector has known false positives and is not
+receive alerts; there is no push, SMS or escalation channel. Our fall detector has known false positives and is not
 clinically validated.

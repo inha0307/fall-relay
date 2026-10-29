@@ -4,7 +4,7 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23719976.svg)](https://doi.org/10.5281/zenodo.23719976)
 
 Fall-Relay is open-source edge–server software that carries fall events from camera devices to the people who
-respond to them, and records how each alert is handled. A Raspberry Pi runs the detector and a latched decision
+respond to them, and records how each alert is handled. A Raspberry Pi runs a fall detector and a latched decision
 engine; every event message is stored in a local outbox before it is sent and is accepted by the server idempotently,
 so retries, lost responses and restarts never lose an event or create a second alert. Detection events and responder
 alerts have separate lifecycles: a responder acknowledges an alert and records the on-site outcome, while the event
@@ -18,10 +18,10 @@ keeps what the device observed.
   model used and, optionally, a short clip around each detected fall.
 - **Device operation:** telemetry, health against per-device profiles, watchdog alerts for cameras that stop detecting
   and remote actions, on Raspberry Pi 5 and Raspberry Pi 4.
-- **Replaceable detector:** the bundled pose-based detector ([edge/MODEL.md](edge/MODEL.md)) is the reference
-  detector whose NTU RGB+D results are reported in the article; any detector that emits the event contract can be used.
+- **Replaceable fall detector:** our pose-based fall detector ([edge/MODEL.md](edge/MODEL.md)) is the one whose
+  NTU RGB+D results are reported in the article; any fall detector that emits the event contract can be used.
 
-The default detector has known false positives during daily activities. The software is not clinically validated.
+Our fall detector has known false positives during daily activities. The software is not clinically validated.
 
 ## Try the workflow without a Raspberry Pi
 
@@ -52,7 +52,7 @@ checked with ruff for Python (`pyproject.toml`: `ruff format --check .`, `ruff c
 application (`server/frontend`: `npm run format:check`).
 
 Use a **new output directory** for each run. The demo starts a loopback-only bridge
-on the same PostgreSQL backend as the reference deployment, and two synthetic cameras that run the same post-inference code as the Pi
+on the same PostgreSQL backend as the laboratory deployment, and two synthetic cameras that run the same post-inference code as the Pi
 (v2 decision engine, explicit-event outbox, heartbeat with the 13-joint skeleton).
 Camera 1 falls, lies down and gets up; camera 2 stays normal. The demo uploads a
 generated fall clip the way the device does and takes the alert through
@@ -106,11 +106,11 @@ not used. The generated `demo.env` holds private local demo tokens; do not publi
 | Server installation, checks, troubleshooting | [server/bridge/INSTALL.md](server/bridge/INSTALL.md) |
 | Server configuration and services | [server/bridge/README.md](server/bridge/README.md) |
 | Edge device installation | [edge/deploy/README.md](edge/deploy/README.md) |
-| Default detector (code, training, evaluation; weights not distributed) | [edge/MODEL.md](edge/MODEL.md), [training/README.md](training/README.md) |
+| Our fall detector (code, training, evaluation; weights not distributed) | [edge/MODEL.md](edge/MODEL.md), [training/README.md](training/README.md) |
 | Raspberry Pi 5 / Pi 4 benchmark | [edge/ntu_benchmark/README.md](edge/ntu_benchmark/README.md) |
 | Synthetic demo | [server/bridge/DEMO.md](server/bridge/DEMO.md) |
 | Interface terms | [docs/UI_GLOSSARY.md](docs/UI_GLOSSARY.md) |
-| Evidence behind the article: detector operating point, check conditions and results, replay measurements | [docs/evidence/README.md](docs/evidence/README.md) |
+| Evidence behind the article: fall detector operating point, check conditions and results, replay measurements | [docs/evidence/README.md](docs/evidence/README.md) |
 | Readable captures of the web application pages (hardware-free example) | [docs/screens/README.md](docs/screens/README.md) |
 
 Repository layout:

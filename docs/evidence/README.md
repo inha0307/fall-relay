@@ -1,24 +1,24 @@
 # Evidence for the Fall-Relay article
 
 
-This page gives the detector operating point and event rule used by the bundled detector (Table E1), the full conditions and observations of the deterministic checks (Table E2) and the per-slot processing-time distributions of the replay trials (Figure E1). The detector's accuracy is not evaluated in the article or here. The accompanying files are aggregated measurements (CSV and JSON), check reports and the browser verification record; no video, clip, image of a person or database file is included.
+This page gives the operating point and event rule of our fall detector (Table E1), the full conditions and observations of the deterministic checks (Table E2) and the per-slot processing-time distributions of the replay trials (Figure E1). The accuracy of our fall detector on NTU RGB+D is reported in Section 3.4 of the article and in [edge/MODEL.md](../../edge/MODEL.md). The accompanying files are aggregated measurements (CSV and JSON), check reports and the browser verification record; no video, clip, image of a person or database file is included.
 
-## Table E1. Detector operating point and event rule
+## Table E1. Fall detector operating point and event rule
 
-**Table E1.** Settings of the bundled detector that determine when an event opens and closes. They are the values of the reference deployment, of the hardware-free example and of the replay trials of Section 3.3.
+**Table E1.** Settings of our fall detector that determine when an event opens and closes. They are the values of the laboratory deployment, of the hardware-free example and of the replay trials of Section 3.3.
 
 | Item | Value | Note |
 |---|---|---|
 | Decision slot | 100 ms | 10 slots per second at the design rate |
-| Input window | 20 slots | the detector scores the pose sequence of the last 20 slots |
+| Input window | 20 slots | the fall detector scores the pose sequence of the last 20 slots |
 | Valid slot | both hips and ≥ 8 of 13 joints visible | |
 | Eligible slot | valid, and ≥ 10 of the last 20 slots valid | |
-| Score threshold θ | 0.95 | detector score per slot |
+| Score threshold θ | 0.95 | fall detector score per slot |
 | Open rule (k / n / m) | 3 / 5 / 3 | at least k of the last n slots score ≥ θ and at least m are eligible |
 | Close rules | upright ≥ 3 s; no eligible input ≥ 10 s; age 600 s; runtime stop | the event is latched until one of these holds |
 | Cooldown after close | 0 s | the deployment and the replay trials use no cooldown |
 
-## Table E1b. Devices of the reference deployment and the replay trials
+## Table E1b. Devices of the laboratory deployment and the replay trials
 
 | Device | SoC, memory, cooling | OS, Python | Camera |
 |---|---|---|---|
@@ -37,7 +37,7 @@ Server host of the trials: the laboratory workstation that also runs the bridge 
 | A2 Killed process | Child process driving the outbox module killed (SIGKILL) after local commit; restarted with the same outbox | 1 message pending after the kill; recovery added the runtime_stop close (2 pending); both then delivered with no lost or duplicate event | Outbox module driven directly in a child process; the full edge runtime process was not killed; power loss not tested |
 | A3 Outage, errors, capacity | Simulated 600 s outage; HTTP 403; mismatching receipt; queue capacity 1 | 2 messages kept during outage, 0 after reconnect; 403 blocked until explicit retry; mismatching receipt refused; at capacity an update was refused and the close stored | Outage time simulated, not a real 10 min disconnection |
 | A4 Engine integration | Synthetic scores and poses → decision engine → outbox → bridge over HTTP | Recovered event with 7 messages (open, 5 updates, close); runtime_stop event with 2; 2 events, 2 alerts; resent open acknowledged as duplicate | No camera or model inference |
-| A5 Any-detector adapter | `edge/examples/any_detector_adapter.py` run on `sample_scores.csv` against a bridge (`edge/test_any_detector_adapter.py`) | One event closed as recovered; a receipt for every message in sequence order; one fall alert; no model-run record | Scores from a file; no heartbeats, camera or model inference |
+| A5 Adapter for any fall detector | `edge/examples/any_detector_adapter.py` run on `sample_scores.csv` against a bridge (`edge/test_any_detector_adapter.py`) | One event closed as recovered; a receipt for every message in sequence order; one fall alert; no model-run record | Scores from a file; no heartbeats, camera or model inference |
 | B1 Concurrent handling | Two threads acknowledge one alert; late receipt; invalid outcome | One success, one HTTP 409; no state regression; invalid outcome 422, valid outcome stored | API and store level; no real concurrent browsers |
 | B2 Stream resumption | Paged log reads; SSE reader interrupted and resumed; store reopened | 1,102 log rows received exactly once: 507 distinct cursors before the interruption and rows 508–1,102 after resumption; camera isolation and resynchronisation after an unknown cursor | Log rows, not 1,102 distinct alerts |
 | B3 Role and camera scope | Other camera's alert; viewer acknowledgement; another user's receipt | Expected 403/404 responses; stream isolated per camera | Trusted identity injected; not a security audit |

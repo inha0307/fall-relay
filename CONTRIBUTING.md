@@ -34,7 +34,7 @@ data.
 ## What is out of scope
 
 The trained fall models and the data derived from NTU RGB+D are not part of this repository (see `NOTICE`);
-pull requests must not add them. Contributions that only change the detector should come with the training
+pull requests must not add them. Contributions that only change our fall detector should come with the training
 provenance expected by `edge/test_code_provenance.py`.
 
 ## Licence

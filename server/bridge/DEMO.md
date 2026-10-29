@@ -3,7 +3,7 @@
 See the [root quickstart](../../README.md) for exact commands. `demo.py` always creates
 a new output directory and its own PostgreSQL schema (`demo_<random>`, in the database
 named by `FALLRELAY_DATABASE_URL`), initialised empty and dropped when the demo stops;
-the bridge runs on the same PostgreSQL backend as the reference deployment. It launches
+the bridge runs on the same PostgreSQL backend as the laboratory deployment. It launches
 the same `video_bridge.py` used by the deployed system; no mock endpoint implementation is
 substituted. On the device side it imports the deployed v2 modules from `edge/`
 (decision engine, `EventBridgeV2` with its SQLite outbox, and the runtime's

@@ -15,7 +15,7 @@ telemetry and remote actions are served by `hardware_store.py`, `device_profiles
 
 The bridge reads `server_config.json` from this folder (or `--config PATH`, or `FALLRELAY_SERVER_CONFIG`). Relative
 paths are resolved from the configuration file's folder. The reference file in the repository is the configuration
-of the reference deployment.
+of the laboratory deployment.
 
 | Key | Meaning |
 |---|---|
@@ -103,5 +103,5 @@ as connected.
 
 ## Limits
 
-The bridge is one process; it is not safe to run several workers or instances against one database. The bundled
+The bridge is one process; it is not safe to run several workers or instances against one database. Our fall
 detector has known false positives during daily activities; do not describe the system as clinically validated.
