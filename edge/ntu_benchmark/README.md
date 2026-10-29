@@ -1,4 +1,4 @@
-# Fig 6 / Table 2: NTU RGB real-time Pi replay
+# NTU RGB real-time Pi replay (Table 4 of the article; evidence Figure E1)
 
 This is a system performance replay of the existing NTU **test split**, not a new
 independent model accuracy evaluation. Never substitute synthetic scores/keypoints.
@@ -84,8 +84,8 @@ before / 2 after the decision, 10 FPS, 640×360, JPEG quality 75; overrides are 
 - Evidence readiness: distinct server-side final-file observation (0.1-second polling
   resolution) and time from decision; it is not alert delivery latency.
 
-Fig 6 distributions and Table 2 come from the **same measured trial intervals**.
-Table 2 CPU/resources/bandwidth describe the complete sustained replay workload,
+The processing-time distributions (evidence Figure E1; "Fig 6" in the tool output names) and the device table (Table 4 of the article) come from the **same measured trial intervals**.
+The table's CPU/resources/bandwidth describe the complete sustained replay workload,
 including explicitly marked holds and boundaries; original-video processing rates
 exclude those intervals. Source-exposure seconds are reported next to wall duration.
 

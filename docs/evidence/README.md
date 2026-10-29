@@ -29,7 +29,7 @@ Server host of the trials: the laboratory workstation that also runs the bridge 
 
 ## Table E2. Deterministic checks: conditions and observations
 
-**Table E2.** Full conditions, observations and scope of the checks summarised in Table 2(A) of the article (SoftwareX submission). All 29 check scripts passed on 27 October 2026 (local time; the report records 2026-10-27T10:49 UTC) in an isolated environment with temporary databases; `server/bridge/run_checks.py --report` writes the report included with this page.
+**Table E2.** Full conditions, observations and scope of the checks summarised in Table 3(A) of the article (SoftwareX submission). All 29 check scripts passed on 27 October 2026 (local time; the report records 2026-10-27T10:49 UTC) in an isolated environment with temporary databases; `server/bridge/run_checks.py --report` writes the report included with this page.
 
 | Check | Condition | Observed result | Scope |
 |---|---|---|---|
@@ -47,7 +47,7 @@ Server host of the trials: the laboratory workstation that also runs the bridge 
 
 ![Processing-time CDF](processing_time_cdf.png)
 
-*Figure E1. Cumulative distribution of per-slot processing time (pose estimation to decision) on the Raspberry Pi 5 and Raspberry Pi 4 during the NTU RGB+D replay (2 × 20 min per condition), without and with event clips; log scale. Medians and 95th percentiles are those of Table 3 of the article. | width=140mm*
+*Figure E1. Cumulative distribution of per-slot processing time (pose estimation to decision) on the Raspberry Pi 5 and Raspberry Pi 4 during the NTU RGB+D replay (2 × 20 min per condition), without and with event clips; log scale. Medians and 95th percentiles are those of Table 4 of the article. | width=140mm*
 
 ## Real link loss on a device (27 October 2026)
 
@@ -59,7 +59,7 @@ second the Raspberry Pi 5. In each folder `linkcut_summary.json` is the output o
 `linkcut_events.csv` has one row per event decided during the measurement (decision time, whether it fell in a cut,
 server and browser receipt, late-arrival classification, receipt order, attempts); `linkcut_outbox_series.csv` is the
 1-s series of messages pending in each device's outbox; `cuts.jsonl` and `schedule.json` are the controller's timing
-records. `link_loss/outbox_backlog.png` is Fig. 5 of the article (both trials).
+records. `link_loss/outbox_backlog.png` is Fig. 6 of the article (both trials).
 
 | Gated device | Pi 4 | Pi 5 |
 |---|---|---|
@@ -96,6 +96,6 @@ repository with the records of the replay trials.
 | `checks/fall-relay-checks.json` | Report of the 29 check scripts |
 | `link_loss/pi4_gated/…`, `link_loss/pi5_gated/…`: `linkcut_summary.json`, `linkcut_events.csv`, `linkcut_outbox_series.csv`, `cuts.jsonl`, `schedule.json`, `uptime_start.json`, `unrelated_services.json`, `completed.json` | Aggregates and timing records of the two link-loss trials (one row per event, 1-s outbox series, cut times) |
 | `link_loss/link_gate.py`, `analyze_linkcut.py` | The TCP gate run on the device and the analysis script that produced the aggregates |
-| `link_loss/outbox_backlog.png` | Fig. 5 of the article, both trials (600 dpi PNG) |
+| `link_loss/outbox_backlog.png` | Fig. 6 of the article, both trials (600 dpi PNG) |
 | `late_alert_policy/browser.mjs`, `browser-verification.json` | Browser verification of the late-arrival policy |
 | `processing_time_cdf.pdf`, `.png` | Figure E1 as vector PDF and 600 dpi PNG |
