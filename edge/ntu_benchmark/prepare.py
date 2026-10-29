@@ -111,7 +111,7 @@ def main():
     import psycopg
     from psycopg.rows import dict_row
 
-    # Read-only audit of the reference deployment's database (FALLRELAY_DATABASE_URL), recorded with the playlist.
+    # Read-only audit of the laboratory deployment's database (FALLRELAY_DATABASE_URL), recorded with the playlist.
     c = psycopg.connect(os.environ['FALLRELAY_DATABASE_URL'], row_factory=dict_row)
     c.read_only = True
     audit = {

@@ -5,11 +5,11 @@ The adapter is the smallest program that uses the event contract. It reads one r
 (time, score, eligible, upright, lying), runs the same latched k-of-n decision engine as the Raspberry Pi
 runtime, and hands every open/update/close of a fall event to EventBridgeV2, which commits it to a local
 SQLite outbox and delivers it to the bridge's /api/edge_event until the bridge acknowledges it with a receipt.
-No camera, pose model or trained fall model is involved: the scores can come from any detector, a recording,
+No camera, pose model or trained fall model is involved: the scores can come from any fall detector, a recording,
 or a file such as examples/sample_scores.csv.
 
 What it does not do: it sends no heartbeats (/api/edge_result), because a heartbeat carries the run identity
-of the bundled model (pose model, LPN and TCN hashes) that a foreign detector cannot truthfully declare.
+of our fall detector's model bundle (pose model, LPN and TCN hashes) that another fall detector cannot truthfully declare.
 The camera therefore shows no skeleton or decision rate in the web application; events and alerts are
 stored, delivered and handled exactly as for a device.
 

@@ -1,6 +1,6 @@
 """Deployment-identical frame preprocessing and NCNN detection keeping all 17 COCO joints.
 
-The earlier 12-joint detector reordered the keypoints to ORDER and dropped the face points. detect17 runs
+The earlier 12-joint pose extraction reordered the keypoints to ORDER and dropped the face points. detect17 runs
 the same letterbox, NCNN extraction, thresholds and NMS, but keeps the raw COCO-17 keypoints so the head
 point can be derived later.
 """

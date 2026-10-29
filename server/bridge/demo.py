@@ -8,7 +8,7 @@ fall clip the way the device does, and walks the alert through acknowledgement a
 No camera, pose model or classifier runs: scores and keypoints are generated, so nothing here measures
 detection accuracy or device speed.
 
-The bridge runs on PostgreSQL, as in the reference deployment: the demo creates a schema of its own
+The bridge runs on PostgreSQL, as in the laboratory deployment: the demo creates a schema of its own
 (demo_<random>) in the database named by FALLRELAY_DATABASE_URL, initialises it empty, and drops it when
 it stops. Nothing outside that schema is read or changed.
 """

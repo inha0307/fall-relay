@@ -2,7 +2,7 @@
 """Stage, pilot, gate and run paired 1+20 minute NTU replay trials with one real browser.
 
 The isolated bridge runs on PostgreSQL (its own schema in a dedicated local PostgreSQL 14
-instance, like the reference deployment's backend); the Raspberry Pi 4 runs no unrelated services during the
+instance, like the laboratory deployment's backend); the Raspberry Pi 4 runs no unrelated services during the
 trials; 2 x 20 min per condition after a 1 min warm-up; device and server uptime are recorded because the devices
 had been running for a long time before the run. Only isolated credentials are used. SSH supervisors restore the
 operational inference services on normal exit, child failure, SIGTERM, controller disconnect or lease expiry.

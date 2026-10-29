@@ -8,7 +8,7 @@ import time
 from model_contract import CONTRACT_V2, DECISION_PROVENANCE, IMPLEMENTATIONS
 
 H = 'a' * 64
-# The decision block of the bundled detector (edge/bundle_manifest.json) with the runtime's update interval.
+# The decision block of our fall detector (edge/bundle_manifest.json) with the runtime's update interval.
 DECISION = {
     'theta': 0.95,
     'k': 3,

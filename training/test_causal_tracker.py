@@ -13,7 +13,7 @@ def detection(x, score=0.8):
 t = CausalTracker()
 d, identity, reset = t.update([detection(300), detection(0, 0.7)])
 assert reset
-# A bystander's rising detector confidence must not change primary identity.
+# A bystander's rising pose-model confidence must not change primary identity.
 d, new, reset = t.update([detection(0, 0.99), detection(302, 0.5)])
 assert identity == new and not reset and d['box'][0] == 302
 for _ in range(5):

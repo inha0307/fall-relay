@@ -110,7 +110,7 @@ def skeleton(k17, table, scale):
     ]
 
 
-# The clip is evidence for the person handling the alert, not a detector input (detection uses the 10 Hz slots).
+# The clip is evidence for the person handling the alert, not an input of the fall detector (detection uses the 10 Hz slots).
 # 10 fps keeps 4-5 frames of a ~0.45 s fall descent; the bridge encodes at 10 fps, so no frames are repeated.
 CLIP_DEFAULTS = {"pre_s": 3.0, "post_s": 2.0, "fps": 10.0, "width": 640, "height": 360, "jpeg_quality": 75}
 CLIP_RETRY_S, CLIP_GIVE_UP_S = 5.0, 600.0

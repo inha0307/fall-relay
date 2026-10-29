@@ -11,7 +11,7 @@ from postgres.backup import backup
 from postgres.common_env import database_url
 from postgres.schema import NAME, adopt_baseline, pending
 
-REVIEWED = set()  # versions above the baseline that have been reviewed for the reference deployment
+REVIEWED = set()  # versions above the baseline that have been reviewed for the laboratory deployment
 
 
 def upgrade_schema(conninfo, schema='public', apply=False):

@@ -35,7 +35,7 @@
     },
     "pose17.py": {
       "frozen_sha256": "419c6267f0e5f3005de57a9eb2af75242974ac0112eaf20fb470d3a0f10eb5a6",
-      "current_sha256": "8fd0c49e8321792698fd0c73fe1aa2385c81b6217a1f833b2000bb85fd715735",
+      "current_sha256": "921ae4b80e71f2f3b0b2948ece95bdc61fc57e33de13dacfa604ed32f5f97153",
       "ast_sha256": "e18210fb1560eaec99e233ec17978ae8ae7d4e92fc8e19a54b7cd3619780a894"
     },
     "shape_features_v2.py": {
