@@ -25,7 +25,8 @@ async function proxy(request, { params }) {
     const scope = await cameraScope(await getDb(), auth.user.id);
     const base = (process.env.PIPELINE_SERVER_URL || 'http://127.0.0.1:5001').replace(/\/+$/, '');
     const target = new URL(`${base}/api/alerts${route ? '/' + route : ''}`);
-    for (const name of ['after', 'device'])
+    // policy tells the bridge that this client handles manual-review cases; without it the stream holds live alerts only.
+    for (const name of ['after', 'device', 'policy'])
         if (request.nextUrl.searchParams.has(name))
             target.searchParams.set(name, request.nextUrl.searchParams.get(name));
     const headers = {
