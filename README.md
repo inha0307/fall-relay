@@ -157,7 +157,7 @@ units and `fall_relay_*` database files.
 
 ## License and data
 
-The code is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0-only); see [LICENSE](LICENSE).
+The code is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0-only); see [LICENSE](LICENSE) (the same text is in [Licence.txt](Licence.txt), the file name the SoftwareX template asks for).
 Model files are not in this repository and carry their own terms: the Ultralytics YOLO26n-pose model is AGPL-3.0,
 and the fall models trained on NTU RGB+D are not redistributed; see [NOTICE](NOTICE). The demo draws artificial
 points with OpenCV; it contains no NTU frames and no recording of a person.
