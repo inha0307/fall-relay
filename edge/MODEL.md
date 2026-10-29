@@ -1,6 +1,6 @@
 # Fall detection model (default detector)
 
-The detector shipped with Fall-Relay is the default detector whose NTU RGB+D results are reported in the article;
+The default detector of Fall-Relay is the one whose NTU RGB+D results are reported in the article; this repository holds its code and training scripts, not its trained weights;
 it is a component behind the event contract, not a contribution in itself. Any detector can replace it as long as the runtime emits the event contract
 ([docs/EVENT_PROTOCOL.md](../docs/EVENT_PROTOCOL.md)). Training code and the full evaluation procedure are in
 [`training/README.md`](../training/README.md). The trained weights are not distributed with the source; see

@@ -21,7 +21,7 @@ keeps what the device observed.
 - **Replaceable detector:** the bundled pose-based detector ([edge/MODEL.md](edge/MODEL.md)) is the reference
   detector whose NTU RGB+D results are reported in the article; any detector that emits the event contract can be used.
 
-The bundled detector has known false positives during daily activities. The software is not clinically validated.
+The default detector has known false positives during daily activities. The software is not clinically validated.
 
 ## Try the workflow without a Raspberry Pi
 
@@ -106,7 +106,7 @@ not used. The generated `demo.env` holds private local demo tokens; do not publi
 | Server installation, checks, troubleshooting | [server/bridge/INSTALL.md](server/bridge/INSTALL.md) |
 | Server configuration and services | [server/bridge/README.md](server/bridge/README.md) |
 | Edge device installation | [edge/deploy/README.md](edge/deploy/README.md) |
-| Bundled detector and its evaluation | [edge/MODEL.md](edge/MODEL.md), [training/README.md](training/README.md) |
+| Default detector (code, training, evaluation; weights not distributed) | [edge/MODEL.md](edge/MODEL.md), [training/README.md](training/README.md) |
 | Raspberry Pi 5 / Pi 4 benchmark | [edge/ntu_benchmark/README.md](edge/ntu_benchmark/README.md) |
 | Synthetic demo | [server/bridge/DEMO.md](server/bridge/DEMO.md) |
 | Interface terms | [docs/UI_GLOSSARY.md](docs/UI_GLOSSARY.md) |
