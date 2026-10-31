@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use Fall-Relay, please cite it as below."
-title: "Fall-Relay: edge-server software for durable fall-event delivery and responder alert handling"
+title: "Fall-Relay: Edge–server software for reliable fall-event delivery and responder alert handling"
 type: software
 version: 1.0.2
 date-released: 2026-10-29
