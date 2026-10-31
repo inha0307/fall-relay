@@ -28,6 +28,26 @@ camera 1280×720, 30 fps
 | Dynamic features | Vertical and horizontal hip velocity, trunk angular velocity, 1 s hip drop, 1 s trunk tilt change, two validity flags; normalised by body length |
 | Head point | Computed from the face keypoints and calibrated to the NTU Kinect head joint (`head_point_v2.json`, derived from NTU RGB+D, not distributed) |
 
+## Training
+
+Both models are trained on NTU RGB+D 60, actions A001–A049, with the cross-subject split of the evaluation below
+(16 training, 4 validation and 20 test subjects); the poses are extracted from the RGB videos with the same NCNN model
+that the device runs. Fall onset and impact times are rule-generated from the Kinect skeletons and audited with
+AI-assisted visual estimates, not human annotations (see Evaluation). MLP, multilayer perceptron; MSE, mean squared
+error; MPJPE, mean per-joint position error; AP, average precision.
+
+| | Pose lifting network (LPN) | TCN (classifier) |
+|---|---|---|
+| Architecture | Residual MLP, width 256, 2 residual blocks | 4 causal dilated Conv1D (dilations 1, 2, 4, 8; receptive field 31 slots), last-step output |
+| Input → output | 26 xy + 13 masks → 13 × 3 | 20 slots × 59 features → 1 |
+| Parameters; file | 288,551; 1.14 MB | 27,425; 0.12 MB |
+| Training data | 2.32 M paired frames (YOLO 2D, Kinect 3D through a per-camera projection) | 1.59 M windows: 10,673 positive from 189 fall captures, 0.23 M hard negatives from 9 fall-like actions |
+| Validation data | 0.43 M frames | 0.30 M windows |
+| Targets | Kinect 3D joints, masked MSE | Positive from onset to impact + 0.5 s; the critical phase of a fall lasts 0.3–0.5 s (Noury et al., IRBM 29(6):340–349, 2008) |
+| Schedule | 40 epochs × 0.6 M samples, Adam, cosine from 10⁻³ | 30 epochs, batch 512, Adam, cosine from 10⁻³ |
+| Augmentation | Joint dropout 50 %, mirror 50 %, synthetic viewpoints 30 %, fall frames weighted ×10 | Mirror 50 %, 1–2 dropped slots 30 % |
+| Selection | Lowest mean validation MPJPE over real and synthetic views; real 110.7 mm (12 joints) | Seeds 42–44, highest validation window AP: 0.905 |
+
 ## Decision rule
 
 Frozen with the test evaluation and declared by every run in its identity (`edge/bundle_manifest.json`, `decision`).
