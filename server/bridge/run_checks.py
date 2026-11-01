@@ -15,6 +15,7 @@ HERE = Path(__file__).resolve().parent
 CHECKS = (
     'tests/test_v2_foundation.py',
     'tests/test_notification_policy.py',
+    'tests/test_late_arrival_v2.py',
     'tests/test_identity_v2.py',
     '../../edge/test_result_transport.py',
     '../../edge/test_bundle.py',

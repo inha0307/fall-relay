@@ -73,7 +73,10 @@ class OutboxWorker:
         if payload is None:
             return False
         try:
-            receipt = self.request(self.server + '/api/edge_event', self.headers, payload)
+            # Event age and backlog travel as headers: they change on every send and stay out of the semantic hash.
+            receipt = self.request(
+                self.server + '/api/edge_event', {**self.headers, **self.box.transport(payload)}, payload
+            )
             self.box.complete(payload, receipt, now if simulated else time.time())
         except urllib.error.HTTPError as exc:
             permanent = 400 <= exc.code < 500 and exc.code not in (408, 425, 429)

@@ -11,7 +11,7 @@ from postgres.backup import backup
 from postgres.common_env import database_url
 from postgres.schema import NAME, adopt_baseline, pending
 
-REVIEWED = set()  # versions above the baseline that have been reviewed for the laboratory deployment
+REVIEWED = {2}  # versions above the baseline that have been reviewed for the laboratory deployment
 
 
 def upgrade_schema(conninfo, schema='public', apply=False):
@@ -28,14 +28,30 @@ def upgrade_schema(conninfo, schema='public', apply=False):
             return result
         connection.execute('SET LOCAL synchronous_commit = on')
         connection.execute('LOCK TABLE events,alerts IN ACCESS EXCLUSIVE MODE')
-        # Stored events and alerts must come through a migration unchanged.
-        before = [connection.execute(f'SELECT * FROM {table} ORDER BY id').fetchall() for table in ('events', 'alerts')]
+        # Stored events and alerts must come through a migration unchanged: every column that existed before keeps
+        # its values (a migration may add columns, never alter or drop existing ones).
+        columns = {
+            table: [
+                row[0]
+                for row in connection.execute(
+                    'SELECT column_name FROM information_schema.columns WHERE table_schema=%s AND table_name=%s ORDER BY ordinal_position',
+                    (schema, table),
+                ).fetchall()
+            ]
+            for table in ('events', 'alerts')
+        }
+        rows = lambda table: connection.execute(  # noqa: E731
+            sql.SQL('SELECT {} FROM {} ORDER BY id').format(
+                sql.SQL(',').join(map(sql.Identifier, columns[table])), sql.Identifier(table)
+            )
+        ).fetchall()
+        before = [rows(table) for table in ('events', 'alerts')]
         for version, name, digest, text in todo:
             connection.execute(text)
             connection.execute(
                 'INSERT INTO schema_migrations VALUES (%s,%s,%s,%s)', (version, name, time.time(), digest)
             )
-        after = [connection.execute(f'SELECT * FROM {table} ORDER BY id').fetchall() for table in ('events', 'alerts')]
+        after = [rows(table) for table in ('events', 'alerts')]
         assert after == before, 'existing event or alert values changed'
         result['applied'] = result['pending']
         return result

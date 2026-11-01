@@ -188,6 +188,8 @@ def main():
                 else None,
                 'late_arrival': bool(ev and ev['late_arrival']),
                 'notification_mode': al['notification_mode'] if al else None,
+                'classification_reason': al.get('classification_reason') if al else None,
+                'close_reason': ev['close_reason'] if ev else None,
                 'browser_received': (al['id'] in first_browser) if al else False,
                 'browser_receipt_confirmed': bool(al and al['first_delivered_at']),
                 'receipt_seqs': seqs,
@@ -233,6 +235,8 @@ def main():
             'browser_events': sum(c['browser_received'] for c in cohort),
             'late_arrival_events': sum(c['late_arrival'] for c in cohort),
             'notification_modes': dict(collections.Counter(c['notification_mode'] for c in cohort)),
+            'classification_reasons': dict(collections.Counter(c['classification_reason'] for c in cohort)),
+            'close_reasons': dict(collections.Counter(c['close_reason'] for c in cohort)),
             'receipts_in_order_all': all(c['receipts_in_order'] for c in cohort),
             'server_events_for_run': sum(
                 1 for e in events.values() if e['run_id'] == (slots[0]['run_id'] if slots else None)

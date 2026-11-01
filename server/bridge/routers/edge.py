@@ -65,8 +65,14 @@ def edge_router(service, authorize, schedule_clips, recorder=None, labels=None):
         refused = authorize(payload['camera_id'], request)
         if refused is not None:
             return refused
+        # Delivery context (edge_outbox.transport): absent or malformed values mean "unknown", never an error.
+        transport = {}
+        for name, key in (('x-fall-relay-event-age-ms', 'event_age_ms'), ('x-fall-relay-event-backlog', 'event_backlog')):
+            value = request.headers.get(name)
+            if value is not None and re.fullmatch(r'[0-9]{1,15}', value):
+                transport[key] = int(value)
         try:
-            result = await run_in_threadpool(service.receive, payload)
+            result = await run_in_threadpool(service.receive, payload, None, transport)
         except EventConflict as exc:
             return JSONResponse({'ok': False, 'error': str(exc), 'code': exc.code}, status_code=409)
         except (ValueError, TypeError, OverflowError):

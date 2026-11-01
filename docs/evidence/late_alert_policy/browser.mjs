@@ -7,11 +7,11 @@ const browser=await chromium.launch({headless:true,executablePath:cfg.chromium,a
 const result={synthetic_transport:true,physical_notifications_tested:false,checks:[],errors:[]};
 try {
  const context=await browser.newContext();
- const response=await context.request.post(cfg.web+'/api/auth/login',{data:{userid:'pgverify-admin',password:cfg.password}});
+ const response=await context.request.post(cfg.web+'/api/auth/login',{data:{userid:cfg.userid||'pgverify-admin',password:cfg.password}});
  assert(response.ok());
- await context.route('**/api/alerts/status',r=>r.fulfill({json:{enabled:true,notification_policy_version:1}}));
+ await context.route('**/api/alerts/status',r=>r.fulfill({json:{enabled:true,notification_policy_version:2}}));
  const base={type:'fall',camera_id:'1',state:'pending',created_at:Date.now()/1000,server_received_at:Date.now()/1000,clock_usable:1,event_decided_at:Date.now()/1000-600};
- const cases=[{...base,id:9001,notification_mode:'manual_review',late_arrival:1,suppression_reason:'event_too_old'}, {...base,id:9002,notification_mode:'manual_review',late_arrival:1,suppression_reason:'clock_unreliable',clock_usable:0,event_decided_at:null}];
+ const cases=[{...base,id:9001,notification_mode:'manual_review',late_arrival:1,suppression_reason:'late_recovered',classification_reason:'LATE_RECOVERED',close_reason:'recovered',edge_state:'COOLDOWN'}, {...base,id:9002,notification_mode:'manual_review',late_arrival:1,suppression_reason:'clock_unreliable',clock_usable:0,event_decided_at:null}];
  await context.route(/\/api\/alerts\/\d+\/(ack|resolve|received)$/,async r=>{
   const [,id,action]=r.request().url().match(/alerts\/(\d+)\/(\w+)$/);
   const a=cases.find(a=>a.id===Number(id));
@@ -30,7 +30,7 @@ try {
  });
  await page.goto(cfg.web+'/alerts');
  await page.waitForFunction(()=>window.stream);
- assert((await page.evaluate(()=>window.streamURL)).includes('policy=1'));
+ assert((await page.evaluate(()=>window.streamURL)).includes('policy=2'));
  await page.getByRole('button',{name:'Sound off',exact:true}).click();
  await page.getByRole('button',{name:'Desktop notifications off',exact:true}).click();
  await page.evaluate(alerts=>window.emit('snapshot',{cursor:0,alerts,truncated:false}),cases);
@@ -60,6 +60,36 @@ try {
  await page.getByRole('button',{name:/^Resolved/}).click();
  await page.locator('[data-alert-id="9001"]').waitFor();
  result.checks.push('manual review acknowledgement and outcome available in resolved history');
+ await page.getByRole('button',{name:/^Open/}).click();
+ // Version 2: a late event arrives as classifying (silent), then the bridge settles it live: it sounds once then.
+ const held={...base,id:9004,created_at:await page.evaluate(()=>Date.now()/1000),notification_mode:'classifying',late_arrival:1,suppression_reason:null,classification_reason:null,edge_state:'ALERT'};cases.push(held);
+ const beforeHeld=await page.evaluate(()=>window.counts);
+ await page.evaluate(alert=>window.emit('alert',{cursor:3,alert}),held);
+ await page.locator('[data-alert-id="9004"]').waitFor();
+ assert((await page.locator('[data-alert-id="9004"]').innerText()).includes('Arriving'));
+ await page.clock.fastForward(4000);
+ assert.deepEqual(await page.evaluate(()=>window.counts),beforeHeld);
+ Object.assign(held,{notification_mode:'live',classification_reason:'ONGOING',classified_at:held.created_at+5});
+ await page.evaluate(alert=>window.emit('alert',{cursor:4,alert}),held);
+ await page.waitForFunction(c=>window.counts.tones===c.tones+3&&window.counts.notifications===c.notifications+1,beforeHeld);
+ assert.equal(await page.locator('[data-alert-id="9004"].alert-waiting').count(),1);
+ await page.locator('[data-alert-id="9004"]').getByRole('button',{name:'Acknowledge',exact:true}).click();
+ await page.locator('[data-alert-id="9004"]').getByRole('button',{name:'Record outcome'}).waitFor();
+ result.checks.push('classifying alert silent while held, sounds once when settled live');
+ // A manual-review alert nobody took gets one quiet reminder (a notification without a tone) when the bridge marks it.
+ const review={...base,id:9005,notification_mode:'manual_review',late_arrival:1,suppression_reason:'late_recovered',classification_reason:'LATE_RECOVERED'};cases.push(review);
+ await page.evaluate(alert=>window.emit('alert',{cursor:5,alert}),review);
+ await page.locator('[data-alert-id="9005"]').waitFor();
+ const beforeReview=await page.evaluate(()=>window.counts);
+ await page.clock.fastForward(60000);
+ assert.deepEqual(await page.evaluate(()=>window.counts),beforeReview);
+ review.review_reminded_at=review.created_at+600;
+ await page.evaluate(alert=>window.emit('alert',{cursor:6,alert}),review);
+ await page.waitForFunction(c=>window.counts.notifications===c.notifications+1&&window.counts.tones===c.tones,beforeReview);
+ await page.evaluate(alert=>window.emit('alert',{cursor:7,alert}),review);
+ await page.clock.fastForward(60000);
+ assert.deepEqual(await page.evaluate(()=>window.counts),{tones:beforeReview.tones,notifications:beforeReview.notifications+1});
+ result.checks.push('manual-review reminder: one quiet notification, no tone, not repeated');
  assert.equal(result.errors.length,0);
  await page.screenshot({path:cfg.out+'/browser.png',fullPage:true});
  result.passed=true;

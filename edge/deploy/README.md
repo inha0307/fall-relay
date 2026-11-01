@@ -49,6 +49,15 @@ loginctl enable-linger "$USER"   # keep it running after logout
 The runtime refuses to start when a bundled file or the pose model differs from `bundle_manifest.json`. It logs to
 `edge_runtime.log` in the install folder and keeps its outbox in `edge_events.sqlite3` there.
 
+### Upgrading a deployed device
+
+Build a new bundle with `make_bundle.py` and replace the install folder's files, keeping `edge_events.sqlite3`: the
+runtime applies any new outbox migration (for example `0003_event_origin.sql` of v1.1.0) to the existing database at
+start-up, and pending messages are kept. Because the manifest lists every bundled file with its hash, copying single
+source files into an installed bundle does not work; the runtime refuses to start. The bridge accepts messages from
+devices of either version, and a v1.1.0 device sends its delivery context as HTTP headers that an older bridge
+ignores, so the server and the devices can be upgraded in either order.
+
 ## 4. Device agent (telemetry and remote actions)
 
 ```bash

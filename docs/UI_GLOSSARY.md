@@ -43,7 +43,8 @@ they differ from the label.
 | Timeline | Detected on device → Received by server → Delivered to browser → Acknowledged → Resolved |
 | States | Pending · Delivered · Acknowledged · Resolved · Expired |
 | Delivered | A browser stored a receipt; it does not mean a person saw it |
-| Manual review | Arrived late or with an unreliable device clock; no sound or notification |
+| Arriving | A late event whose latest state the server is still waiting for (a few seconds); shown, no sound |
+| Manual review | A late event that had already ended in recovery, or a stale event with an unknown outcome; no sound, one quiet reminder after 10 min |
 | Outcomes | Fall confirmed · False alarm (sitting / lying down / bending / other) · Uncertain |
 
 ## Writing rules

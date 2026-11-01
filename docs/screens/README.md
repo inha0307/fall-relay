@@ -5,7 +5,9 @@ Captures of the web application running the hardware-free example (`server/bridg
 synthetic fixture; no real person or camera image is shown. These are the readable originals of Fig. 5 of the
 article, captured from one v1.0.2 run. The manual-review alert comes from `edge/examples/any_detector_adapter.py`
 run once against an unreachable server and then against the demo bridge (camera 3 added by the administrator
-API): the queued event arrives without a usable clock calibration, so the bridge classifies it for manual review.
+API): the queued event arrives late and had already closed with recovery, so the bridge classifies it for manual
+review. (These captures predate notification policy version 2 of v1.1.0, which shows the review reason as "Late arrival;
+the person had already recovered" and lists a late event that is still open as live.)
 
 | File | Screen |
 |---|---|

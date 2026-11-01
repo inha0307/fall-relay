@@ -7,13 +7,36 @@ from pathlib import Path
 import sqlite3
 import threading
 import time
+import uuid
 
 from edge_event_contract import CONTRACT, semantic_hash, validate_edge_event
 from schema_migrations import scripts, statements
 
+# Delivery context sent beside every message, outside the semantic hash (headers, not body).
+AGE_HEADER = 'X-Fall-Relay-Event-Age-Ms'
+BACKLOG_HEADER = 'X-Fall-Relay-Event-Backlog'
+
+
+def boot_identity():
+    """The kernel's boot identifier; a fresh value per process elsewhere (then ages survive restarts, not reboots)."""
+    try:
+        return Path('/proc/sys/kernel/random/boot_id').read_text().strip()
+    except OSError:
+        return uuid.uuid4().hex
+
+
+def boot_clock():
+    """Seconds since boot, including suspend; independent of the wall clock and of its calibration."""
+    try:
+        return time.clock_gettime(time.CLOCK_BOOTTIME)
+    except (AttributeError, OSError):
+        return time.monotonic()
+
 
 class EdgeOutbox:
-    def __init__(self, path, max_pending=10000):
+    def __init__(self, path, max_pending=10000, boot_id=None, boot_clock_fn=None):
+        self.boot_id = boot_id or boot_identity()
+        self.boot_clock = boot_clock_fn or boot_clock
         self.path = Path(path).expanduser().resolve()
         self.path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
         self.guard = (self.path.with_suffix(self.path.suffix + '.lock')).open('a')
@@ -114,6 +137,10 @@ class EdgeOutbox:
                     ).fetchone()[0]
                     uid = f'{run_id}:{counter}'
                     seq = 1
+                    # Where and when the event opened by the boot clock: the age sent with each of its messages.
+                    self.db.execute(
+                        'INSERT INTO edge_event_origin VALUES (?,?,?)', (uid, self.boot_id, self.boot_clock())
+                    )
                 else:
                     if not active or active['run_id'] != run_id:
                         raise ValueError('active event identity changed')
@@ -205,6 +232,23 @@ class EdgeOutbox:
             payload['sent_at'] = now
             return payload
 
+    def transport(self, payload, boot_now=None):
+        """Headers for one send of `payload`: the event's age by the device's boot clock (omitted after a reboot,
+        when it cannot be known) and how many later messages of the same event are still pending."""
+        boot_now = self.boot_clock() if boot_now is None else boot_now
+        with self.lock:
+            origin = self.db.execute(
+                'SELECT boot_id,opened_boot_s FROM edge_event_origin WHERE event_uid=?', (payload['event_uid'],)
+            ).fetchone()
+            backlog = self.db.execute(
+                'SELECT COUNT(*) FROM outbox WHERE event_uid=? AND message_seq>? AND acked_at IS NULL',
+                (payload['event_uid'], payload['message_seq']),
+            ).fetchone()[0]
+        headers = {BACKLOG_HEADER: str(backlog)}
+        if origin and origin['boot_id'] == self.boot_id and boot_now >= origin['opened_boot_s']:
+            headers[AGE_HEADER] = str(int((boot_now - origin['opened_boot_s']) * 1000))
+        return headers
+
     def complete(self, payload, receipt, now):
         if (
             not isinstance(receipt, dict)
@@ -257,6 +301,9 @@ class EdgeOutbox:
             self.db.execute(
                 'DELETE FROM outbox WHERE rowid IN (SELECT rowid FROM outbox WHERE acked_at IS NOT NULL AND acked_at<? LIMIT 1000)',
                 (now - 7 * 86400,),
+            )
+            self.db.execute(
+                'DELETE FROM edge_event_origin WHERE event_uid NOT IN (SELECT event_uid FROM outbox) AND event_uid NOT IN (SELECT event_uid FROM edge_active_events)'
             )
             self.db.commit()
 

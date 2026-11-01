@@ -67,6 +67,20 @@ fields, all required:
 The **semantic hash** of a message is the SHA-256 of its canonical JSON without `sent_at` and `attempt`. A retry must
 have the same semantic hash as the first attempt.
 
+### Delivery context (headers)
+
+Beside the body, every send carries two headers that describe the delivery, not the event. They change from one send
+to the next and are therefore kept out of the body and of the semantic hash; a server that does not know them ignores
+them.
+
+| Header | Meaning |
+|---|---|
+| `X-Fall-Relay-Event-Age-Ms` | Milliseconds since the event opened, by the device's boot clock (`CLOCK_BOOTTIME`). Omitted when the device cannot know it: the event opened before the last reboot (the outbox stores the boot identifier of the open) |
+| `X-Fall-Relay-Event-Backlog` | How many later messages of the same event are still pending in the outbox (0 = this message is the event's latest state) |
+
+The age needs neither the wall clock nor its calibration, so it is right after a reboot before the clock was set, and
+after a link outage during which the calibration failed.
+
 ### Server response
 
 `200` with a receipt: `{"ok": true, "event_uid", "message_seq", "event_id", "alert_id", "duplicate"}`.
@@ -129,7 +143,9 @@ old run's event.
 ### Clock calibration
 
 Every 2 s the worker calls `GET /api/edge_event/context` and computes `offset_s` from the server time and the round
-trip. A calibration older than 10 s is replaced by `{"offset_s": 0, "rtt_s": 60}`, which the server treats as unusable.
+trip. A calibration older than 10 s is replaced by `{"offset_s": 0, "rtt_s": 60}`, which the server treats as
+untrusted. Since policy version 2 the calibration only dates the event for display when the device sent no age
+(an older device, or a message queued before a reboot); it never decides the notification mode.
 
 ### Fall clips (optional, `--clips`)
 
@@ -138,20 +154,49 @@ the frames from 3 s before to 2 s after the decision to `POST /api/edge_clip`. T
 until the event's `open` is stored (the device retries) and acknowledges repeated uploads of a stored clip without
 re-encoding. Without `--clips` no camera image leaves the device.
 
-## 4. Notification policy
+## 4. Notification policy (version 2)
 
-The server decides once, when it accepts the `open`, whether an alert is **live** or for **manual review**:
+An alert is **live** (it sounds until a responder acknowledges it) or for **manual review** (listed without sound).
+The server classifies from the **latest state of the event it knows**, not from the time of arrival alone:
 
-| Condition at the `open` | Mode | Reason recorded |
-|---|---|---|
-| `rtt_s > 2`, `|offset_s| > 86400`, or corrected decision time more than 2 s in the future | `manual_review` | `clock_unreliable` |
-| Corrected decision time (`decided_at + offset_s`) older than 120 s | `manual_review` | `event_too_old` |
-| Otherwise | `live` | — |
+| Latest message of the event | Event age | Mode | `classification_reason` |
+|---|---|---|---|
+| `open` or `update` (the event is still open) | any | `live` | `ONGOING` |
+| `close`, reason `recovered` | ≤ 120 s | `live` | `RECOVERED_RECENT` |
+| `close`, reason `recovered` | > 120 s or unknown | `manual_review` | `LATE_RECOVERED` |
+| `close`, reason `track_lost`, `timeout` or `runtime_stop` | ≤ 3600 s or unknown | `live` | `OUTCOME_UNKNOWN` |
+| `close`, reason `track_lost`, `timeout` or `runtime_stop` | > 3600 s | `manual_review` | `STALE_UNKNOWN` |
+| the latest state did not arrive within the hold | — | `live` | `HOLD_TIMEOUT` |
 
-The decision is latched: later messages, retries or the passage of time never promote a manual-review alert to live
-or silence a live alert. Live alerts are announced to responders (banner, sound, optional desktop notification);
-manual-review alerts appear in the alert list without an alarm. Late events keep both their original decision time and
-their arrival time.
+**When.** The `open` is classified at once when the event is at most 120 s old or when the device reports no later
+message pending (`X-Fall-Relay-Event-Backlog: 0`): the open is then the latest state, so the alert is live
+(`ONGOING`). Otherwise the alert is stored as `classifying` with a hold of 5 s (`edge_event_classify_hold_s`); the
+message that arrives with backlog 0, or any `close`, settles it in the same transaction, and the bridge's periodic tick
+settles an expired hold as `live` / `HOLD_TIMEOUT`. A classifying alert is already visible in the browser, without
+sound.
+
+**Age.** `X-Fall-Relay-Event-Age-Ms` when present; else the corrected wall clock when the calibration is trusted
+(`rtt_s ≤ 2`, `|offset_s| ≤ 86400`, not more than 2 s in the future); else unknown. The event's `started_at` is the
+arrival time minus the age, so the detection time shown to responders does not depend on the device's wall clock.
+`events.event_age_on_arrival_ms` and `events.age_source` (`device_boot` or `wall_clock`) record what was used.
+
+**Once settled, a classification never changes**: a late `close` with `recovered` does not demote a live alert, and
+nothing promotes a manual-review alert. The decision is recorded on the alert (`notification_mode`,
+`suppression_reason` = `late_recovered` or `stale_unknown`, `classification_reason`, `classified_at`, `policy_version`)
+and in `alert_log` as `classified`. A manual-review alert that nobody has acknowledged after 600 s
+(`alert_review_reminder_s`) gets one quiet reminder (`review_reminded_at`, `alert_log` action `review_reminded`); the
+browser shows a notification without a tone.
+
+**Thresholds** are server settings: `edge_event_max_live_age_s` (120), `edge_event_stale_age_s` (3600),
+`edge_event_classify_hold_s` (5), `alert_review_reminder_s` (600).
+
+**Why.** A fall reported minutes late may already have ended, or the person may still be on the floor; a long lie is
+itself a hazard. Only the first case calls for review rather than an urgent sound. Version 1 classified from the
+arrival time and the clock calibration alone, so a fall that started during a link outage was listed without sound;
+rows written under version 1 keep their `event_too_old` / `clock_unreliable` reasons.
+
+**Clients.** The stream request carries `policy=<version>`. A client of another version receives settled live alerts
+only (`live_only`), which is the one set every version understands.
 
 ## 5. Alerts
 

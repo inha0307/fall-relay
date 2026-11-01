@@ -1,4 +1,5 @@
-"""Latched notification policy: classification at first acceptance, retries and updates, old and new SSE clients."""
+"""Notification policy, version 2: rows written under version 1 read back unchanged; a recent event is live at once;
+a settled alert never changes; receipts and acknowledgements leave the mode alone; old and new SSE clients."""
 
 from _bridge_path import BRIDGE, FIXTURES  # noqa: F401
 import asyncio
@@ -12,6 +13,7 @@ from alert_store import AlertStore
 from camera_registry import CameraRegistry
 from edge_event_store import EdgeEventStore
 from event_store import EventStore
+from notification_policy import VERSION
 from routers.alerts import alerts_router
 
 
@@ -19,7 +21,7 @@ async def stream_snapshot(events, policy):
     async def receive():
         await asyncio.Event().wait()
 
-    query = 'device=policy-fixture' + ('&policy=1' if policy else '')
+    query = 'device=policy-fixture' + (f'&policy={VERSION}' if policy else '&policy=1')
     request = Request(
         {
             'type': 'http',
@@ -40,7 +42,7 @@ async def stream_snapshot(events, policy):
 
 
 def stored_policy(events):
-    """Rows stored with an explicit policy (as earlier versions wrote them) are read back unchanged."""
+    """Rows stored by version 1 (its modes, reasons and clock-derived decision time) are read back unchanged."""
     db = events._db
     with db:
         for index, (mode, reason, state) in enumerate(
@@ -62,10 +64,13 @@ def stored_policy(events):
     alerts = AlertStore(events)
     old = {r['id']: r for r in alerts.snapshot(None)['alerts']}
     assert old[1]['notification_mode'] == 'manual_review' and old[1]['suppression_reason'] == 'event_too_old'
+    assert old[1]['event_decided_at'] == 100 and old[1]['policy_version'] is None
     assert old[2]['notification_mode'] == 'manual_review' and old[2]['suppression_reason'] == 'clock_unreliable'
     assert old[2]['state'] == 'resolved' and old[2]['note'] == 'keep this note' and old[2]['resolution'] == 'uncertain'
     assert old[2]['event_decided_at'] is None
     assert old[3]['notification_mode'] == 'live' and old[3]['state'] == 'acknowledged'
+    # Version-1 manual-review rows have no classification time, so they never get a reminder.
+    assert EdgeEventStore(events, 120).tick(now=10**9) == {'settled': 0, 'reminded': 0}
     return alerts
 
 
@@ -74,48 +79,44 @@ def scenarios(events):
     edge = EdgeEventStore(events, 120, delivery_enabled=True)
     fixtures = json.loads((FIXTURES / 'edge_event_v1.json').read_text())
     created = []
-    for age, rtt, expected in [
-        (10, 0.01, 'live'),
-        (120, 0.01, 'live'),
-        (120.001, 0.01, 'manual_review'),
-        (600, 0.01, 'manual_review'),
-        (10, 5, 'manual_review'),
-        (-3, 0.01, 'manual_review'),
+    # A recent open is live at once whatever the clock sample says; the age comes from the device's boot clock.
+    for age_ms, rtt, backlog, expected in [
+        (10_000, 0.01, 0, 'live'),
+        (120_000, 0.01, 5, 'live'),
+        (120_001, 0.01, 0, 'live'),  # late, but nothing else is queued: the open is the latest state
+        (120_001, 0.01, 1, 'classifying'),
+        (10_000, 5, 2, 'live'),  # uncalibrated clock no longer demotes
+        (10_000, 0.01, None, 'live'),  # no backlog count (older device), recent
     ]:
         run = uuid.uuid4().hex
         first = copy.deepcopy(fixtures[0])
         first.update(
-            run_id=run, event_uid=run + ':1', decided_at=1000 - age, sent_at=1000, clock={'offset_s': 0.0, 'rtt_s': rtt}
+            run_id=run, event_uid=run + ':1', decided_at=1000 - age_ms / 1000, sent_at=1000, clock={'offset_s': 0.0, 'rtt_s': rtt}
         )
-        receipt = edge.receive(first, now=1000)
+        transport = {'event_age_ms': age_ms}
+        if backlog is not None:
+            transport['event_backlog'] = backlog
+        receipt = edge.receive(first, now=1000, transport=transport)
         id = receipt['alert_id']
         result = alerts.get(id, None)
-        assert result['notification_mode'] == expected
-        assert result['suppression_reason'] == (
-            None if expected == 'live' else 'clock_unreliable' if rtt > 2 or age < 0 else 'event_too_old'
-        )
-        assert (result['event_decided_at'] is not None) == (rtt <= 2 and age >= 0)
+        assert result['notification_mode'] == expected, (age_ms, rtt, backlog, result['notification_mode'])
+        assert result['suppression_reason'] is None
+        assert result['event_decided_at'] == 1000 - age_ms / 1000, 'the device age dates the detection'
+        assert (result['clock_usable'] == 1) == (rtt <= 2)
         job = events._db.execute('SELECT state FROM alert_dispatch_jobs WHERE alert_id=?', (id,)).fetchone()[0]
-        assert job == ('queued' if expected == 'live' else 'cancelled')
-        assert edge.receive(first, now=5000)['duplicate']
+        assert job == 'queued'
+        assert edge.receive(first, now=5000, transport=transport)['duplicate']
         update = copy.deepcopy(fixtures[1])
         update.update(
-            run_id=run,
-            event_uid=run + ':1',
-            decided_at=max(1001, first['decided_at']),
-            sent_at=5000,
-            clock=first['clock'],
+            run_id=run, event_uid=run + ':1', decided_at=max(1001, first['decided_at']), sent_at=5000, clock=first['clock']
         )
-        edge.receive(update, now=5000)
-        assert alerts.get(id, None)['notification_mode'] == expected, 'policy changed after a delayed update'
+        edge.receive(update, now=5000, transport={'event_age_ms': age_ms + 4_000_000, 'event_backlog': 0})
+        after = alerts.get(id, None)['notification_mode']
+        # A settled alert never changes; a classifying one is settled by the latest state (still open: live).
+        assert after == ('live' if expected == 'classifying' else expected), 'policy changed after a delayed update'
         delivery = alerts.delivery(id, None, 'test', 'browser')
         delivered = alerts.transition(id, None, 'test', 'received', {'device_id': 'browser', 'delivery_id': delivery})
-        assert delivered['state'] == 'delivered' and delivered['notification_mode'] == expected
-        if expected == 'manual_review':
-            assert (
-                events._db.execute('SELECT state FROM alert_dispatch_jobs WHERE alert_id=?', (id,)).fetchone()[0]
-                == 'cancelled'
-            )
+        assert delivered['state'] == 'delivered' and delivered['notification_mode'] == after
         created.append(id)
     snapshot = alerts.snapshot(None)
     assert any(a['notification_mode'] == 'manual_review' for a in snapshot['alerts'])
@@ -125,11 +126,12 @@ def scenarios(events):
     legacy = asyncio.run(stream_snapshot(events, False))
     assert any(a['notification_mode'] == 'manual_review' for a in capable['alerts'])
     assert all(a['notification_mode'] == 'live' for a in legacy['alerts'])
+    assert any(a['late_arrival'] == 1 for a in legacy['alerts']), 'late live alerts reach legacy clients'
     print(
-        'PASS stored policies read back, classification boundaries, latched retries/updates, receipts and old/new SSE clients'
+        'PASS stored version-1 rows read back, immediate classification of recent events, settled alerts unchanged, receipts and old/new SSE clients'
     )
     return {
-        id: (alerts.get(id, None)['notification_mode'], alerts.get(id, None)['suppression_reason']) for id in created
+        id: (alerts.get(id, None)['notification_mode'], alerts.get(id, None)['classification_reason']) for id in created
     }
 
 
@@ -142,7 +144,7 @@ def main():
         restored = EventStore(url())
         alerts = AlertStore(restored)
         assert all(
-            (alerts.get(id, None)['notification_mode'], alerts.get(id, None)['suppression_reason']) == value
+            (alerts.get(id, None)['notification_mode'], alerts.get(id, None)['classification_reason']) == value
             for id, value in expected.items()
         )
         restored.close()

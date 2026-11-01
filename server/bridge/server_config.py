@@ -121,8 +121,18 @@ def load_server_config(path):
             }
         )
     config['cameras'] = normalized
-    age = config.get('edge_event_max_live_age_s', 120)
-    if isinstance(age, bool) or not isinstance(age, (int, float)) or not math.isfinite(age) or not 1 <= age <= 3600:
-        raise ValueError('invalid edge_event_max_live_age_s')
-    config['edge_event_max_live_age_s'] = float(age)
+    # Late-arrival policy (notification_policy.py): the late threshold, the stale threshold for events whose
+    # outcome is unknown, the hold for a late open while its later messages arrive, and the review reminder.
+    for key, default, low, high in (
+        ('edge_event_max_live_age_s', 120, 1, 3600),
+        ('edge_event_stale_age_s', 3600, 60, 7 * 86400),
+        ('edge_event_classify_hold_s', 5, 0, 60),
+        ('alert_review_reminder_s', 600, 0, 86400),
+    ):
+        value = config.get(key, default)
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not low <= value <= high:
+            raise ValueError(f'invalid {key}')
+        config[key] = float(value)
+    if config['edge_event_stale_age_s'] <= config['edge_event_max_live_age_s']:
+        raise ValueError('edge_event_stale_age_s must exceed edge_event_max_live_age_s')
     return config

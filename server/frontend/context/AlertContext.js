@@ -1,7 +1,14 @@
 'use client';
 import { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { POLICY_VERSION, isLiveAlert, selectUrgentWaiting, selectManualReview } from '@/utils/alertPolicy.mjs';
+import {
+    POLICY_VERSION,
+    isLiveAlert,
+    isManualReview,
+    needsAcknowledgement,
+    selectUrgentWaiting,
+    selectManualReview,
+} from '@/utils/alertPolicy.mjs';
 const AlertContext = createContext(null);
 // Connection states shown to the user; LIVE is also what the alert screens test for.
 export const LIVE = 'Live';
@@ -46,6 +53,8 @@ export function AlertProvider({ children }) {
     const soundRef = useRef(false);
     const notifyRef = useRef(false);
     const escalated = useRef(new Set());
+    const announced = useRef(new Set()); // alerts already sounded once they became live
+    const reminded = useRef(new Set()); // manual-review alerts whose one quiet reminder was shown
     const canHandle = ['admin', 'responder'].includes(user?.role);
     const device = useRef(null);
     useEffect(() => {
@@ -89,16 +98,19 @@ export function AlertProvider({ children }) {
             osc.stop(at + 0.22);
         });
     }
-    function desktop(alert, escalation) {
-        if (!isLiveAlert(alert)) return;
+    function desktop(alert, escalation, quiet = false) {
+        // quiet: the one reminder for a manual-review alert nobody has taken; no sound, no insistence.
+        if (!quiet && !isLiveAlert(alert)) return;
         if (!notifyRef.current || typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
-        const title = `${escalation ? 'Still unacknowledged · ' : ''}${ALERT_TITLES[alert.type] || 'Alert'} · camera ${alert.camera_id}`;
+        const title = `${quiet ? 'Awaiting manual review · ' : escalation ? 'Still unacknowledged · ' : ''}${ALERT_TITLES[alert.type] || 'Alert'} · camera ${alert.camera_id}`;
         const n = new Notification(title, {
-            body: escalation
-                ? `No one has acknowledged alert #${alert.id} for ${Math.round(ESCALATE_AFTER_S / 60)} min.`
-                : `Alert #${alert.id}. Open Fall-Relay to acknowledge.`,
-            tag: `fall-relay-alert-${alert.id}${escalation ? '-esc' : ''}`,
-            requireInteraction: alert.type === 'fall',
+            body: quiet
+                ? `Alert #${alert.id} is still waiting for review.`
+                : escalation
+                  ? `No one has acknowledged alert #${alert.id} for ${Math.round(ESCALATE_AFTER_S / 60)} min.`
+                  : `Alert #${alert.id}. Open Fall-Relay to acknowledge.`,
+            tag: `fall-relay-alert-${alert.id}${quiet ? '-review' : escalation ? '-esc' : ''}`,
+            requireInteraction: !quiet && alert.type === 'fall',
         });
         n.onclick = () => {
             window.focus();
@@ -161,6 +173,11 @@ export function AlertProvider({ children }) {
                 last = Date.now();
                 setTruncated(data.truncated);
                 setAlerts(data.alerts);
+                // Alerts already live in the snapshot are not announced again when they next change.
+                for (const a of data.alerts) {
+                    if (isLiveAlert(a)) announced.current.add(a.id);
+                    if (a.review_reminded_at) reminded.current.add(a.id);
+                }
                 data.alerts.forEach(receive);
                 setError('');
             });
@@ -174,9 +191,17 @@ export function AlertProvider({ children }) {
                         .slice(0, 500)
                 );
                 receive(data.alert);
-                if (data.alert.state === 'pending' && isLiveAlert(data.alert)) {
-                    beep(data.alert.type);
-                    desktop(data.alert, false);
+                const a = data.alert;
+                // Sound once, when the alert is (or becomes) live and still unacknowledged: a classifying alert
+                // that the bridge settles as live a few seconds later sounds then.
+                if (isLiveAlert(a) && needsAcknowledgement(a) && !announced.current.has(a.id)) {
+                    announced.current.add(a.id);
+                    beep(a.type);
+                    desktop(a, false);
+                }
+                if (a.review_reminded_at && isManualReview(a) && needsAcknowledgement(a) && !reminded.current.has(a.id)) {
+                    reminded.current.add(a.id);
+                    desktop(a, false, true);
                 }
             });
             source.onerror = () => {

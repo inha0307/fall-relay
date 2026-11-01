@@ -41,7 +41,7 @@ Server host of the trials: the laboratory workstation that also runs the bridge 
 | B1 Concurrent handling | Two threads acknowledge one alert; late receipt; invalid outcome | One success, one HTTP 409; no state regression; invalid outcome 422, valid outcome stored | API and store level; no real concurrent browsers |
 | B2 Stream resumption | Paged log reads; SSE reader interrupted and resumed; store reopened | 1,102 log rows received exactly once: 507 distinct cursors before the interruption and rows 508–1,102 after resumption; camera isolation and resynchronisation after an unknown cursor | Log rows, not 1,102 distinct alerts |
 | B3 Role and camera scope | Other camera's alert; viewer acknowledgement; another user's receipt | Expected 403/404 responses; stream isolated per camera | Trusted identity injected; not a security audit |
-| C1 Late arrival | Event older than 120 s; unreliable clock; retries after classification; restart | Classified manual review and excluded from sound, notification, repeats and reminders; live alerts kept them until acknowledged; classification unchanged by retries or by the migration | Server classification checked in the repository on the bridge's SQLite test store and, with FALLRELAY_DATABASE_URL set, in a temporary PostgreSQL schema; browser behaviour verified once in Chromium with synthetic streams and virtual time (script `browser.mjs` and record `browser-verification.json` in this folder, 22 October 2026) |
+| C1 Late arrival (policy v2) | Late open held for the event's latest state; recovered / still open / closed otherwise; hold timeout; resend with other headers; bridge restart during hold; reboot cases (age unknown, clock unset, queued before power loss); old device without headers | Manual review only for a late event that ended in recovery (or a stale unknown outcome); every other late event live; no demotion after settling; one quiet review reminder; settled across a restart (`tests/test_late_arrival_v2.py`, `tests/test_notification_policy.py`) | Server classification in a temporary PostgreSQL schema; browser behaviour verified once in Chromium with synthetic streams and virtual time (`late_alert_policy/browser.mjs`) |
 
 ## Figure E1. Per-slot processing time
 
@@ -93,7 +93,7 @@ repository with the records of the replay trials.
 | `replay/trials.csv` | The same aggregates as one row per trial |
 | `replay/event_stages.csv` | One row per event (289): decision, server receipt, browser receipt, clock validity and stage latencies |
 | `replay/outbox_creation_to_ack.csv` | One row per outbox message (619): creation, send and acknowledgement times, attempts |
-| `checks/fall-relay-checks.json` | Report of the 29 check scripts |
+| `checks/fall-relay-checks.json` | Report of the 30 check scripts |
 | `link_loss/pi4_gated/…`, `link_loss/pi5_gated/…`: `linkcut_summary.json`, `linkcut_events.csv`, `linkcut_outbox_series.csv`, `cuts.jsonl`, `schedule.json`, `uptime_start.json`, `unrelated_services.json`, `completed.json` | Aggregates and timing records of the two link-loss trials (one row per event, 1-s outbox series, cut times) |
 | `link_loss/link_gate.py`, `analyze_linkcut.py` | The TCP gate run on the device and the analysis script that produced the aggregates |
 | `link_loss/outbox_backlog.png` | Fig. 6 of the article, both trials (600 dpi PNG) |

@@ -59,7 +59,7 @@ def invariants(schema):
     events = EventStore(schema.url)
     cameras = CameraRegistry([{'id': '1', 'label': 'Synthetic'}], connection=events._db, lock=events._lock)
     db = events._db
-    assert events.schema_versions == [1]
+    assert events.schema_versions == [1, 2]
     with db:
         db.execute("INSERT INTO events(camera_id,track_id,started_at,ended_at,max_score) VALUES ('1',1,101,101,0.95)")
     assert db.execute('SELECT source,event_uid FROM events').fetchone()[0] == 'inferred_v1'
@@ -99,11 +99,13 @@ def ledger(schema):
         with schema.connect() as connection:
             rejects(lambda: pending(connection.execute, copied))
         baseline.write_text(baseline.read_text().removeprefix('-- changed\n'))
-        (copied / '0002_pending.sql').write_text('CREATE TABLE later(id bigint);\n')
+        nxt = len(list(copied.glob('[0-9][0-9][0-9][0-9]_*.sql'))) + 1
+        fake = copied / f'{nxt:04d}_pending.sql'
+        fake.write_text('CREATE TABLE later(id bigint);\n')
         with schema.connect() as connection:
-            assert [item[0] for item in pending(connection.execute, copied)] == [2]
+            assert [item[0] for item in pending(connection.execute, copied)] == [nxt]
         rejects(lambda: _start(schema, copied))
-        (copied / '0002_pending.sql').write_text('CREATE TABLE should_rollback(id bigint);\nTHIS IS INVALID SQL;\n')
+        fake.write_text('CREATE TABLE should_rollback(id bigint);\nTHIS IS INVALID SQL;\n')
         scratch = 'test_atomic_' + uuid.uuid4().hex
         with psycopg.connect(schema.base) as connection:
             try:

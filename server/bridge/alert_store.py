@@ -4,10 +4,13 @@ import json
 import time
 from db_backend import lock_key
 
-FIELDS = """a.*,e.late_arrival,e.edge_state,e.clock_usable,
-    CASE WHEN e.source='edge_event' AND e.clock_usable=1
-        THEN e.decided_at+e.clock_offset_s ELSE NULL END AS event_decided_at,
+FIELDS = """a.*,e.late_arrival,e.edge_state,e.clock_usable,e.close_reason,e.ended_at AS event_ended_at,
+    e.event_age_on_arrival_ms,e.age_source,
+    CASE WHEN e.source='edge_event' AND (e.age_source IS NOT NULL OR e.clock_usable=1)
+        THEN e.started_at ELSE NULL END AS event_decided_at,
     COALESCE(e.received_at,a.created_at) AS server_received_at"""
+# Clients of another policy version get only what is unambiguous under every version: settled live alerts.
+LIVE_ONLY = " AND a.notification_mode='live' AND a.suppression_reason IS NULL"
 
 
 class AlertError(ValueError):
@@ -47,15 +50,13 @@ class AlertStore:
             self.db.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ')
             clause, args = self.scope(cameras)
             if live_only:
-                clause += (
-                    " AND a.notification_mode='live' AND COALESCE(e.late_arrival,0)=0 AND a.suppression_reason IS NULL"
-                )
+                clause += LIVE_ONLY
             rows = self.db.execute(
                 'SELECT '
                 + FIELDS
                 + ' FROM alerts a LEFT JOIN events e ON e.id=a.event_id WHERE '
                 + clause
-                + " ORDER BY CASE WHEN a.state IN ('resolved','expired') THEN 2 WHEN a.notification_mode='live' THEN 0 ELSE 1 END,a.id DESC LIMIT 500",
+                + " ORDER BY CASE WHEN a.state IN ('resolved','expired') THEN 2 WHEN a.notification_mode IN ('live','classifying') THEN 0 ELSE 1 END,a.id DESC LIMIT 500",
                 args,
             ).fetchall()
             cursor = self.db.execute('SELECT COALESCE(MAX(id),0) FROM alert_log').fetchone()[0]
@@ -74,9 +75,7 @@ class AlertStore:
         with self.lock:
             clause, args = self.scope(cameras)
             if live_only:
-                clause += (
-                    " AND a.notification_mode='live' AND COALESCE(e.late_arrival,0)=0 AND a.suppression_reason IS NULL"
-                )
+                clause += LIVE_ONLY
             rows = self.db.execute(
                 'SELECT l.id AS cursor,l.alert_id FROM alert_log l JOIN alerts a ON a.id=l.alert_id LEFT JOIN events e ON e.id=a.event_id WHERE l.id>? AND '
                 + clause

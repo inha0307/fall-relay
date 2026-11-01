@@ -4,7 +4,16 @@ import json
 import time
 from edge_event_contract import semantic_hash, validate_edge_event
 from db_backend import has_table, lock_key
-from notification_policy import classify
+from notification_policy import (
+    CLASSIFYING,
+    HOLD_TIMEOUT,
+    LIVE,
+    MANUAL_REVIEW,
+    SUPPRESSION,
+    VERSION,
+    classify,
+    decide_now,
+)
 
 
 class EventConflict(ValueError):
@@ -14,9 +23,14 @@ class EventConflict(ValueError):
 
 
 class EdgeEventStore:
-    def __init__(self, events, max_live_age_s=120, delivery_enabled=False):
+    def __init__(
+        self, events, max_live_age_s=120, delivery_enabled=False, stale_age_s=3600, hold_s=5, review_reminder_s=600
+    ):
         self.db, self.lock = events._db, events._lock
         self.max_live_age_s = max_live_age_s
+        self.stale_age_s = stale_age_s
+        self.hold_s = hold_s
+        self.review_reminder_s = review_reminder_s
         self.delivery_enabled = delivery_enabled
         self.has_models = has_table(self.db, 'model_runs')
         with self.lock:
@@ -67,15 +81,28 @@ class EdgeEventStore:
             'duplicate': duplicate,
         }
 
-    def receive(self, payload, now=None):
+    def receive(self, payload, now=None, transport=None):
+        """Store one event message atomically and return its receipt.
+
+        `transport` is the delivery context the device sends as headers (edge_outbox.transport): the event's age by
+        the device's boot clock and how many later messages of the event are still pending. Both are optional; an
+        older device sends neither."""
         payload = validate_edge_event(payload)
         digest = semantic_hash(payload)
         now = time.time() if now is None else now
+        transport = transport or {}
         camera, run, uid, seq = (payload[key] for key in ('camera_id', 'run_id', 'event_uid', 'message_seq'))
+        # The wall-clock calibration is kept for display; it no longer decides the notification mode.
         corrected = payload['decided_at'] + payload['clock']['offset_s']
-        usable = payload['clock']['rtt_s'] <= 2 and abs(payload['clock']['offset_s']) <= 86400 and corrected <= now + 2
-        late = not usable or now - corrected > self.max_live_age_s
-        mode, suppression_reason = classify(clock_usable=usable, late=late)
+        trusted = payload['clock']['rtt_s'] <= 2 and abs(payload['clock']['offset_s']) <= 86400 and corrected <= now + 2
+        if 'event_age_ms' in transport:
+            age, age_source = transport['event_age_ms'] / 1000, 'device_boot'
+        elif trusted:
+            age, age_source = max(0.0, now - corrected), 'wall_clock'
+        else:
+            age, age_source = None, None
+        backlog = transport.get('event_backlog')
+        late = age is None or age > self.max_live_age_s
         with self.lock:
             self.db.execute('BEGIN IMMEDIATE')
             try:
@@ -104,11 +131,16 @@ class EdgeEventStore:
                 if payload['kind'] == 'open':
                     if event:
                         raise EventConflict('duplicate_open', 'event is already open; send its next sequence')
-                    started = corrected if usable else now
+                    started = now - age if age is not None else now
+                    if decide_now(age_s=age, backlog=backlog, late_threshold_s=self.max_live_age_s):
+                        mode, reason = classify(latest_kind='open', close_reason=None, age_s=age)
+                        classified_at, hold_until = now, None
+                    else:
+                        mode, reason, classified_at, hold_until = CLASSIFYING, None, None, now + self.hold_s
                     cursor = self.db.execute(
                         '''INSERT INTO events(camera_id,track_id,started_at,max_score,model_run_id,event_uid,source,
                         run_id,edge_state,onset_sensor_ns,decided_sensor_ns,decided_at,clock_offset_s,clock_rtt_s,received_at,last_received_at,
-                        last_message_seq,clock_usable,late_arrival) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
+                        last_message_seq,clock_usable,late_arrival,event_age_on_arrival_ms,age_source) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
                         (
                             camera,
                             payload['track_id'],
@@ -127,41 +159,43 @@ class EdgeEventStore:
                             now,
                             now,
                             seq,
-                            int(usable),
+                            int(trusted),
                             int(late),
+                            None if age is None else int(round(age * 1000)),
+                            age_source,
                         ),
                     )
                     event_id = cursor.lastrowid
                     alert_id = self.db.execute(
-                        "INSERT INTO alerts(event_id,type,camera_id,created_at,notification_mode,suppression_reason) VALUES (?,'fall',?,?,?,?)",
-                        (event_id, camera, now, mode, suppression_reason),
+                        '''INSERT INTO alerts(event_id,type,camera_id,created_at,notification_mode,suppression_reason,
+                        classification_reason,classified_at,hold_until,policy_version) VALUES (?,'fall',?,?,?,NULL,?,?,?,?)''',
+                        (event_id, camera, now, mode, reason, classified_at, hold_until, VERSION),
                     ).lastrowid
                     detail = json.dumps(
                         {
                             'event_uid': uid,
                             'late_arrival': late,
-                            'clock_usable': usable,
-                            'decision_time': corrected if usable else None,
-                            'delivery_enabled': bool(self.delivery_enabled and mode == 'live'),
+                            'clock_usable': trusted,
+                            'event_age_s': age,
+                            'age_source': age_source,
+                            'event_backlog': backlog,
+                            'decision_time': started,
+                            'delivery_enabled': bool(self.delivery_enabled and mode == LIVE),
                             'notification_mode': mode,
-                            'suppression_reason': suppression_reason,
+                            'classification_reason': reason,
+                            'policy_version': VERSION,
                         }
                     )
                     self.db.execute(
                         "INSERT INTO alert_log(alert_id,at,actor,action,to_state,detail) VALUES (?,?,'edge','created','pending',?)",
                         (alert_id, now, detail),
                     )
+                    # The browser stream carries classifying and live alerts alike; a manual-review decision cancels.
                     self.db.execute(
-                        "INSERT INTO alert_dispatch_jobs(job_key,alert_id,escalation_level,channel,state,next_attempt_at,created_at,last_error) VALUES (?,?,0,'sse',?,?,?,?)",
-                        (
-                            f'alert:{alert_id}:sse:0',
-                            alert_id,
-                            'cancelled' if late else 'queued',
-                            now,
-                            now,
-                            'late or uncalibrated event: manual review' if late else None,
-                        ),
+                        "INSERT INTO alert_dispatch_jobs(job_key,alert_id,escalation_level,channel,state,next_attempt_at,created_at) VALUES (?,?,0,'sse','queued',?,?)",
+                        (f'alert:{alert_id}:sse:0', alert_id, now, now),
                     )
+                    # Clip frames exist on the device only for a few seconds around a recent decision.
                     self.db.execute(
                         'INSERT INTO edge_clip_jobs VALUES (?,?,?,?,?,?)',
                         (
@@ -169,7 +203,7 @@ class EdgeEventStore:
                             camera,
                             started,
                             'unavailable' if late else 'queued',
-                            'late or uncalibrated event' if late else None,
+                            'late or undated event' if late else None,
                             now,
                         ),
                     )
@@ -198,12 +232,18 @@ class EdgeEventStore:
                     if original and json.loads(original[0])['confirm'] != payload['confirm']:
                         raise EventConflict('decision_changed', 'decision parameters changed inside the event')
                     event_id = event['id']
-                    alert_id = self.db.execute(
-                        "SELECT id FROM alerts WHERE event_id=? AND type='fall'", (event_id,)
-                    ).fetchone()[0]
-                    ended = (
-                        max(event['started_at'], corrected if usable else now) if payload['kind'] == 'close' else None
-                    )
+                    alert = self.db.execute(
+                        "SELECT id,notification_mode FROM alerts WHERE event_id=? AND type='fall'", (event_id,)
+                    ).fetchone()
+                    alert_id = alert['id']
+                    # End time: the corrected device clock when it is trusted; otherwise the event's duration by the
+                    # sensor clock, which needs no calibration.
+                    if payload['kind'] != 'close':
+                        ended = None
+                    elif trusted:
+                        ended = max(event['started_at'], corrected)
+                    else:
+                        ended = event['started_at'] + max(0, payload['decided_sensor_ns'] - event['onset_sensor_ns']) / 1e9
                     self.db.execute(
                         '''UPDATE events SET edge_state=?,decided_sensor_ns=?,last_received_at=?,last_message_seq=?,max_score=?,ended_at=?,close_reason=? WHERE id=?''',
                         (
@@ -217,6 +257,22 @@ class EdgeEventStore:
                             event_id,
                         ),
                     )
+                    if alert['notification_mode'] == CLASSIFYING and (backlog == 0 or payload['kind'] == 'close'):
+                        # This is the latest state the device holds for the event: classify from it.
+                        if age_source == 'device_boot':
+                            age_now = age
+                        elif event['event_age_on_arrival_ms'] is not None:
+                            age_now = event['event_age_on_arrival_ms'] / 1000 + max(0.0, now - event['received_at'])
+                        else:
+                            age_now = None
+                        mode, reason = classify(
+                            latest_kind=payload['kind'],
+                            close_reason=payload['close_reason'],
+                            age_s=age_now,
+                            late_threshold_s=self.max_live_age_s,
+                            stale_threshold_s=self.stale_age_s,
+                        )
+                        self._classify(alert_id, mode, reason, now, {'latest_kind': payload['kind'], 'close_reason': payload['close_reason'], 'event_age_s': age_now})
                 self.db.execute(
                     'INSERT INTO edge_event_receipts(event_uid,message_seq,kind,semantic_sha256,event_id,alert_id,received_at,payload) VALUES (?,?,?,?,?,?,?,?)',
                     (uid, seq, payload['kind'], digest, event_id, alert_id, now, json.dumps(payload, allow_nan=False)),
@@ -226,6 +282,57 @@ class EdgeEventStore:
             except Exception:
                 self.db.rollback()
                 raise
+
+    def _classify(self, alert_id, mode, reason, now, detail):
+        """Settle a classifying alert (inside the caller's transaction). A settled alert is never changed again."""
+        suppression = SUPPRESSION.get(reason) if mode == MANUAL_REVIEW else None
+        changed = self.db.execute(
+            "UPDATE alerts SET notification_mode=?,suppression_reason=?,classification_reason=?,classified_at=?,hold_until=NULL WHERE id=? AND notification_mode=?",
+            (mode, suppression, reason, now, alert_id, CLASSIFYING),
+        ).rowcount
+        if not changed:
+            return False
+        self.db.execute(
+            "INSERT INTO alert_log(alert_id,at,actor,action,detail) VALUES (?,?,'bridge','classified',?)",
+            (alert_id, now, json.dumps({**detail, 'notification_mode': mode, 'classification_reason': reason, 'policy_version': VERSION})),
+        )
+        if mode == MANUAL_REVIEW:
+            self.db.execute(
+                "UPDATE alert_dispatch_jobs SET state='cancelled',last_error='manual review' WHERE alert_id=? AND state IN ('queued','processing','retry')",
+                (alert_id,),
+            )
+        return True
+
+    def tick(self, now=None):
+        """Periodic work: settle holds that ran out (the latest state did not arrive) and send the one quiet
+        reminder for manual-review alerts nobody has acknowledged. Safe to call every second and after a restart."""
+        now = time.time() if now is None else now
+        settled = reminded = 0
+        with self.lock:
+            self.db.execute('BEGIN IMMEDIATE')
+            try:
+                lock_key(self.db, 'alert-log')
+                for row in self.db.execute(
+                    "SELECT id FROM alerts WHERE notification_mode=? AND hold_until<=?", (CLASSIFYING, now)
+                ).fetchall():
+                    settled += self._classify(row['id'], LIVE, HOLD_TIMEOUT, now, {'hold_s': self.hold_s})
+                if self.review_reminder_s > 0:
+                    for row in self.db.execute(
+                        '''SELECT id FROM alerts WHERE notification_mode=? AND state IN ('pending','sent','delivered')
+                        AND review_reminded_at IS NULL AND classified_at IS NOT NULL AND classified_at+?<=?''',
+                        (MANUAL_REVIEW, self.review_reminder_s, now),
+                    ).fetchall():
+                        self.db.execute('UPDATE alerts SET review_reminded_at=? WHERE id=?', (now, row['id']))
+                        self.db.execute(
+                            "INSERT INTO alert_log(alert_id,at,actor,action,detail) VALUES (?,?,'bridge','review_reminded',?)",
+                            (row['id'], now, json.dumps({'after_s': self.review_reminder_s})),
+                        )
+                        reminded += 1
+                self.db.commit()
+            except Exception:
+                self.db.rollback()
+                raise
+        return {'settled': settled, 'reminded': reminded}
 
     def event_for_clip(self, camera, run, onset_sensor_ns):
         """The stored explicit event a device clip belongs to (identity: camera, run, onset), or None."""

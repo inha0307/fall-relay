@@ -165,5 +165,6 @@ points with OpenCV; it contains no NTU frames and no recording of a person.
 Releases are archived on Zenodo; the DOI [10.5281/zenodo.23719976](https://doi.org/10.5281/zenodo.23719976) resolves to
 the latest version (v1.0.0: [10.5281/zenodo.23719977](https://doi.org/10.5281/zenodo.23719977); v1.0.1 aligns code
 defaults and documentation with the article, the measured behaviour is unchanged; v1.0.2 fixes the web proxy so that
-manual-review alerts appear on the Alerts page). To cite the software, use
+manual-review alerts appear on the Alerts page; v1.1.0 introduces notification policy version 2, which classifies an
+alert from the latest state of its event instead of its arrival time, see docs/EVENT_PROTOCOL.md §4). To cite the software, use
 [CITATION.cff](CITATION.cff) or the "Cite this repository" button on GitHub.

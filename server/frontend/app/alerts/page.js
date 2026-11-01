@@ -8,10 +8,13 @@ import ui from '@/components/ui.module.css';
 import {
     UNACKED,
     needsAcknowledgement,
+    isClassifying,
     isManualReview,
     isUrgentWaiting,
+    isLiveAlert,
     isOpen,
     reviewReason,
+    liveReason,
 } from '@/utils/alertPolicy.mjs';
 import { dateTime, duration } from '@/utils/format';
 
@@ -34,7 +37,15 @@ function AlertCard({ a, nowS, canHandle, busy, action, onResolve }) {
     const needsAck = needsAcknowledgement(a);
     const waiting = isUrgentWaiting(a);
     const manual = isManualReview(a);
+    const classifying = isClassifying(a);
+    const lateLive = isLiveAlert(a) && Boolean(a.late_arrival);
     const receivedAt = a.server_received_at ?? a.created_at;
+    const eventStatus =
+        a.type !== 'fall' || !a.edge_state
+            ? ''
+            : a.close_reason
+              ? `event closed (${a.close_reason.replace('_', ' ')})`
+              : 'event still open';
     const overdue = waiting && nowS - a.created_at >= ESCALATE_AFTER_S;
     const [clipError, setClipError] = useState('');
     const outcome = a.type === 'fall' ? labels[a.resolution] : DEVICE_OUTCOMES[a.resolution];
@@ -61,18 +72,35 @@ function AlertCard({ a, nowS, canHandle, busy, action, onResolve }) {
                 </span>
                 <span className="alert-camera">Camera {a.camera_id}</span>
                 <span
-                    className={`alert-state alert-state-${manual && needsAck ? 'manual' : waiting ? 'waiting' : a.state}`}
+                    className={`alert-state alert-state-${(manual || classifying) && needsAck ? 'manual' : waiting ? 'waiting' : a.state}`}
                 >
-                    {manual && needsAck ? 'Awaiting manual review' : states[a.state] || a.state}
+                    {classifying && needsAck
+                        ? 'Arriving'
+                        : manual && needsAck
+                          ? 'Awaiting manual review'
+                          : states[a.state] || a.state}
                 </span>
             </div>
             <p className="alert-when">
                 Received {ago(nowS - receivedAt)} · {clock(receivedAt)} · #{a.id}
+                {eventStatus ? ` · ${eventStatus}` : ''}
             </p>
+            {classifying && (
+                <p className={ui.note}>
+                    Arriving: the event reached the server late; waiting a few seconds for its latest state before
+                    deciding whether to sound.
+                </p>
+            )}
             {manual && (
                 <p className="alert-manual-note">
                     <strong>Manual review — {reviewReason(a)}</strong>. Saved for review; urgent reminders are
-                    suppressed.
+                    suppressed.{a.review_reminded_at ? ' Reminded once.' : ''}
+                </p>
+            )}
+            {lateLive && a.event_decided_at && (
+                <p className={ui.note}>
+                    Arrived {duration(receivedAt - a.event_decided_at)} after the detection; live because{' '}
+                    {liveReason(a) || 'the event may still need a response'}.
                 </p>
             )}
             {a.type === 'fall' && a.event_decided_at == null && (
@@ -199,8 +227,8 @@ export default function AlertsPage() {
                     <div>
                         <h1 className={ui.title}>Alerts</h1>
                         <p className={ui.subtitle}>
-                            Live alerts need acknowledgement and on-site follow-up. Delayed or clock-uncertain cases are
-                            saved for manual review.
+                            Live alerts need acknowledgement and on-site follow-up. Late events that had already
+                            ended are saved for manual review.
                         </p>
                     </div>
                     <div className={ui.toolbar}>

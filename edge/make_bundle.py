@@ -42,6 +42,7 @@ EVENT_SHARED = [
     "db_backend.py",
     "migrations/edge/0001_outbox.sql",
     "migrations/edge/0002_runtime_recovery.sql",
+    "migrations/edge/0003_event_origin.sql",
 ]
 TEMPLATE = HERE / "deploy" / "fall-relay-edge.service.template"
 

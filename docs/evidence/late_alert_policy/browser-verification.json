@@ -1,10 +1,15 @@
 {
+  "verified_on": "2026-11-01",
+  "notification_policy_version": 2,
+  "browser": "Microsoft Edge (Chromium) via Playwright, virtual clock",
   "synthetic_transport": true,
   "physical_notifications_tested": false,
   "checks": [
     "manual cases: initial, 30-second reminders and 120-second escalation suppressed; no urgent styling/title; clock uncertainty shown",
     "live initial notification, reminder and escalation preserved; acknowledgement stops reminders",
-    "manual review acknowledgement and outcome available in resolved history"
+    "manual review acknowledgement and outcome available in resolved history",
+    "classifying alert silent while held, sounds once when settled live",
+    "manual-review reminder: one quiet notification, no tone, not repeated"
   ],
   "errors": [],
   "passed": true

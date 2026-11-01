@@ -16,7 +16,7 @@ import urllib.error
 from camera_registry import CameraRegistry
 from edge_event_runtime import OutboxWorker
 from edge_event_store import EdgeEventStore, EventConflict
-from edge_outbox import EdgeOutbox
+from edge_outbox import AGE_HEADER, BACKLOG_HEADER, EdgeOutbox, boot_clock
 from event_store import EventStore
 from _pg import Schema, url
 from test_hardware import call, config
@@ -33,6 +33,15 @@ def rejects(fn, error=ValueError):
     except error:
         return
     raise AssertionError('invalid operation accepted')
+
+
+def transport_of(headers):
+    """The delivery context the bridge's router parses from the request headers."""
+    return {
+        key: int(headers[name])
+        for name, key in ((AGE_HEADER, 'event_age_ms'), (BACKLOG_HEADER, 'event_backlog'))
+        if name in headers
+    }
 
 
 def messages(wall=100):
@@ -72,10 +81,10 @@ def storage(root):
     attempts = []
     lose_response = True
 
-    def request(_url, _headers, payload):
+    def request(_url, headers, payload):
         nonlocal lose_response
         attempts.append(payload['message_seq'])
-        result = store.receive(payload, now=100 + payload['message_seq'])
+        result = store.receive(payload, now=100 + payload['message_seq'], transport=transport_of(headers))
         if lose_response:
             lose_response = False
             raise OSError('response lost after commit')
@@ -134,7 +143,8 @@ def crash_and_outage(root):
             child.wait(timeout=5)
         child.stdout.close()
         child.stderr.close()
-    box = EdgeOutbox(path)
+    # The same boot as the killed process, 610 s later by the boot clock: the event's age is known and late.
+    box = EdgeOutbox(path, boot_clock_fn=lambda: boot_clock() + 610)
     rejects(lambda: EdgeOutbox(path), RuntimeError)
     assert box.status(101)['outbox_pending'] == 1
     assert box.recover('1', 101, 30) == 30
@@ -142,10 +152,10 @@ def crash_and_outage(root):
     events, registry, store = service(root)
     online = False
 
-    def request(_url, _headers, payload):
+    def request(_url, headers, payload):
         if not online:
             raise OSError('simulated link outage')
-        return store.receive(payload, now=710)
+        return store.receive(payload, now=710, transport=transport_of(headers))
 
     worker = OutboxWorker(box, 'http://synthetic.invalid', '1', {}, request)
     for now in range(100, 701):
@@ -159,13 +169,17 @@ def crash_and_outage(root):
     assert box.status(780)['outbox_pending'] == 0
     assert events._db.execute('SELECT COUNT(*) FROM events').fetchone()[0] == 1
     assert events._db.execute('SELECT close_reason FROM events').fetchone()[0] == 'runtime_stop'
-    assert events._db.execute('SELECT late_arrival FROM events').fetchone()[0] == 1
-    assert events._db.execute('SELECT state FROM alert_dispatch_jobs').fetchone()[0] == 'cancelled'
+    row = events._db.execute('SELECT late_arrival,age_source,event_age_on_arrival_ms FROM events').fetchone()
+    assert (row[0], row[1]) == (1, 'device_boot'), tuple(row)
+    # Late, and the outcome is unknown (the runtime stopped): the alert is live, not held back for review.
+    alert = events._db.execute('SELECT notification_mode,classification_reason FROM alerts').fetchone()
+    assert (alert[0], alert[1]) == ('live', 'OUTCOME_UNKNOWN'), tuple(alert)
+    assert events._db.execute('SELECT state FROM alert_dispatch_jobs').fetchone()[0] == 'queued'
     box.close()
     events.close()
     registry.close()
     print(
-        'PASS actual host SIGKILL recovery and simulated 600-second outage; no lost/duplicate events, late delivery suppressed'
+        'PASS actual host SIGKILL recovery and simulated 600-second outage; no lost/duplicate events, late event live with its outcome unknown'
     )
 
 

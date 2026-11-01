@@ -488,7 +488,14 @@ def create_app(config: dict) -> FastAPI:
     from decision_log_store import DecisionLogStore, decision_log_router
 
     log_archives = DecisionLogStore(store, config['archive_dir'])
-    edge_events = EdgeEventStore(store, config.get('edge_event_max_live_age_s', 120), delivery_enabled=alerts_enabled)
+    edge_events = EdgeEventStore(
+        store,
+        config.get('edge_event_max_live_age_s', 120),
+        delivery_enabled=alerts_enabled,
+        stale_age_s=config.get('edge_event_stale_age_s', 3600),
+        hold_s=config.get('edge_event_classify_hold_s', 5),
+        review_reminder_s=config.get('alert_review_reminder_s', 600),
+    )
     channels = ChannelMap()
     meter = traffic.TrafficMeter()
 
@@ -597,6 +604,10 @@ def create_app(config: dict) -> FastAPI:
                     watchdog.error = type(exc).__name__
                     print('[watchdog] scan failed: ' + watchdog.error, flush=True)
             edge_events.schedule_clips(recorder, {cam: channel.label for cam, channel in channels.items()})
+            try:
+                edge_events.tick()  # settle classification holds and send review reminders
+            except Exception:
+                logging.exception('Late-arrival policy tick failed')
             hardware.prune()
             if recorder and time.monotonic() >= next_prune:
                 next_prune += 3600

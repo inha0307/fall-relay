@@ -50,7 +50,11 @@ def event_decision(decision):
         for m in (decision_engine, edge_outbox, edge_event_runtime, edge_event_contract, schema_migrations)
     }
     sql = Path(edge_outbox.__file__).parent / "migrations" / "edge"
-    files.update(edge_schema_1=sql / "0001_outbox.sql", edge_schema_2=sql / "0002_runtime_recovery.sql")
+    files.update(
+        edge_schema_1=sql / "0001_outbox.sql",
+        edge_schema_2=sql / "0002_runtime_recovery.sql",
+        edge_schema_3=sql / "0003_event_origin.sql",
+    )
     return {
         "event_protocol": "edge_event",
         "declared": dict(decision),

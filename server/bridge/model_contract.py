@@ -30,6 +30,7 @@ DECISION_PROVENANCE = {
     'schema_migrations',
     'edge_schema_1',
     'edge_schema_2',
+    'edge_schema_3',
 }
 
 

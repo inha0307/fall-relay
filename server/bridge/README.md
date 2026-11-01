@@ -25,7 +25,7 @@ of the laboratory deployment.
 | `require_media_token` | Clips and the debugging video stream require a media token from the web server |
 | `write_token_env` | Name of the environment variable holding the server token (`FALLRELAY_WRITE_TOKEN`) |
 | `features` | `alerts` (create and serve alerts), `watchdog` (camera-offline and device-warning alerts); explicit events are always accepted |
-| `edge_event_max_live_age_s` | Older events become manual-review alerts (default 120) |
+| `edge_event_max_live_age_s`, `edge_event_stale_age_s`, `edge_event_classify_hold_s`, `alert_review_reminder_s` | Late-arrival policy (docs/EVENT_PROTOCOL.md §4): a late event that ended in recovery becomes manual review (default 120 s), an outcome unknown beyond the stale age too (3600 s); a late open is held for the event's latest state (5 s); one quiet review reminder (600 s) |
 | `edge_stale_after_s`, `video_stale_after_s` | A decision or frame older than this is not shown as live (default 3 s and 5 s) |
 | `database_url_env` | Name of the environment variable holding the PostgreSQL connection string (default `FALLRELAY_DATABASE_URL`) |
 | `archive_dir` | Folder for collected decision-log archives (their index is in the database); the reference uses `../data/decision_logs` |
@@ -92,7 +92,7 @@ Further accounts, roles (Administrator, Responder, Viewer) and camera access are
 ## Checks
 
 ```bash
-.venv/bin/python run_checks.py --report checks.json        # all 29 check scripts, each in its own process
+.venv/bin/python run_checks.py --report checks.json        # all 30 check scripts, each in its own process
 .venv/bin/python tests/smoke_test_edge_api.py              # one check on its own
 ```
 
