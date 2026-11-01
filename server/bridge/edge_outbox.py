@@ -16,6 +16,9 @@ from schema_migrations import scripts, statements
 AGE_HEADER = 'X-Fall-Relay-Event-Age-Ms'
 BACKLOG_HEADER = 'X-Fall-Relay-Event-Backlog'
 CLOCK_HEADER = 'X-Fall-Relay-Decided-Clock'  # 'synced' when the wall clock was synchronised at the event's open
+# The WAL is fsynced by a background thread this often (seconds), so a commit never waits for the storage and a
+# power loss costs at most the commits of the last interval plus the time the card took to sync (trial D3).
+SYNC_INTERVAL_S = 1.0
 
 
 def wall_clock_synced():
@@ -81,11 +84,17 @@ class EdgeOutbox:
             self.db = sqlite3.connect(self.path, check_same_thread=False)
             self.db.row_factory = sqlite3.Row
             self.db.execute('PRAGMA journal_mode=WAL')
-            # FULL: the WAL is fsynced at every commit, so a committed message survives a power loss (the message
-            # rate makes the sync cheap). NORMAL lost the last ~30 s of commits in the power-loss trial (D3).
-            self.db.execute('PRAGMA synchronous=FULL')
+            # NORMAL keeps commits off the storage: FULL stalled the inference loop for 9.7 s when the SD card held
+            # an fsync (trial D1 pilot). Durability comes from the sync thread below, which fsyncs the WAL every
+            # SYNC_INTERVAL_S; bare NORMAL lost the last ~30 s of commits in the power-loss trial (D3, cut 1).
+            self.db.execute('PRAGMA synchronous=NORMAL')
             self.db.execute('PRAGMA busy_timeout=3000')
+            self._dirty = threading.Event()
+            self._closing = threading.Event()
+            self.last_sync = None
             self._migrate()
+            self._syncer = threading.Thread(target=self._sync_loop, name='outbox-sync', daemon=True)
+            self._syncer.start()
         except Exception:
             if hasattr(self, 'db'):
                 self.db.close()
@@ -118,15 +127,44 @@ class EdgeOutbox:
                 for statement in statements(sql):
                     self.db.execute(statement)
                 self.db.execute('INSERT INTO edge_schema_migrations VALUES (?,?)', (version, checksum))
-            self.db.commit()
+            self._commit()
         except Exception:
             self.db.rollback()
             raise
 
     def close(self):
+        self._closing.set()
+        if getattr(self, '_syncer', None) and self._syncer.is_alive() and threading.current_thread() is not self._syncer:
+            self._syncer.join(timeout=10)
+        self.sync_now()
         with self.lock:
             self.db.close()
             self.guard.close()
+
+    def _commit(self):
+        self.db.commit()
+        self._dirty.set()
+
+    def _sync_loop(self):
+        while not self._closing.wait(SYNC_INTERVAL_S):
+            if self._dirty.is_set():
+                self.sync_now()
+
+    def sync_now(self):
+        """fsync the WAL and the database file: what was committed before the call survives a power loss."""
+        self._dirty.clear()
+        for suffix in ('-wal', ''):
+            try:
+                fd = os.open(str(self.path) + suffix, os.O_RDONLY)
+            except OSError:
+                continue
+            try:
+                os.fsync(fd)
+            except OSError:
+                self._dirty.set()
+            finally:
+                os.close(fd)
+        self.last_sync = time.time()
 
     def _put(self, payload, now):
         payload = validate_edge_event(payload)
@@ -207,7 +245,7 @@ class EdgeOutbox:
                         'INSERT INTO edge_active_events VALUES (?,?,?,?,?,?,?) ON CONFLICT(camera_id) DO UPDATE SET last_message_seq=excluded.last_message_seq,decision_state=excluded.decision_state,payload=excluded.payload,updated_at=excluded.updated_at',
                         (camera, uid, run_id, seq, transition['state'], json.dumps(payload, allow_nan=False), now),
                     )
-                self.db.commit()
+                self._commit()
                 return payload
             except Exception:
                 self.db.rollback()
@@ -251,13 +289,13 @@ class EdgeOutbox:
                     'UPDATE outbox SET blocked_at=?,last_error=? WHERE event_uid=? AND message_seq=?',
                     (now, 'stored event semantic hash mismatch', row['event_uid'], row['message_seq']),
                 )
-                self.db.commit()
+                self._commit()
                 raise RuntimeError('stored event semantic hash mismatch')
             self.db.execute(
                 'UPDATE outbox SET attempts=attempts+1 WHERE event_uid=? AND message_seq=?',
                 (row['event_uid'], row['message_seq']),
             )
-            self.db.commit()
+            self._commit()
             payload['attempt'] = row['attempts'] + 1
             payload['sent_at'] = now
             return payload
@@ -296,7 +334,7 @@ class EdgeOutbox:
                 'UPDATE outbox SET acked_at=?,last_error=NULL,receipt_json=? WHERE event_uid=? AND message_seq=?',
                 (now, json.dumps(receipt), payload['event_uid'], payload['message_seq']),
             )
-            self.db.commit()
+            self._commit()
 
     def fail(self, payload, now, error, permanent=False):
         delay = min(60, 2 ** min(6, max(0, payload['attempt'] - 1)))
@@ -311,7 +349,7 @@ class EdgeOutbox:
                     payload['message_seq'],
                 ),
             )
-            self.db.commit()
+            self._commit()
 
     def status(self, now=None):
         now = time.time() if now is None else now
@@ -327,6 +365,8 @@ class EdgeOutbox:
             'outbox_oldest_s': max(0, now - row['oldest']) if row['oldest'] is not None else 0,
             'outbox_blocked': row['blocked'] or 0,
             'outbox_error': error[0] if error else None,
+            'outbox_synced_ago_s': round(now - self.last_sync, 3) if self.last_sync else None,
+            'outbox_unsynced': self._dirty.is_set(),
         }
 
     def prune(self, now):
@@ -338,12 +378,12 @@ class EdgeOutbox:
             self.db.execute(
                 'DELETE FROM edge_event_origin WHERE event_uid NOT IN (SELECT event_uid FROM outbox) AND event_uid NOT IN (SELECT event_uid FROM edge_active_events)'
             )
-            self.db.commit()
+            self._commit()
 
     def retry_blocked(self):
         with self.lock:
             self.db.execute('UPDATE outbox SET blocked_at=NULL,next_attempt=0 WHERE acked_at IS NULL')
-            self.db.commit()
+            self._commit()
 
 
 if __name__ == '__main__':

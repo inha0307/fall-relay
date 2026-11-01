@@ -166,6 +166,6 @@ Releases are archived on Zenodo; the DOI [10.5281/zenodo.23719976](https://doi.o
 the latest version (v1.0.0: [10.5281/zenodo.23719977](https://doi.org/10.5281/zenodo.23719977); v1.0.1 aligns code
 defaults and documentation with the article, the measured behaviour is unchanged; v1.0.2 fixes the web proxy so that
 manual-review alerts appear on the Alerts page; v1.1.0 introduces notification policy version 2, which classifies an
-alert from the latest state of its event instead of its arrival time, see docs/EVENT_PROTOCOL.md §4, and opens the
-device outbox with `synchronous=FULL` so that committed messages survive a power loss). To cite the software, use
+alert from the latest state of its event instead of its arrival time, see docs/EVENT_PROTOCOL.md §4, and syncs the
+device outbox to storage every second so that a power loss costs at most the last second of committed messages). To cite the software, use
 [CITATION.cff](CITATION.cff) or the "Cite this repository" button on GitHub.

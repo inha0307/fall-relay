@@ -58,9 +58,17 @@ def port():
 def ssh(cmd, **kwargs):
     if LOCAL:
         return subprocess.run(['bash', '-c', cmd], check=True, **kwargs)
-    return subprocess.run(
-        ['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=8', '-i', KEY, DEVICE['target'], cmd], check=True, **kwargs
-    )
+    # Exit status 255 is the SSH transport failing (the device's network flaps for a while after a reboot), not the
+    # remote command: retry a few times before giving up.
+    for attempt in range(5):
+        try:
+            return subprocess.run(
+                ['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=8', '-i', KEY, DEVICE['target'], cmd], check=True, **kwargs
+            )
+        except subprocess.CalledProcessError as exc:
+            if exc.returncode != 255 or attempt == 4:
+                raise
+            time.sleep(4)
 
 
 def ssh_text(cmd):

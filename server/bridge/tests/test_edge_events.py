@@ -68,8 +68,11 @@ def storage(root):
     events, registry, store = service(root)
     rows = messages()
     box = EdgeOutbox(root / 'outbox.sqlite3')
-    # Durable across power loss: the WAL is synced at every commit (D3 trial: NORMAL lost the last ~30 s).
-    assert box.db.execute('PRAGMA synchronous').fetchone()[0] == 2, 'outbox must open with synchronous=FULL'
+    # Durable across power loss without a sync in the inference loop: commits stay NORMAL and a background thread
+    # fsyncs the WAL every second (trial D3: bare NORMAL lost ~30 s; FULL stalled the loop for 9.7 s on the SD card).
+    assert box.db.execute('PRAGMA synchronous').fetchone()[0] == 1 and box._syncer.is_alive()
+    box.sync_now()
+    assert box.status()['outbox_unsynced'] is False and box.status()['outbox_synced_ago_s'] is not None
     decision = {key: rows[0]['confirm'][key] for key in ('k', 'n', 'm')}
     for row in rows:
         transition = {
