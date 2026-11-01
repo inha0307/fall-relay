@@ -10,6 +10,11 @@ from video_bridge import create_app
 import uvicorn
 
 
+def _int_header(headers, name):
+    value = headers.get(name)
+    return int(value) if value is not None and value.isdigit() else None
+
+
 def main():
     p = argparse.ArgumentParser()
     p.add_argument('--config', required=True)
@@ -118,6 +123,9 @@ def main():
                                     'onset_sensor_ns',
                                 )
                             },
+                            # Delivery context of an event message (docs/EVENT_PROTOCOL.md, "Delivery context").
+                            'event_age_ms': _int_header(headers, b'x-fall-relay-event-age-ms'),
+                            'event_backlog': _int_header(headers, b'x-fall-relay-event-backlog'),
                         },
                     )
 

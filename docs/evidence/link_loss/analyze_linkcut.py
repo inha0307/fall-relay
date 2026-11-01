@@ -111,7 +111,8 @@ def main():
 
     completed = json.loads((root / 'completed.json').read_text()) if (root / 'completed.json').exists() else {}
     gated = (completed.get('gated_devices') or ['pi4'])[0]
-    control = 'pi5' if gated == 'pi4' else 'pi4'
+    # The other device, when the trial had one (v1.0.0 trials: Pi 4 and Pi 5; v1.1.0: the Pi 5 alone).
+    control = next((d for d in ('pi4', 'pi5') if d != gated and (trial / d / 'slots.jsonl').exists()), None)
     report = {
         'trial': a.trial,
         'schedule': sched,
