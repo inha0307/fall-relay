@@ -14,7 +14,7 @@ install directory and camera.
 The runtime refuses to start when any listed file differs from its hash. See deploy/README.md.
 """
 
-import argparse, hashlib, json, shutil
+import argparse, hashlib, json, re, shutil
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -62,6 +62,9 @@ def main():
     ap.add_argument("--camera", default="1", help="camera id; names the unit fall-relay-edge-cam<id>.service")
     ap.add_argument("--clips", action="store_true", help="upload short event clips (contain camera images)")
     args = ap.parse_args()
+    # The bridge accepts a run identity only with this bundle id form (server/bridge/model_contract.py).
+    if not re.fullmatch("[A-Za-z0-9_-]{1,64}", args.bundle_id):
+        ap.error("--bundle-id must match [A-Za-z0-9_-]{1,64} (no dots: fall-relay-v1-1-0, not fall-relay-v1.1.0)")
     if args.out.exists() and any(args.out.iterdir()):
         raise SystemExit(f"{args.out} is not empty")
     manifest = json.loads((HERE / "bundle_manifest.json").read_text())
