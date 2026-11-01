@@ -77,9 +77,13 @@ them.
 |---|---|
 | `X-Fall-Relay-Event-Age-Ms` | Milliseconds since the event opened, by the device's boot clock (`CLOCK_BOOTTIME`). Omitted when the device cannot know it: the event opened before the last reboot (the outbox stores the boot identifier of the open) |
 | `X-Fall-Relay-Event-Backlog` | How many later messages of the same event are still pending in the outbox (0 = this message is the event's latest state) |
+| `X-Fall-Relay-Decided-Clock` | `synced` when the device's wall clock was synchronised (kernel `adjtimex`, STA_UNSYNC clear) at the moment the event opened; absent otherwise. The outbox records it with the open |
 
 The age needs neither the wall clock nor its calibration, so it is right after a reboot before the clock was set, and
-after a link outage during which the calibration failed.
+after a link outage during which the calibration failed. The third header covers the remaining case: a message
+queued before a power loss and sent after the reboot while the wall clock is still unset. Its `decided_at` was taken
+by a synchronised clock and is used as is; the calibration measured at send time, which would be off by the clock's
+error, is ignored.
 
 ### Server response
 
@@ -175,10 +179,12 @@ message that arrives with backlog 0, or any `close`, settles it in the same tran
 settles an expired hold as `live` / `HOLD_TIMEOUT`. A classifying alert is already visible in the browser, without
 sound.
 
-**Age.** `X-Fall-Relay-Event-Age-Ms` when present; else the corrected wall clock when the calibration is trusted
-(`rtt_s ≤ 2`, `|offset_s| ≤ 86400`, not more than 2 s in the future); else unknown. The event's `started_at` is the
-arrival time minus the age, so the detection time shown to responders does not depend on the device's wall clock.
-`events.event_age_on_arrival_ms` and `events.age_source` (`device_boot` or `wall_clock`) record what was used.
+**Age.** `X-Fall-Relay-Event-Age-Ms` when present; else `decided_at` as sent when `X-Fall-Relay-Decided-Clock:
+synced` is present (and the time is plausible: at most 30 days old, at most 2 s in the future); else the corrected
+wall clock when the calibration is trusted (`rtt_s ≤ 2`, `|offset_s| ≤ 86400`, not more than 2 s in the future); else
+unknown. The event's `started_at` is the arrival time minus the age, so the detection time shown to responders does
+not depend on the device's wall clock at send time. `events.event_age_on_arrival_ms` and `events.age_source`
+(`device_boot`, `decided_wall` or `wall_clock`) record what was used.
 
 **Once settled, a classification never changes**: a late `close` with `recovered` does not demote a live alert, and
 nothing promotes a manual-review alert. The decision is recorded on the alert (`notification_mode`,

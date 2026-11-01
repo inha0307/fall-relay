@@ -95,8 +95,14 @@ class EdgeEventStore:
         # The wall-clock calibration is kept for display; it no longer decides the notification mode.
         corrected = payload['decided_at'] + payload['clock']['offset_s']
         trusted = payload['clock']['rtt_s'] <= 2 and abs(payload['clock']['offset_s']) <= 86400 and corrected <= now + 2
+        # The device vouches that its wall clock was synchronised when the event opened: decided_at is then right
+        # even if the clock is unset now (resend after a reboot), and the send-time calibration is ignored.
+        synced = bool(transport.get('decided_clock_synced')) and now - 30 * 86400 <= payload['decided_at'] <= now + 2
         if 'event_age_ms' in transport:
             age, age_source = transport['event_age_ms'] / 1000, 'device_boot'
+        elif synced:
+            corrected, trusted = payload['decided_at'], True
+            age, age_source = max(0.0, now - corrected), 'decided_wall'
         elif trusted:
             age, age_source = max(0.0, now - corrected), 'wall_clock'
         else:

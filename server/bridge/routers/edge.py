@@ -71,6 +71,8 @@ def edge_router(service, authorize, schedule_clips, recorder=None, labels=None):
             value = request.headers.get(name)
             if value is not None and re.fullmatch(r'[0-9]{1,15}', value):
                 transport[key] = int(value)
+        if request.headers.get('x-fall-relay-decided-clock') == 'synced':
+            transport['decided_clock_synced'] = True
         try:
             result = await run_in_threadpool(service.receive, payload, None, transport)
         except EventConflict as exc:

@@ -126,6 +126,7 @@ def main():
                             # Delivery context of an event message (docs/EVENT_PROTOCOL.md, "Delivery context").
                             'event_age_ms': _int_header(headers, b'x-fall-relay-event-age-ms'),
                             'event_backlog': _int_header(headers, b'x-fall-relay-event-backlog'),
+                            'decided_clock_synced': headers.get(b'x-fall-relay-decided-clock') == b'synced',
                         },
                     )
 

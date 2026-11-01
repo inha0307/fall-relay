@@ -31,6 +31,7 @@ DECISION_PROVENANCE = {
     'edge_schema_1',
     'edge_schema_2',
     'edge_schema_3',
+    'edge_schema_4',
 }
 
 

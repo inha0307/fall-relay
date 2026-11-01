@@ -3,7 +3,7 @@
 
 -- Event age as the device reported it (boot clock) or as derived from the wall clock, and which it was.
 ALTER TABLE events ADD COLUMN event_age_on_arrival_ms bigint;
-ALTER TABLE events ADD COLUMN age_source text CHECK (age_source IN ('device_boot','wall_clock'));
+ALTER TABLE events ADD COLUMN age_source text CHECK (age_source IN ('device_boot','decided_wall','wall_clock'));
 
 -- The classification record of an alert.
 ALTER TABLE alerts ADD COLUMN classification_reason text;

@@ -16,7 +16,7 @@ import urllib.error
 from camera_registry import CameraRegistry
 from edge_event_runtime import OutboxWorker
 from edge_event_store import EdgeEventStore, EventConflict
-from edge_outbox import AGE_HEADER, BACKLOG_HEADER, EdgeOutbox, boot_clock
+from edge_outbox import AGE_HEADER, BACKLOG_HEADER, CLOCK_HEADER, EdgeOutbox, boot_clock
 from event_store import EventStore
 from _pg import Schema, url
 from test_hardware import call, config
@@ -37,11 +37,14 @@ def rejects(fn, error=ValueError):
 
 def transport_of(headers):
     """The delivery context the bridge's router parses from the request headers."""
-    return {
+    transport = {
         key: int(headers[name])
         for name, key in ((AGE_HEADER, 'event_age_ms'), (BACKLOG_HEADER, 'event_backlog'))
         if name in headers
     }
+    if headers.get(CLOCK_HEADER) == 'synced':
+        transport['decided_clock_synced'] = True
+    return transport
 
 
 def messages(wall=100):
@@ -65,6 +68,8 @@ def storage(root):
     events, registry, store = service(root)
     rows = messages()
     box = EdgeOutbox(root / 'outbox.sqlite3')
+    # Durable across power loss: the WAL is synced at every commit (D3 trial: NORMAL lost the last ~30 s).
+    assert box.db.execute('PRAGMA synchronous').fetchone()[0] == 2, 'outbox must open with synchronous=FULL'
     decision = {key: rows[0]['confirm'][key] for key in ('k', 'n', 'm')}
     for row in rows:
         transition = {

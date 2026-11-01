@@ -15,6 +15,31 @@ from schema_migrations import scripts, statements
 # Delivery context sent beside every message, outside the semantic hash (headers, not body).
 AGE_HEADER = 'X-Fall-Relay-Event-Age-Ms'
 BACKLOG_HEADER = 'X-Fall-Relay-Event-Backlog'
+CLOCK_HEADER = 'X-Fall-Relay-Decided-Clock'  # 'synced' when the wall clock was synchronised at the event's open
+
+
+def wall_clock_synced():
+    """1 when the kernel reports the wall clock synchronised (adjtimex: STA_UNSYNC clear, state not TIME_ERROR);
+    0 when it is not or cannot be asked. Then a decided_at taken now stays meaningful after a reboot."""
+    try:
+        import ctypes
+
+        class Timex(ctypes.Structure):
+            _fields_ = [
+                ('modes', ctypes.c_uint),
+                ('offset', ctypes.c_long),
+                ('freq', ctypes.c_long),
+                ('maxerror', ctypes.c_long),
+                ('esterror', ctypes.c_long),
+                ('status', ctypes.c_int),
+                ('_rest', ctypes.c_char * 512),
+            ]
+
+        tx = Timex()
+        state = ctypes.CDLL(None, use_errno=True).adjtimex(ctypes.byref(tx))
+        return int(state >= 0 and state != 5 and not tx.status & 0x40)
+    except (AttributeError, OSError, ValueError):
+        return 0
 
 
 def boot_identity():
@@ -34,9 +59,10 @@ def boot_clock():
 
 
 class EdgeOutbox:
-    def __init__(self, path, max_pending=10000, boot_id=None, boot_clock_fn=None):
+    def __init__(self, path, max_pending=10000, boot_id=None, boot_clock_fn=None, clock_synced_fn=None):
         self.boot_id = boot_id or boot_identity()
         self.boot_clock = boot_clock_fn or boot_clock
+        self.clock_synced = clock_synced_fn or wall_clock_synced
         self.path = Path(path).expanduser().resolve()
         self.path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
         self.guard = (self.path.with_suffix(self.path.suffix + '.lock')).open('a')
@@ -55,7 +81,9 @@ class EdgeOutbox:
             self.db = sqlite3.connect(self.path, check_same_thread=False)
             self.db.row_factory = sqlite3.Row
             self.db.execute('PRAGMA journal_mode=WAL')
-            self.db.execute('PRAGMA synchronous=NORMAL')
+            # FULL: the WAL is fsynced at every commit, so a committed message survives a power loss (the message
+            # rate makes the sync cheap). NORMAL lost the last ~30 s of commits in the power-loss trial (D3).
+            self.db.execute('PRAGMA synchronous=FULL')
             self.db.execute('PRAGMA busy_timeout=3000')
             self._migrate()
         except Exception:
@@ -137,9 +165,11 @@ class EdgeOutbox:
                     ).fetchone()[0]
                     uid = f'{run_id}:{counter}'
                     seq = 1
-                    # Where and when the event opened by the boot clock: the age sent with each of its messages.
+                    # Where and when the event opened by the boot clock (the age sent with each of its messages),
+                    # and whether the wall clock was synchronised then (so decided_at can be trusted after a reboot).
                     self.db.execute(
-                        'INSERT INTO edge_event_origin VALUES (?,?,?)', (uid, self.boot_id, self.boot_clock())
+                        'INSERT INTO edge_event_origin(event_uid,boot_id,opened_boot_s,wall_synced) VALUES (?,?,?,?)',
+                        (uid, self.boot_id, self.boot_clock(), int(bool(self.clock_synced()))),
                     )
                 else:
                     if not active or active['run_id'] != run_id:
@@ -238,7 +268,8 @@ class EdgeOutbox:
         boot_now = self.boot_clock() if boot_now is None else boot_now
         with self.lock:
             origin = self.db.execute(
-                'SELECT boot_id,opened_boot_s FROM edge_event_origin WHERE event_uid=?', (payload['event_uid'],)
+                'SELECT boot_id,opened_boot_s,wall_synced FROM edge_event_origin WHERE event_uid=?',
+                (payload['event_uid'],),
             ).fetchone()
             backlog = self.db.execute(
                 'SELECT COUNT(*) FROM outbox WHERE event_uid=? AND message_seq>? AND acked_at IS NULL',
@@ -247,6 +278,8 @@ class EdgeOutbox:
         headers = {BACKLOG_HEADER: str(backlog)}
         if origin and origin['boot_id'] == self.boot_id and boot_now >= origin['opened_boot_s']:
             headers[AGE_HEADER] = str(int((boot_now - origin['opened_boot_s']) * 1000))
+        if origin and origin['wall_synced']:
+            headers[CLOCK_HEADER] = 'synced'
         return headers
 
     def complete(self, payload, receipt, now):

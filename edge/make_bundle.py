@@ -43,6 +43,7 @@ EVENT_SHARED = [
     "migrations/edge/0001_outbox.sql",
     "migrations/edge/0002_runtime_recovery.sql",
     "migrations/edge/0003_event_origin.sql",
+    "migrations/edge/0004_origin_clock.sql",
 ]
 TEMPLATE = HERE / "deploy" / "fall-relay-edge.service.template"
 

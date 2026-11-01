@@ -12,6 +12,7 @@ C8 a live alert never becomes manual review when its close (recovered) arrives l
 C9 age unknown after a reboot, closed with recovery -> manual review (LATE_RECOVERED)
 C10 opened after a reboot before the wall clock was set -> live, detection time taken from the device age
 C11 queued before a power loss, sent after the reboot: runtime_stop -> live; recovered -> manual review
+C12 the same with the device's word that its clock was synchronised at the open: decided_at used as is
 Also: an outcome unknown older than the stale threshold -> manual review (STALE_UNKNOWN); a recent open is classified
 at once even with a backlog; an old device without transport headers is held and settled by its close.
 """
@@ -196,6 +197,25 @@ def scenarios(events, fixtures):
         expect(alerts, id, mode, code)
         results[f'C11:{reason}'] = id
 
+    # C12: queued before a power loss and sent after the reboot while the device's wall clock is still unset (the
+    # send-time calibration says 11 days), with the device's word that its clock was synchronised when the event
+    # opened: decided_at is used as is, so the detection time and the age are right.
+    unset = {'offset_s': 968_000.0, 'rtt_s': 0.01}
+    for reason, mode, code in (('runtime_stop', LIVE, OUTCOME_UNKNOWN), ('recovered', MANUAL_REVIEW, LATE_RECOVERED)):
+        d = Device(fixtures)
+        id = edge.receive(d.message('open', 1, 'ALERT', t - 500, clock=unset), now=t, transport={'event_backlog': 1, 'decided_clock_synced': True})['alert_id']
+        row = expect(alerts, id, CLASSIFYING)
+        assert row['age_source'] == 'decided_wall' and row['event_age_on_arrival_ms'] == 500_000 and row['event_decided_at'] == t - 500
+        edge.receive(d.message('close', 2, 'COOLDOWN', t - 400, reason, clock=unset), now=t + 0.1, transport={'event_backlog': 0, 'decided_clock_synced': True})
+        expect(alerts, id, mode, code)
+        results[f'C12:{reason}'] = id
+    # Without the device's word the same messages give an unknown age (the calibration is not trusted).
+    d = Device(fixtures)
+    id = edge.receive(d.message('open', 1, 'ALERT', t - 500, clock=unset), now=t, transport={'event_backlog': 1})['alert_id']
+    assert expect(alerts, id, CLASSIFYING)['age_source'] is None
+    edge.receive(d.message('close', 2, 'COOLDOWN', t - 400, 'runtime_stop', clock=unset), now=t + 0.1, transport={'event_backlog': 0})
+    expect(alerts, id, LIVE, OUTCOME_UNKNOWN)
+
     # An old device sends no headers at all: a recent open is live at once; a late one is held and its close settles it.
     d = Device(fixtures)
     id = edge.receive(d.message('open', 1, 'ALERT', t - 10), now=t)['alert_id']
@@ -229,7 +249,7 @@ def scenarios(events, fixtures):
             raise AssertionError('constraint accepted ' + sql)
         except Exception as exc:
             assert not isinstance(exc, AssertionError), exc
-    print('PASS C1-C11: latest-state classification, hold and timeout, reminder, resend, reboot and legacy-device cases')
+    print('PASS C1-C12: latest-state classification, hold and timeout, reminder, resend, reboot, synced-clock and legacy-device cases')
     return results
 
 
