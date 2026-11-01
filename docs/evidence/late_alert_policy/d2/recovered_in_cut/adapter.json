@@ -1,1 +1,1 @@
-{"run_id": "a8784e8a704044cb9a57245904eb0087", "rows": 2621, "events_opened": 1, "events_closed": 1, "outbox": {"outbox_pending": 0, "outbox_oldest_s": 0, "outbox_blocked": 0, "outbox_error": null}}
+{"run_id": "35970b2d37eb4aca8fa6ff11a8794093", "rows": 2621, "events_opened": 1, "events_closed": 1, "outbox": {"outbox_pending": 0, "outbox_oldest_s": 0, "outbox_blocked": 0, "outbox_error": null, "outbox_synced_ago_s": 20.755, "outbox_unsynced": false}}

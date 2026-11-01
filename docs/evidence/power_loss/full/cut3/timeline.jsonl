@@ -1,0 +1,20 @@
+{"wall": 1793537949.3323534, "kind": "gate_cut"}
+{"wall": 1793537949.5313172, "kind": "clock_before", "device_minus_host_s": 0.08551645278930664}
+{"wall": 1793537949.5317616, "kind": "adapter_started", "host_started_at": 1793537949.53176}
+{"wall": 1793538009.6228068, "kind": "power_cue"}
+{"wall": 1793538024.845958, "kind": "ssh_session_ended", "returncode": 255, "power_off_at": 1793538016.8769283}
+{"wall": 1793538048.3748047, "kind": "port_back", "first_ok_after_gap": 1793538047.8794}
+{"wall": 1793538048.8443222, "kind": "ssh_ready", "ssh_ready_at": 1793538048.668928, "device_minus_host_s": -974403.4104306698}
+{"wall": 1793538049.1992948, "kind": "post_boot", "integrity": ["ok"], "rows": 34, "uptime_s": 13.21}
+{"wall": 1793538065.4792054, "kind": "resend_started"}
+{"wall": 1793538065.9798923, "kind": "resend_ended", "returncode": 255}
+{"wall": 1793538302.4776385, "kind": "resend_started", "attempt": 1}
+{"wall": 1793538302.9784951, "kind": "resend_ended", "returncode": 255, "attempt": 1}
+{"wall": 1793538308.9852226, "kind": "resend_started", "attempt": 2}
+{"wall": 1793538309.4862206, "kind": "resend_ended", "returncode": 255, "attempt": 2}
+{"wall": 1793538315.4936707, "kind": "resend_started", "attempt": 3}
+{"wall": 1793538315.9944558, "kind": "resend_ended", "returncode": 255, "attempt": 3}
+{"wall": 1793538322.0029218, "kind": "resend_started", "attempt": 4}
+{"wall": 1793538322.5040987, "kind": "resend_ended", "returncode": 255, "attempt": 4}
+{"wall": 1793538328.5110407, "kind": "resend_started", "attempt": 5}
+{"wall": 1793538339.023837, "kind": "resend_ended", "returncode": 0, "attempt": 5}

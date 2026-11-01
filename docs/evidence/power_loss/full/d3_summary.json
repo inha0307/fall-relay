@@ -1,0 +1,140 @@
+{
+  "root": "d3_20261101_run02",
+  "repeats": {
+    "cut1": {
+      "power_off_after_start_s": 68.3,
+      "device_back_after_s": 31.7,
+      "clock_device_minus_host_s": {
+        "before": 0.06956744194030762,
+        "after_boot": -973950.3295371532
+      },
+      "chrony_after_boot": [
+        "Reference ID    : 7F7F0101 ()",
+        "Stratum         : 10",
+        "Ref time (UTC)  : Wed Oct 21 06:20:42 2026",
+        "System time     : 0.000000000 seconds fast of NTP time"
+      ],
+      "boot_id_changed": true,
+      "integrity_check": [
+        "ok"
+      ],
+      "survived_messages": 34,
+      "last_committed_before_power_off_s": 1.27,
+      "message_interval_s": 2.0,
+      "estimated_lost_messages": 0,
+      "final_outbox": {
+        "rows": 35,
+        "unacked": 0,
+        "kinds": {
+          "open": 1,
+          "update": 33,
+          "close": 1
+        }
+      },
+      "server": {
+        "events": 1,
+        "receipts": 35,
+        "receipts_in_order": true,
+        "close_reason": "runtime_stop",
+        "age_source": "decided_wall",
+        "event_age_on_arrival_ms": 102463,
+        "late_arrival": 0,
+        "open_age_header_ms": null,
+        "open_backlog_header": 34,
+        "notification_mode": "live",
+        "classification_reason": "ONGOING",
+        "event_started_at_minus_decided_s": 0.0
+      }
+    },
+    "cut2": {
+      "power_off_after_start_s": 65.3,
+      "device_back_after_s": 31.8,
+      "clock_device_minus_host_s": {
+        "before": 0.08039379119873047,
+        "after_boot": -974237.6747851372
+      },
+      "chrony_after_boot": [
+        "Reference ID    : 7F7F0101 ()",
+        "Stratum         : 10",
+        "Ref time (UTC)  : Wed Oct 21 06:20:43 2026",
+        "System time     : 0.000000000 seconds fast of NTP time"
+      ],
+      "boot_id_changed": true,
+      "integrity_check": [
+        "ok"
+      ],
+      "survived_messages": 33,
+      "last_committed_before_power_off_s": 0.22,
+      "message_interval_s": 2.0,
+      "estimated_lost_messages": 0,
+      "final_outbox": {
+        "rows": 33,
+        "unacked": 33,
+        "kinds": {
+          "open": 1,
+          "update": 32,
+          "close": 0
+        }
+      },
+      "server": {
+        "events": 1,
+        "receipts": 34,
+        "receipts_in_order": true,
+        "close_reason": "runtime_stop",
+        "age_source": "decided_wall",
+        "event_age_on_arrival_ms": 479920,
+        "late_arrival": 1,
+        "open_age_header_ms": null,
+        "open_backlog_header": 33,
+        "notification_mode": "live",
+        "classification_reason": "OUTCOME_UNKNOWN",
+        "event_started_at_minus_decided_s": 0.0
+      }
+    },
+    "cut3": {
+      "power_off_after_start_s": 67.3,
+      "device_back_after_s": 31.0,
+      "clock_device_minus_host_s": {
+        "before": 0.08551645278930664,
+        "after_boot": -974403.4104306698
+      },
+      "chrony_after_boot": [
+        "Reference ID    : 7F7F0101 ()",
+        "Stratum         : 10",
+        "Ref time (UTC)  : Wed Oct 21 06:20:43 2026",
+        "System time     : 0.000000000 seconds fast of NTP time"
+      ],
+      "boot_id_changed": true,
+      "integrity_check": [
+        "ok"
+      ],
+      "survived_messages": 34,
+      "last_committed_before_power_off_s": 0.28,
+      "message_interval_s": 2.0,
+      "estimated_lost_messages": 0,
+      "final_outbox": {
+        "rows": 34,
+        "unacked": 34,
+        "kinds": {
+          "open": 1,
+          "update": 33,
+          "close": 0
+        }
+      },
+      "server": {
+        "events": 1,
+        "receipts": 35,
+        "receipts_in_order": true,
+        "close_reason": "runtime_stop",
+        "age_source": "decided_wall",
+        "event_age_on_arrival_ms": 376790,
+        "late_arrival": 1,
+        "open_age_header_ms": null,
+        "open_backlog_header": 34,
+        "notification_mode": "live",
+        "classification_reason": "OUTCOME_UNKNOWN",
+        "event_started_at_minus_decided_s": 0.0
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{"wall": 1793539211.3240566, "kind": "device_settled", "uptime_s": 183.88}
+{"wall": 1793539212.931471, "kind": "gate_cut"}
+{"wall": 1793539213.1137884, "kind": "clock_before", "device_minus_host_s": 0.07514834403991699}
+{"wall": 1793539213.1151896, "kind": "adapter_started", "host_started_at": 1793539213.1151826}
+{"wall": 1793539273.2077553, "kind": "power_cue"}
+{"wall": 1793539286.428171, "kind": "ssh_session_ended", "returncode": 255, "power_off_at": 1793539279.0332792}
+{"wall": 1793539312.4584787, "kind": "port_back", "first_ok_after_gap": 1793539312.2806695}
+{"wall": 1793539312.9555783, "kind": "ssh_ready", "ssh_ready_at": 1793539312.7801745, "device_minus_host_s": -975665.8791136742}
+{"wall": 1793539313.2630692, "kind": "post_boot", "integrity": ["ok"], "rows": 33, "uptime_s": 14.89}
+{"wall": 1793539368.9421198, "kind": "resend_started", "attempt": 1}
+{"wall": 1793539369.4429615, "kind": "resend_ended", "returncode": 255, "attempt": 1}
+{"wall": 1793539375.4486554, "kind": "resend_started", "attempt": 2}
+{"wall": 1793539385.9601347, "kind": "resend_ended", "returncode": 0, "attempt": 2}
+{"wall": 1793539451.280481, "kind": "gate_log_failed", "error": "ssh exit status 255"}
+{"wall": 1793539511.4166565, "kind": "gate_log_failed", "error": "ssh exit status 255"}
+{"wall": 1793539571.5625696, "kind": "gate_log_failed", "error": "ssh exit status 255"}

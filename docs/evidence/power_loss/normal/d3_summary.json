@@ -1,0 +1,50 @@
+{
+  "root": "d3_20261101_run01",
+  "repeats": {
+    "cut1": {
+      "power_off_after_start_s": 66.2,
+      "device_back_after_s": -50.3,
+      "clock_device_minus_host_s": {
+        "before": 0.0811464786529541,
+        "after_boot": -967970.7188651562
+      },
+      "chrony_after_boot": [
+        "Reference ID    : 7F7F0101 ()",
+        "Stratum         : 10",
+        "Ref time (UTC)  : Wed Oct 21 06:20:43 2026",
+        "System time     : 0.000000000 seconds fast of NTP time"
+      ],
+      "boot_id_changed": true,
+      "integrity_check": [
+        "ok"
+      ],
+      "survived_messages": 18,
+      "last_committed_before_power_off_s": 31.24,
+      "message_interval_s": 2.0,
+      "estimated_lost_messages": 14,
+      "final_outbox": {
+        "rows": 19,
+        "unacked": 0,
+        "kinds": {
+          "open": 1,
+          "update": 17,
+          "close": 1
+        }
+      },
+      "server": {
+        "events": 1,
+        "receipts": 19,
+        "receipts_in_order": true,
+        "close_reason": "runtime_stop",
+        "age_source": null,
+        "event_age_on_arrival_ms": null,
+        "late_arrival": 1,
+        "open_age_header_ms": null,
+        "open_backlog_header": 18,
+        "notification_mode": "live",
+        "classification_reason": "OUTCOME_UNKNOWN",
+        "event_started_at_minus_decided_s": 100.0
+      }
+    }
+  }
+}

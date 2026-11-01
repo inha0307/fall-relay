@@ -1,0 +1,294 @@
+{
+  "device_wall": 1792563645.1425726,
+  "size-db": 4096,
+  "size-wal": 762232,
+  "size-shm": 32768,
+  "integrity_check": [
+    "ok"
+  ],
+  "rows": [
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 1,
+      "kind": "open",
+      "created_at": 1793537496.9907885,
+      "acked_at": null,
+      "attempts": 6
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 2,
+      "kind": "update",
+      "created_at": 1793537497.390785,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 3,
+      "kind": "update",
+      "created_at": 1793537499.3907785,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 4,
+      "kind": "update",
+      "created_at": 1793537501.3907812,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 5,
+      "kind": "update",
+      "created_at": 1793537503.3907845,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 6,
+      "kind": "update",
+      "created_at": 1793537505.390779,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 7,
+      "kind": "update",
+      "created_at": 1793537507.390784,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 8,
+      "kind": "update",
+      "created_at": 1793537509.3907795,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 9,
+      "kind": "update",
+      "created_at": 1793537511.3907778,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 10,
+      "kind": "update",
+      "created_at": 1793537513.390789,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 11,
+      "kind": "update",
+      "created_at": 1793537515.3907897,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 12,
+      "kind": "update",
+      "created_at": 1793537517.3907888,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 13,
+      "kind": "update",
+      "created_at": 1793537519.3907847,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 14,
+      "kind": "update",
+      "created_at": 1793537521.3907843,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 15,
+      "kind": "update",
+      "created_at": 1793537523.3907855,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 16,
+      "kind": "update",
+      "created_at": 1793537525.390783,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 17,
+      "kind": "update",
+      "created_at": 1793537527.3907852,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 18,
+      "kind": "update",
+      "created_at": 1793537529.3907847,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 19,
+      "kind": "update",
+      "created_at": 1793537531.390782,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 20,
+      "kind": "update",
+      "created_at": 1793537533.3907945,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 21,
+      "kind": "update",
+      "created_at": 1793537535.390798,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 22,
+      "kind": "update",
+      "created_at": 1793537537.390785,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 23,
+      "kind": "update",
+      "created_at": 1793537539.3907819,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 24,
+      "kind": "update",
+      "created_at": 1793537541.3907835,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 25,
+      "kind": "update",
+      "created_at": 1793537543.3907886,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 26,
+      "kind": "update",
+      "created_at": 1793537545.3907828,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 27,
+      "kind": "update",
+      "created_at": 1793537547.3907855,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 28,
+      "kind": "update",
+      "created_at": 1793537549.3907835,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 29,
+      "kind": "update",
+      "created_at": 1793537551.3907838,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 30,
+      "kind": "update",
+      "created_at": 1793537553.3907943,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 31,
+      "kind": "update",
+      "created_at": 1793537555.3907914,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 32,
+      "kind": "update",
+      "created_at": 1793537557.3907828,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 33,
+      "kind": "update",
+      "created_at": 1793537559.490779,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "message_seq": 34,
+      "kind": "update",
+      "created_at": 1793537561.4907835,
+      "acked_at": null,
+      "attempts": 0
+    }
+  ],
+  "origin": [
+    {
+      "event_uid": "5c593ed1e0c84b589d2aa3b77a73302a:1",
+      "boot_id": "e77e0f9b-6420-4165-8a5c-520914a9c367",
+      "opened_boot_s": 5893.851727949
+    }
+  ],
+  "uptime_s": 12.95,
+  "booted_at": 1792563632.226923,
+  "boot_id": "1df45dad-4257-449d-8c3d-33e7bd0b154b",
+  "chrony": "Reference ID    : 7F7F0101 ()\nStratum         : 10\nRef time (UTC)  : Wed Oct 21 06:20:42 2026\nSystem time     : 0.000000000 seconds fast of NTP time\nLast offset     : +0.000000000 seconds\nRMS offset      : 0.000000000 seconds\nFrequency       : 2.946 ppm fast\nResidual freq   : +0.000 ppm\nSkew            : 0.000 ppm\nRoot delay      : 0.000000000 seconds\nRoot dispersion : 0.000000000 seconds\nUpdate interval : 0.0 seconds\nLeap status     : Normal\n"
+}

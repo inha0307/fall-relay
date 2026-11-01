@@ -60,15 +60,15 @@ def ssh(cmd, **kwargs):
         return subprocess.run(['bash', '-c', cmd], check=True, **kwargs)
     # Exit status 255 is the SSH transport failing (the device's network flaps for a while after a reboot), not the
     # remote command: retry a few times before giving up.
-    for attempt in range(5):
+    for attempt in range(12):
         try:
             return subprocess.run(
                 ['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=8', '-i', KEY, DEVICE['target'], cmd], check=True, **kwargs
             )
         except subprocess.CalledProcessError as exc:
-            if exc.returncode != 255 or attempt == 4:
+            if exc.returncode != 255 or attempt == 11:
                 raise
-            time.sleep(4)
+            time.sleep(5)
 
 
 def ssh_text(cmd):
@@ -135,8 +135,8 @@ def stage(root):
     with tarfile.open(pack, 'w') as t:
         t.add(ADAPTER, arcname='any_detector_adapter.py')
         t.add(LINK_GATE, arcname='link_gate.py')
-        for name in ('lying_still.csv', 'recovered_in_cut.csv'):
-            t.add(HERE / name, arcname='scores/' + name)
+        for path in sorted(HERE.glob('*.csv')):  # the two D2 sequences and idle.csv of the power-loss check
+            t.add(path, arcname='scores/' + path.name)
     with pack.open('rb') as f:
         settings = {'stage': DEVICE['stage'], 'original': DEVICE['original']}
         if LOCAL:

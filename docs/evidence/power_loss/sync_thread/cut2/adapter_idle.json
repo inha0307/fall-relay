@@ -1,0 +1,1 @@
+{"run_id": "fb09de1a2d9d4ca4b685b428ab1b4497", "rows": 100, "events_opened": 0, "events_closed": 0, "outbox": {"outbox_pending": 0, "outbox_oldest_s": 0, "outbox_blocked": 0, "outbox_error": null, "outbox_synced_ago_s": 8.87, "outbox_unsynced": false}}

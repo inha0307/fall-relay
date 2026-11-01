@@ -1,5 +1,5 @@
 {
-  "root": "d2_20261101_run01",
+  "root": "d2_20261101_run02",
   "cut": [
     0.0,
     180.0
@@ -7,8 +7,8 @@
   "cases": {
     "lying_still": {
       "scores": "lying_still.csv",
-      "run_id": "06f4ad6f31af4eb2bc6b4a1ced2cbcff",
-      "event_uid": "06f4ad6f31af4eb2bc6b4a1ced2cbcff:1",
+      "run_id": "f3c22ea6fa87469299b71782482fede7",
+      "event_uid": "f3c22ea6fa87469299b71782482fede7:1",
       "adapter": {
         "rows": 2621,
         "events_opened": 1,
@@ -17,27 +17,29 @@
           "outbox_pending": 0,
           "outbox_oldest_s": 0,
           "outbox_blocked": 0,
-          "outbox_error": null
+          "outbox_error": null,
+          "outbox_synced_ago_s": 3.893,
+          "outbox_unsynced": false
         }
       },
       "cut": {
         "cut_at_s": -0.0,
-        "restored_at_s": 180.256
+        "restored_at_s": 180.262
       },
       "event": {
-        "decided_at_s": 3.677,
+        "decided_at_s": 2.569,
         "open_created_in_cut": true,
-        "open_received_s": 197.604,
-        "open_received_after_restore_s": 17.348,
-        "open_age_header_ms": 195034,
+        "open_received_s": 198.579,
+        "open_received_after_restore_s": 18.316,
+        "open_age_header_ms": 195994,
         "open_backlog_header": 98,
-        "event_age_on_arrival_ms": 195034,
+        "event_age_on_arrival_ms": 195994,
         "age_source": "device_boot",
         "late_arrival": 1,
         "clock_usable": 0,
         "close_reason": "recovered",
-        "ended_at_s": 258.368,
-        "close_received_s": 258.376
+        "ended_at_s": 258.382,
+        "close_received_s": 258.412
       },
       "alert": {
         "id": 1,
@@ -46,24 +48,24 @@
         "classification_reason": "ONGOING",
         "suppression_reason": null,
         "policy_version": 2,
-        "created_s": 197.604,
+        "created_s": 198.579,
         "hold_until_s": null,
-        "classified_s": 198.347,
-        "classified_after_open_received_s": 0.743,
+        "classified_s": 199.429,
+        "classified_after_open_received_s": 0.85,
         "log": [
           {
-            "at_s": 197.604,
+            "at_s": 198.579,
             "actor": "edge",
             "action": "created",
             "to_state": "pending",
-            "detail": "{\"event_uid\": \"06f4ad6f31af4eb2bc6b4a1ced2cbcff:1\", \"late_arrival\": true, \"clock_usable\": false, \"event_age_s\": 195.034, \"age_source\": \"device_boot\", \"event_backlog\": 98, \"decision_time\": 1793527291.4695868, \"delivery_enabled\": false, \"notification_mode\": \"classifying\", \"classification_reason\": null, \"policy_version\": 2}"
+            "detail": "{\"event_uid\": \"f3c22ea6fa87469299b71782482fede7:1\", \"late_arrival\": true, \"clock_usable\": false, \"event_age_s\": 195.994, \"age_source\": \"device_boot\", \"event_backlog\": 98, \"decision_time\": 1793542384.2702055, \"delivery_enabled\": false, \"notification_mode\": \"classifying\", \"classification_reason\": null, \"policy_version\": 2}"
           },
           {
-            "at_s": 198.347,
+            "at_s": 199.429,
             "actor": "bridge",
             "action": "classified",
             "to_state": null,
-            "detail": "{\"latest_kind\": \"update\", \"close_reason\": null, \"event_age_s\": 195.779, \"notification_mode\": \"live\", \"classification_reason\": \"ONGOING\", \"policy_version\": 2}"
+            "detail": "{\"latest_kind\": \"update\", \"close_reason\": null, \"event_age_s\": 196.845, \"notification_mode\": \"live\", \"classification_reason\": \"ONGOING\", \"policy_version\": 2}"
           }
         ]
       },
@@ -74,11 +76,11 @@
           "update": 128,
           "close": 1
         },
-        "created_during_cut": 89,
+        "created_during_cut": 90,
         "acked_after_restore_s": {
-          "min": 18.478625059127808,
-          "max": 19.136595726013184,
-          "n": 89
+          "min": 18.314924955368042,
+          "max": 19.081237077713013,
+          "n": 90
         },
         "max_attempts": 9,
         "retried": 1,
@@ -90,7 +92,7 @@
       },
       "gate": {
         "held_connections": 97,
-        "relayed_connections": 170,
+        "relayed_connections": 171,
         "upstream_failed": 0
       },
       "expected": {
@@ -104,8 +106,8 @@
     },
     "recovered_in_cut": {
       "scores": "recovered_in_cut.csv",
-      "run_id": "a8784e8a704044cb9a57245904eb0087",
-      "event_uid": "a8784e8a704044cb9a57245904eb0087:1",
+      "run_id": "35970b2d37eb4aca8fa6ff11a8794093",
+      "event_uid": "35970b2d37eb4aca8fa6ff11a8794093:1",
       "adapter": {
         "rows": 2621,
         "events_opened": 1,
@@ -114,27 +116,29 @@
           "outbox_pending": 0,
           "outbox_oldest_s": 0,
           "outbox_blocked": 0,
-          "outbox_error": null
+          "outbox_error": null,
+          "outbox_synced_ago_s": 20.755,
+          "outbox_unsynced": false
         }
       },
       "cut": {
         "cut_at_s": -0.0,
-        "restored_at_s": 180.265
+        "restored_at_s": 180.261
       },
       "event": {
-        "decided_at_s": 3.647,
+        "decided_at_s": 2.527,
         "open_created_in_cut": true,
-        "open_received_s": 198.492,
-        "open_received_after_restore_s": 18.228,
-        "open_age_header_ms": 195951,
+        "open_received_s": 198.485,
+        "open_received_after_restore_s": 18.224,
+        "open_age_header_ms": 195943,
         "open_backlog_header": 17,
-        "event_age_on_arrival_ms": 195951,
+        "event_age_on_arrival_ms": 195943,
         "age_source": "device_boot",
         "late_arrival": 1,
         "clock_usable": 0,
         "close_reason": "recovered",
-        "ended_at_s": 33.541,
-        "close_received_s": 198.649
+        "ended_at_s": 33.542,
+        "close_received_s": 198.606
       },
       "alert": {
         "id": 2,
@@ -143,24 +147,24 @@
         "classification_reason": "LATE_RECOVERED",
         "suppression_reason": "late_recovered",
         "policy_version": 2,
-        "created_s": 198.492,
+        "created_s": 198.485,
         "hold_until_s": null,
-        "classified_s": 198.649,
-        "classified_after_open_received_s": 0.157,
+        "classified_s": 198.606,
+        "classified_after_open_received_s": 0.121,
         "log": [
           {
-            "at_s": 198.492,
+            "at_s": 198.485,
             "actor": "edge",
             "action": "created",
             "to_state": "pending",
-            "detail": "{\"event_uid\": \"a8784e8a704044cb9a57245904eb0087:1\", \"late_arrival\": true, \"clock_usable\": false, \"event_age_s\": 195.951, \"age_source\": \"device_boot\", \"event_backlog\": 17, \"decision_time\": 1793527559.609939, \"delivery_enabled\": false, \"notification_mode\": \"classifying\", \"classification_reason\": null, \"policy_version\": 2}"
+            "detail": "{\"event_uid\": \"35970b2d37eb4aca8fa6ff11a8794093:1\", \"late_arrival\": true, \"clock_usable\": false, \"event_age_s\": 195.943, \"age_source\": \"device_boot\", \"event_backlog\": 17, \"decision_time\": 1793542652.3817768, \"delivery_enabled\": false, \"notification_mode\": \"classifying\", \"classification_reason\": null, \"policy_version\": 2}"
           },
           {
-            "at_s": 198.649,
+            "at_s": 198.606,
             "actor": "bridge",
             "action": "classified",
             "to_state": null,
-            "detail": "{\"latest_kind\": \"close\", \"close_reason\": \"recovered\", \"event_age_s\": 196.11, \"notification_mode\": \"manual_review\", \"classification_reason\": \"LATE_RECOVERED\", \"policy_version\": 2}"
+            "detail": "{\"latest_kind\": \"close\", \"close_reason\": \"recovered\", \"event_age_s\": 196.065, \"notification_mode\": \"manual_review\", \"classification_reason\": \"LATE_RECOVERED\", \"policy_version\": 2}"
           }
         ]
       },
@@ -173,8 +177,8 @@
         },
         "created_during_cut": 18,
         "acked_after_restore_s": {
-          "min": 19.348397493362427,
-          "max": 19.504555225372314,
+          "min": 18.218690633773804,
+          "max": 18.338148593902588,
           "n": 18
         },
         "max_attempts": 9,

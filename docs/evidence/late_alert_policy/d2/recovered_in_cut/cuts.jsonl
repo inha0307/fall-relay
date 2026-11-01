@@ -1,4 +1,4 @@
-{"wall": 1793527557.0690868, "kind": "adapter_started", "case": "recovered_in_cut", "scores": "recovered_in_cut.csv", "host_started_at": 1793527557.0685616}
-{"wall": 1793527557.06915, "kind": "cut_start", "offset_s": 0.0, "duration_s": 180.0, "state": "on", "cut_at": 1793527557.0685601}
-{"wall": 1793527737.3333027, "kind": "cut_end", "offset_s": 0.0, "duration_s": 180.0, "state": "done", "cut_at": 1793527557.0685601, "restored_at": 1793527737.3331447}
-{"wall": 1793527819.4602058, "kind": "adapter_exited", "returncode": 0, "host_exited_at": 1793527819.460125}
+{"wall": 1793542649.8399649, "kind": "adapter_started", "case": "recovered_in_cut", "scores": "recovered_in_cut.csv", "host_started_at": 1793542649.8395567}
+{"wall": 1793542649.840013, "kind": "cut_start", "offset_s": 0.0, "duration_s": 180.0, "state": "on", "cut_at": 1793542649.8395553}
+{"wall": 1793542830.1009154, "kind": "cut_end", "offset_s": 0.0, "duration_s": 180.0, "state": "done", "cut_at": 1793542649.8395553, "restored_at": 1793542830.1007762}
+{"wall": 1793542912.2319245, "kind": "adapter_exited", "returncode": 0, "host_exited_at": 1793542912.2317348}

@@ -1,0 +1,166 @@
+{
+  "device_wall": 1792563645.749018,
+  "size-db": 4096,
+  "size-wal": 461496,
+  "size-shm": 32768,
+  "integrity_check": [
+    "ok"
+  ],
+  "rows": [
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 1,
+      "kind": "open",
+      "created_at": 1793531520.6018493,
+      "acked_at": null,
+      "attempts": 5
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 2,
+      "kind": "update",
+      "created_at": 1793531521.0018456,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 3,
+      "kind": "update",
+      "created_at": 1793531523.0018473,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 4,
+      "kind": "update",
+      "created_at": 1793531525.0018492,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 5,
+      "kind": "update",
+      "created_at": 1793531527.0018454,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 6,
+      "kind": "update",
+      "created_at": 1793531529.0018444,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 7,
+      "kind": "update",
+      "created_at": 1793531531.0018458,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 8,
+      "kind": "update",
+      "created_at": 1793531533.0018501,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 9,
+      "kind": "update",
+      "created_at": 1793531535.001847,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 10,
+      "kind": "update",
+      "created_at": 1793531537.001855,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 11,
+      "kind": "update",
+      "created_at": 1793531539.0018528,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 12,
+      "kind": "update",
+      "created_at": 1793531541.0018497,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 13,
+      "kind": "update",
+      "created_at": 1793531543.0018547,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 14,
+      "kind": "update",
+      "created_at": 1793531545.0018458,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 15,
+      "kind": "update",
+      "created_at": 1793531547.0018454,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 16,
+      "kind": "update",
+      "created_at": 1793531549.0018523,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 17,
+      "kind": "update",
+      "created_at": 1793531551.0018473,
+      "acked_at": null,
+      "attempts": 0
+    },
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "message_seq": 18,
+      "kind": "update",
+      "created_at": 1793531553.0018468,
+      "acked_at": null,
+      "attempts": 0
+    }
+  ],
+  "origin": [
+    {
+      "event_uid": "decd105458cc4180af577262beeeacb8:1",
+      "boot_id": "194e7b99-f699-4508-8248-64e0544a3c21",
+      "opened_boot_s": 9586.24819935
+    }
+  ],
+  "uptime_s": 13.44,
+  "booted_at": 1792563632.3365512,
+  "boot_id": "e77e0f9b-6420-4165-8a5c-520914a9c367",
+  "chrony": "Reference ID    : 7F7F0101 ()\nStratum         : 10\nRef time (UTC)  : Wed Oct 21 06:20:43 2026\nSystem time     : 0.000000000 seconds fast of NTP time\nLast offset     : +0.000000000 seconds\nRMS offset      : 0.000000000 seconds\nFrequency       : 3.032 ppm fast\nResidual freq   : +0.000 ppm\nSkew            : 0.000 ppm\nRoot delay      : 0.000000000 seconds\nRoot dispersion : 0.000000000 seconds\nUpdate interval : 0.0 seconds\nLeap status     : Normal\n"
+}

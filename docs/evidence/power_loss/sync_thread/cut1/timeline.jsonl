@@ -1,0 +1,12 @@
+{"wall": 1793538942.0110037, "kind": "gate_cut"}
+{"wall": 1793538942.2026613, "kind": "clock_before", "device_minus_host_s": 0.0815272331237793}
+{"wall": 1793538942.203059, "kind": "adapter_started", "host_started_at": 1793538942.2030573}
+{"wall": 1793539002.2904537, "kind": "power_cue"}
+{"wall": 1793539015.507311, "kind": "ssh_session_ended", "returncode": 255, "power_off_at": 1793539008.0062766}
+{"wall": 1793539039.5350025, "kind": "port_back", "first_ok_after_gap": 1793539039.2455986}
+{"wall": 1793539039.9915402, "kind": "ssh_ready", "ssh_ready_at": 1793539039.8075976, "device_minus_host_s": -975395.1197052002}
+{"wall": 1793539040.265226, "kind": "post_boot", "integrity": ["ok"], "rows": 33, "uptime_s": 12.81}
+{"wall": 1793539056.5504582, "kind": "resend_started", "attempt": 1}
+{"wall": 1793539057.0512786, "kind": "resend_ended", "returncode": 255, "attempt": 1}
+{"wall": 1793539063.0582411, "kind": "resend_started", "attempt": 2}
+{"wall": 1793539073.570194, "kind": "resend_ended", "returncode": 0, "attempt": 2}

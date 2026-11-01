@@ -90,19 +90,19 @@ repository with the records of the replay trials.
 `link_loss/pi5_gated_v1.1.0/` holds the aggregates of the link-loss trial repeated with v1.1.0 (notification policy
 version 2) on the Raspberry Pi 5 alone; the Pi 4 had been retired and the cameras removed, so there is no control
 device and the replay took the `--input-video` path. Same protocol: 20-min replay of the 48 frozen videos, clips off,
-two 180 s cuts 300 s and 720 s into the measurement. The files are those of the v1.0.0 folders; the outbox series was
-derived from the device's outbox database (`outbox_series_source` in the summary) because the repository copy of the
-benchmark device did not record the outbox status in its resource log at the time.
+two 180 s cuts 300 s and 720 s into the measurement. The files are those of the v1.0.0 folders (`outbox_series_source` in the summary says where the 1-s outbox
+series came from: the device's resource log). The trial ran the release code of v1.1.0, after the power-loss trial
+below had changed how the outbox syncs its log.
 
 | v1.1.0 trial, Pi 5 gated | |
 |---|---|
 | Processed slots / expected (achieved rate) | 5,489 / 5,489 (10.11 Hz) |
 | Events decided in the measurement / during the cuts | 38 / 9 (8 + 1) |
 | Events stored at the server / duplicates / blocked messages | 38 / 0 / 0 |
-| Outbox messages / attempts / timed-out attempts (all during cuts) | 86 / 152 / 66 |
+| Outbox messages / attempts / timed-out attempts (all during cuts) | 84 / 149 / 65 |
 | Peak pending messages, first and second cut | 17, 3 |
-| Backlog cleared after restore, first and second cut | 60.4 s, 31.5 s |
-| Delivery of messages created during the first cut, after restore (min / median / max) | 2.9 / 28.9 / 60.0 s |
+| Backlog cleared after restore, first and second cut | 50.6 s, 30.8 s |
+| Delivery of messages created during the first cut, after restore (min / median / max) | 0.7 / 25.9 / 49.7 s |
 | Alerts classified live / manual review | 38 / 0 (ONGOING 30, OUTCOME_UNKNOWN 8) |
 | Late-arrival events (open more than 120 s old at receipt) | 8, all live |
 | Alerts received by the browser | 38 of 38 |
@@ -120,10 +120,32 @@ written by `make_d2_scores.py`, with the link dead from the start of the run unt
 
 | Case | Open age header | Queued behind it | Open arrived after restore | Classified after arrival | Result |
 |---|---|---|---|---|---|
-| lying_still | 195.0 s | 98 | 17.3 s | 0.74 s | live, ONGOING |
-| recovered_in_cut | 196.0 s | 17 | 18.2 s | 0.16 s | manual review, LATE_RECOVERED |
+| lying_still | 196.0 s | 98 | 18.3 s | 0.85 s | live, ONGOING |
+| recovered_in_cut | 195.9 s | 17 | 18.2 s | 0.12 s | manual review, LATE_RECOVERED |
 
 Every message of both cases was stored once and in order (130 and 18 messages).
+
+## Power loss on the device (1 November 2026)
+
+`power_loss/` holds three trials in which the Raspberry Pi 5 lost power while its outbox was filling: the adapter
+ran `lying_still.csv` with the link cut, so one message was committed every 2 s, and the operator pulled the USB-C
+cable about 65 s in (`d3_power_loss.py`; the host dates the power loss by probing a closed TCP port of the device
+every 0.2 s). After the reboot the outbox database was copied untouched and integrity-checked (`post_boot.json`),
+then the adapter was started again with the same outbox and the link restored, so that it closed the previous
+event as `runtime_stop` and resent what was pending. The three folders are three outbox settings:
+
+| Setting | Repeats | Last surviving commit before the power loss | Messages lost | Database | Note |
+|---|---|---|---|---|---|
+| `normal/`: `synchronous=NORMAL` alone (v1.0.0 behaviour) | 1 | 31.2 s | 14 of 32 | intact | WAL pages rewritten in place wait for the kernel's dirty-page expiry (30 s) |
+| `full/`: `synchronous=FULL` (fsync at every commit) | 3 | 1.3 s, 0.2 s, 0.3 s | 0 | intact | one fsync held the 10 Hz detection loop for 9.7 s in the following D1 pilot, so this setting was not kept |
+| `sync_thread/`: `NORMAL` + a thread that fsyncs the log every second (v1.1.0) | 3 | 0.8 s, 0.9 s, 1.1 s | 0 | intact | the loop never waits for the storage; the 20-min D1 trial above ran with it and missed no slot |
+
+In every repeat the device came back with its wall clock about 11 days behind (no RTC battery, chrony not yet
+synchronised) and the adapter resent within 20 s of boot. With the synced-clock header of v1.1.0
+(`X-Fall-Relay-Decided-Clock`) the bridge dated each event from `decided_at` (`age_source` = `decided_wall`,
+`started_at` − `decided_at` = 0.0 s) and classified the alerts live; in the `normal/` trial, made before that header
+existed, the age was unknown and the alert was live as well. All resent messages were stored once and in sequence
+order (`d3_summary.json`, `timeline.jsonl` per repeat).
 
 ## Files
 
@@ -141,4 +163,5 @@ Every message of both cases was stored once and in order (130 and 18 messages).
 | `late_alert_policy/browser.mjs`, `browser-verification.json` | Browser verification of the late-arrival policy |
 | `link_loss/pi5_gated_v1.1.0/…`: the same files as the v1.0.0 folders | Aggregates and timing records of the v1.1.0 link-loss trial on the Pi 5 (no control device) |
 | `late_alert_policy/d2/`: `d2_summary.json`, `d2_messages.csv`, `run.json`, `lying_still/`, `recovered_in_cut/`, `lying_still.csv`, `recovered_in_cut.csv`, `make_d2_scores.py`, `d2_controller.py`, `analyze_d2.py` | The two late-arrival cases on the device (policy version 2): records, the hand-written score sequences and the scripts that ran and analysed them |
+| `power_loss/`: `d3_power_loss.py`, `normal/`, `full/`, `sync_thread/` (each: `d3_summary.json`, `completed.json`, `cut*/timeline.jsonl`, `post_boot.json`, `adapter_idle.json`) | The power-loss trials of the device outbox under three sync settings: timeline of each repeat, the outbox rows that survived, integrity check, resend result |
 | `processing_time_cdf.pdf`, `.png` | Figure E1 as vector PDF and 600 dpi PNG |
