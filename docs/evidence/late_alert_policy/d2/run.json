@@ -1,0 +1,30 @@
+{
+  "completed_at": 1793527825.0763783,
+  "cases": [
+    [
+      "lying_still",
+      "lying_still.csv"
+    ],
+    [
+      "recovered_in_cut",
+      "recovered_in_cut.csv"
+    ]
+  ],
+  "cut": [
+    0.0,
+    180.0
+  ],
+  "device": "pi5",
+  "bundle_id": "fall-relay-v1.1.0",
+  "scores_sha256": {
+    "lying_still.csv": "b1c4d022ee27d674f7992cae4891b8a672afe4996bb34435bacac91a09f59cb4",
+    "recovered_in_cut.csv": "2f337f318fd2117a7bc4a8ea7f6b7ef7a78763d80807a5bc37443051dc9f791a"
+  },
+  "device_python": "3.13.5",
+  "device_chrony": [
+    "Reference ID    : 7986D768 (121.134.215.104)",
+    "Stratum         : 3",
+    "Ref time (UTC)  : Sun Nov 01 09:55:36 2026"
+  ],
+  "note": "Raspberry Pi 5, no camera; the any-detector adapter ran on the device through the TCP gate link_gate.py; bridge on an isolated PostgreSQL schema on the server host."
+}

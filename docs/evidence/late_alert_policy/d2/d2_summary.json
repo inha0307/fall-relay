@@ -1,0 +1,202 @@
+{
+  "root": "d2_20261101_run01",
+  "cut": [
+    0.0,
+    180.0
+  ],
+  "cases": {
+    "lying_still": {
+      "scores": "lying_still.csv",
+      "run_id": "06f4ad6f31af4eb2bc6b4a1ced2cbcff",
+      "event_uid": "06f4ad6f31af4eb2bc6b4a1ced2cbcff:1",
+      "adapter": {
+        "rows": 2621,
+        "events_opened": 1,
+        "events_closed": 1,
+        "outbox": {
+          "outbox_pending": 0,
+          "outbox_oldest_s": 0,
+          "outbox_blocked": 0,
+          "outbox_error": null
+        }
+      },
+      "cut": {
+        "cut_at_s": -0.0,
+        "restored_at_s": 180.256
+      },
+      "event": {
+        "decided_at_s": 3.677,
+        "open_created_in_cut": true,
+        "open_received_s": 197.604,
+        "open_received_after_restore_s": 17.348,
+        "open_age_header_ms": 195034,
+        "open_backlog_header": 98,
+        "event_age_on_arrival_ms": 195034,
+        "age_source": "device_boot",
+        "late_arrival": 1,
+        "clock_usable": 0,
+        "close_reason": "recovered",
+        "ended_at_s": 258.368,
+        "close_received_s": 258.376
+      },
+      "alert": {
+        "id": 1,
+        "state": "pending",
+        "notification_mode": "live",
+        "classification_reason": "ONGOING",
+        "suppression_reason": null,
+        "policy_version": 2,
+        "created_s": 197.604,
+        "hold_until_s": null,
+        "classified_s": 198.347,
+        "classified_after_open_received_s": 0.743,
+        "log": [
+          {
+            "at_s": 197.604,
+            "actor": "edge",
+            "action": "created",
+            "to_state": "pending",
+            "detail": "{\"event_uid\": \"06f4ad6f31af4eb2bc6b4a1ced2cbcff:1\", \"late_arrival\": true, \"clock_usable\": false, \"event_age_s\": 195.034, \"age_source\": \"device_boot\", \"event_backlog\": 98, \"decision_time\": 1793527291.4695868, \"delivery_enabled\": false, \"notification_mode\": \"classifying\", \"classification_reason\": null, \"policy_version\": 2}"
+          },
+          {
+            "at_s": 198.347,
+            "actor": "bridge",
+            "action": "classified",
+            "to_state": null,
+            "detail": "{\"latest_kind\": \"update\", \"close_reason\": null, \"event_age_s\": 195.779, \"notification_mode\": \"live\", \"classification_reason\": \"ONGOING\", \"policy_version\": 2}"
+          }
+        ]
+      },
+      "messages": {
+        "total": 130,
+        "kinds": {
+          "open": 1,
+          "update": 128,
+          "close": 1
+        },
+        "created_during_cut": 89,
+        "acked_after_restore_s": {
+          "min": 18.478625059127808,
+          "max": 19.136595726013184,
+          "n": 89
+        },
+        "max_attempts": 9,
+        "retried": 1,
+        "blocked": 0,
+        "unacked": 0,
+        "receipts": 130,
+        "receipts_in_order": true,
+        "duplicate_server_rows": 0
+      },
+      "gate": {
+        "held_connections": 97,
+        "relayed_connections": 170,
+        "upstream_failed": 0
+      },
+      "expected": {
+        "notification_mode": "live",
+        "classification_reason": [
+          "HOLD_TIMEOUT",
+          "ONGOING"
+        ]
+      },
+      "as_expected": true
+    },
+    "recovered_in_cut": {
+      "scores": "recovered_in_cut.csv",
+      "run_id": "a8784e8a704044cb9a57245904eb0087",
+      "event_uid": "a8784e8a704044cb9a57245904eb0087:1",
+      "adapter": {
+        "rows": 2621,
+        "events_opened": 1,
+        "events_closed": 1,
+        "outbox": {
+          "outbox_pending": 0,
+          "outbox_oldest_s": 0,
+          "outbox_blocked": 0,
+          "outbox_error": null
+        }
+      },
+      "cut": {
+        "cut_at_s": -0.0,
+        "restored_at_s": 180.265
+      },
+      "event": {
+        "decided_at_s": 3.647,
+        "open_created_in_cut": true,
+        "open_received_s": 198.492,
+        "open_received_after_restore_s": 18.228,
+        "open_age_header_ms": 195951,
+        "open_backlog_header": 17,
+        "event_age_on_arrival_ms": 195951,
+        "age_source": "device_boot",
+        "late_arrival": 1,
+        "clock_usable": 0,
+        "close_reason": "recovered",
+        "ended_at_s": 33.541,
+        "close_received_s": 198.649
+      },
+      "alert": {
+        "id": 2,
+        "state": "pending",
+        "notification_mode": "manual_review",
+        "classification_reason": "LATE_RECOVERED",
+        "suppression_reason": "late_recovered",
+        "policy_version": 2,
+        "created_s": 198.492,
+        "hold_until_s": null,
+        "classified_s": 198.649,
+        "classified_after_open_received_s": 0.157,
+        "log": [
+          {
+            "at_s": 198.492,
+            "actor": "edge",
+            "action": "created",
+            "to_state": "pending",
+            "detail": "{\"event_uid\": \"a8784e8a704044cb9a57245904eb0087:1\", \"late_arrival\": true, \"clock_usable\": false, \"event_age_s\": 195.951, \"age_source\": \"device_boot\", \"event_backlog\": 17, \"decision_time\": 1793527559.609939, \"delivery_enabled\": false, \"notification_mode\": \"classifying\", \"classification_reason\": null, \"policy_version\": 2}"
+          },
+          {
+            "at_s": 198.649,
+            "actor": "bridge",
+            "action": "classified",
+            "to_state": null,
+            "detail": "{\"latest_kind\": \"close\", \"close_reason\": \"recovered\", \"event_age_s\": 196.11, \"notification_mode\": \"manual_review\", \"classification_reason\": \"LATE_RECOVERED\", \"policy_version\": 2}"
+          }
+        ]
+      },
+      "messages": {
+        "total": 18,
+        "kinds": {
+          "open": 1,
+          "update": 16,
+          "close": 1
+        },
+        "created_during_cut": 18,
+        "acked_after_restore_s": {
+          "min": 19.348397493362427,
+          "max": 19.504555225372314,
+          "n": 18
+        },
+        "max_attempts": 9,
+        "retried": 1,
+        "blocked": 0,
+        "unacked": 0,
+        "receipts": 18,
+        "receipts_in_order": true,
+        "duplicate_server_rows": 0
+      },
+      "gate": {
+        "held_connections": 97,
+        "relayed_connections": 59,
+        "upstream_failed": 0
+      },
+      "expected": {
+        "notification_mode": "manual_review",
+        "classification_reason": [
+          "LATE_RECOVERED"
+        ]
+      },
+      "as_expected": true
+    }
+  }
+}

@@ -59,7 +59,7 @@ second the Raspberry Pi 5. In each folder `linkcut_summary.json` is the output o
 `linkcut_events.csv` has one row per event decided during the measurement (decision time, whether it fell in a cut,
 server and browser receipt, late-arrival classification, receipt order, attempts); `linkcut_outbox_series.csv` is the
 1-s series of messages pending in each device's outbox; `cuts.jsonl` and `schedule.json` are the controller's timing
-records. `link_loss/outbox_backlog.png` is Fig. 6 of the article (both trials).
+records. `link_loss/outbox_backlog.png` is Fig. 6 of the v1.0.0 article draft (both trials); `link_loss/outbox_backlog_v1.1.0.png` is Fig. 6 of the article (the v1.1.0 trial).
 
 | Gated device | Pi 4 | Pi 5 |
 |---|---|---|
@@ -84,6 +84,47 @@ bridge process had been started 3.0 h and 3.4 h earlier, when the released softw
 (slots, transport attempts, outbox database, resource log) and the browser and server logs are kept outside the
 repository with the records of the replay trials.
 
+
+## Real link loss and late arrival with v1.1.0 (1 November 2026)
+
+`link_loss/pi5_gated_v1.1.0/` holds the aggregates of the link-loss trial repeated with v1.1.0 (notification policy
+version 2) on the Raspberry Pi 5 alone; the Pi 4 had been retired and the cameras removed, so there is no control
+device and the replay took the `--input-video` path. Same protocol: 20-min replay of the 48 frozen videos, clips off,
+two 180 s cuts 300 s and 720 s into the measurement. The files are those of the v1.0.0 folders; the outbox series was
+derived from the device's outbox database (`outbox_series_source` in the summary) because the repository copy of the
+benchmark device did not record the outbox status in its resource log at the time.
+
+| v1.1.0 trial, Pi 5 gated | |
+|---|---|
+| Processed slots / expected (achieved rate) | 5,489 / 5,489 (10.11 Hz) |
+| Events decided in the measurement / during the cuts | 38 / 9 (8 + 1) |
+| Events stored at the server / duplicates / blocked messages | 38 / 0 / 0 |
+| Outbox messages / attempts / timed-out attempts (all during cuts) | 86 / 152 / 66 |
+| Peak pending messages, first and second cut | 17, 3 |
+| Backlog cleared after restore, first and second cut | 60.4 s, 31.5 s |
+| Delivery of messages created during the first cut, after restore (min / median / max) | 2.9 / 28.9 / 60.0 s |
+| Alerts classified live / manual review | 38 / 0 (ONGOING 30, OUTCOME_UNKNOWN 8) |
+| Late-arrival events (open more than 120 s old at receipt) | 8, all live |
+| Alerts received by the browser | 38 of 38 |
+| Receipts in sequence order for every event | yes |
+
+The replay ends every event at the sequence boundary with the close reason `runtime_stop`, so the eight late events
+had no recovery and were live under version 2 (`OUTCOME_UNKNOWN`); the ninth event opened during a cut arrived less
+than 120 s old. `late_alert_policy/d2/` holds the two late-arrival cases run on the same device with the
+any-detector adapter (`edge/examples/any_detector_adapter.py`) through the same gate: `lying_still.csv` (fall at
+2.2 s, lying until 255 s) and `recovered_in_cut.csv` (fall at 2.2 s, up again at 30 s), each 262 s at 10 Hz and
+written by `make_d2_scores.py`, with the link dead from the start of the run until 180 s. `d2_summary.json` and
+`d2_messages.csv` are the output of `analyze_d2.py`; `run.json`, the per-case `cuts.jsonl`, `adapter.json` and
+`start.json` are the controller's records. `d2_controller.py` reproduces the cases on a device named in
+`edge/ntu_benchmark/setup.json` or, with `--local`, on any host with the bench PostgreSQL.
+
+| Case | Open age header | Queued behind it | Open arrived after restore | Classified after arrival | Result |
+|---|---|---|---|---|---|
+| lying_still | 195.0 s | 98 | 17.3 s | 0.74 s | live, ONGOING |
+| recovered_in_cut | 196.0 s | 17 | 18.2 s | 0.16 s | manual review, LATE_RECOVERED |
+
+Every message of both cases was stored once and in order (130 and 18 messages).
+
 ## Files
 
 | File | Content |
@@ -96,6 +137,8 @@ repository with the records of the replay trials.
 | `checks/fall-relay-checks.json` | Report of the 30 check scripts |
 | `link_loss/pi4_gated/…`, `link_loss/pi5_gated/…`: `linkcut_summary.json`, `linkcut_events.csv`, `linkcut_outbox_series.csv`, `cuts.jsonl`, `schedule.json`, `uptime_start.json`, `unrelated_services.json`, `completed.json` | Aggregates and timing records of the two link-loss trials (one row per event, 1-s outbox series, cut times) |
 | `link_loss/link_gate.py`, `analyze_linkcut.py` | The TCP gate run on the device and the analysis script that produced the aggregates |
-| `link_loss/outbox_backlog.png` | Fig. 6 of the article, both trials (600 dpi PNG) |
+| `link_loss/outbox_backlog.png`, `outbox_backlog_v1.1.0.png` | Outbox backlog figures: the two v1.0.0 trials, and the v1.1.0 trial that is Fig. 6 of the article (600 dpi PNG) |
 | `late_alert_policy/browser.mjs`, `browser-verification.json` | Browser verification of the late-arrival policy |
+| `link_loss/pi5_gated_v1.1.0/…`: the same files as the v1.0.0 folders | Aggregates and timing records of the v1.1.0 link-loss trial on the Pi 5 (no control device) |
+| `late_alert_policy/d2/`: `d2_summary.json`, `d2_messages.csv`, `run.json`, `lying_still/`, `recovered_in_cut/`, `lying_still.csv`, `recovered_in_cut.csv`, `make_d2_scores.py`, `d2_controller.py`, `analyze_d2.py` | The two late-arrival cases on the device (policy version 2): records, the hand-written score sequences and the scripts that ran and analysed them |
 | `processing_time_cdf.pdf`, `.png` | Figure E1 as vector PDF and 600 dpi PNG |

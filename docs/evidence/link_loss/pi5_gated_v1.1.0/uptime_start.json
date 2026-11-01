@@ -1,0 +1,26 @@
+{
+  "server": {
+    "uptime_s": 190166.49,
+    "booted_at": 1793338045.2523706,
+    "loadavg": [
+      "0.07",
+      "0.13",
+      "0.23"
+    ],
+    "now": 1793528211.742383,
+    "hostname": "server",
+    "release": "6.18.33.2-microsoft-standard-WSL2"
+  },
+  "pi5": {
+    "uptime_s": 6278.7,
+    "booted_at": 1793521934.3582063,
+    "loadavg": [
+      "0.07",
+      "0.04",
+      "0.11"
+    ],
+    "now": 1793528213.0582464,
+    "hostname": "pi5",
+    "release": "6.12.75+rpt-rpi-2712"
+  }
+}

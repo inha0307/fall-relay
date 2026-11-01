@@ -1,0 +1,4 @@
+{"wall": 1793527288.8994908, "kind": "adapter_started", "case": "lying_still", "scores": "lying_still.csv", "host_started_at": 1793527288.8990934}
+{"wall": 1793527288.8995435, "kind": "cut_start", "offset_s": 0.0, "duration_s": 180.0, "state": "on", "cut_at": 1793527288.8990924}
+{"wall": 1793527469.1556435, "kind": "cut_end", "offset_s": 0.0, "duration_s": 180.0, "state": "done", "cut_at": 1793527288.8990924, "restored_at": 1793527469.1555583}
+{"wall": 1793527551.4855213, "kind": "adapter_exited", "returncode": 0, "host_exited_at": 1793527551.4854305}
