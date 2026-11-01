@@ -215,6 +215,8 @@ def main():
                         ]
                         r = session.post(server + '/api/device_health', json=report, headers=headers, timeout=3)
                         data['health_status'] = r.status_code
+                    # Outbox backlog once a second (Fig. 6 of the article draws it during the link cuts).
+                    data['outbox'] = bridge.box.status()
                     log('resources', **data)
                 except Exception as exc:
                     log('resources', error=type(exc).__name__ + ': ' + str(exc))

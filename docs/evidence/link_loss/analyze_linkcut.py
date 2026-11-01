@@ -152,6 +152,7 @@ def main():
             if ms - 60 <= r['wall'] < me + 300 and not r.get('error') and r.get('outbox')
         ]
         series[device] = [(r['wall'], r['outbox']['outbox_pending'], r['outbox'].get('outbox_oldest_s')) for r in res]
+        series_source = 'resource_log'
         summary = rows(local / 'summary.jsonl')
         summary = summary[-1] if summary else {}
         con = sqlite3.connect('file:' + str(local / 'outbox.sqlite3') + '?mode=ro', uri=True)
@@ -163,6 +164,19 @@ def main():
                 (ms, me),
             )
         ]
+        if not res:
+            # No outbox status in the resource log (the benchmark device of v1.1.0 did not record it): derive the
+            # backlog from the outbox database itself, one point per second, which is exact rather than sampled.
+            lifetimes = con.execute(
+                'SELECT created_at,acked_at FROM outbox WHERE created_at<? ORDER BY created_at', (me + 300,)
+            ).fetchall()
+            series[device] = []
+            t = math.floor(ms - 60)
+            while t < me + 300:
+                open_now = [c for c, a in lifetimes if c <= t and (a is None or a > t)]
+                series[device].append((t, len(open_now), (t - min(open_now)) if open_now else 0))
+                t += 1
+            series_source = 'outbox_db'
         cohort = []
         for d in decisions:
             uid = d['event_uid']
@@ -259,6 +273,7 @@ def main():
             'transport_failed_errors': dict(collections.Counter(r.get('error') for r in failed)),
             'duplicate_replies': len(dup),
             'outbox_pending_max': pending_max,
+            'outbox_series_source': series_source,
             'decision_to_server_s_outside_cuts': pct(
                 [
                     c['decision_to_server_s']
