@@ -75,7 +75,7 @@ them.
 
 | Header | Meaning |
 |---|---|
-| `X-Fall-Relay-Event-Age-Ms` | Milliseconds since the event opened, by the device's boot clock (`CLOCK_BOOTTIME`). Omitted when the device cannot know it: the event opened before the last reboot (the outbox stores the boot identifier of the open) |
+| `X-Fall-Relay-Event-Age-Ms` | Milliseconds since the event opened, by the device's monotonic clock (`CLOCK_BOOTTIME`, which keeps counting through suspend). Omitted when the device cannot know it: the event opened before the last reboot (the outbox stores the boot identifier of the open) |
 | `X-Fall-Relay-Event-Backlog` | How many later messages of the same event are still pending in the outbox (0 = this message is the event's latest state) |
 | `X-Fall-Relay-Decided-Clock` | `synced` when the device's wall clock was synchronised (kernel `adjtimex`, STA_UNSYNC clear) at the moment the event opened; absent otherwise. The outbox records it with the open |
 
