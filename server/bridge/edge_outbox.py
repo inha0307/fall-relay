@@ -19,6 +19,7 @@ CLOCK_HEADER = 'X-Fall-Relay-Decided-Clock'  # 'synced' when the wall clock was 
 # The WAL is fsynced by a background thread this often (seconds), so a commit never waits for the storage and a
 # power loss costs at most the commits of the last interval plus the time the card took to sync (trial D3).
 SYNC_INTERVAL_S = 1.0
+CHECKPOINT_BYTES = 4 * 1024 * 1024  # the WAL size at which the sync thread checkpoints (SQLite's default: 1000 pages)
 
 
 def wall_clock_synced():
@@ -89,10 +90,17 @@ class EdgeOutbox:
             # SYNC_INTERVAL_S; bare NORMAL lost the last ~30 s of commits in the power-loss trial (D3, cut 1).
             self.db.execute('PRAGMA synchronous=NORMAL')
             self.db.execute('PRAGMA busy_timeout=3000')
+            # No automatic checkpoint: by default SQLite runs one (with its fsync) inside the commit that pushes the
+            # WAL past 1000 pages, which would make that commit wait for the storage. The sync thread checkpoints.
+            self.db.execute('PRAGMA wal_autocheckpoint=0')
             self._dirty = threading.Event()
             self._closing = threading.Event()
             self.last_sync = None
             self._migrate()
+            # The sync thread's own connection, used only for checkpoints, so that it never holds `self.lock`
+            # while the storage is busy.
+            self._sync_db = sqlite3.connect(self.path, check_same_thread=False)
+            self._sync_db.execute('PRAGMA busy_timeout=3000')
             self._syncer = threading.Thread(target=self._sync_loop, name='outbox-sync', daemon=True)
             self._syncer.start()
         except Exception:
@@ -138,6 +146,8 @@ class EdgeOutbox:
             self._syncer.join(timeout=10)
         self.sync_now()
         with self.lock:
+            if getattr(self, '_sync_db', None):
+                self._sync_db.close()
             self.db.close()
             self.guard.close()
 
@@ -151,8 +161,15 @@ class EdgeOutbox:
                 self.sync_now()
 
     def sync_now(self):
-        """fsync the WAL and the database file: what was committed before the call survives a power loss."""
+        """fsync the WAL and the database file: what was committed before the call survives a power loss. When the
+        WAL has grown past CHECKPOINT_BYTES, a passive checkpoint (which blocks no writer) folds it into the
+        database first, on this thread, so that a commit never pays for a checkpoint."""
         self._dirty.clear()
+        try:
+            if os.path.getsize(str(self.path) + '-wal') > CHECKPOINT_BYTES and getattr(self, '_sync_db', None):
+                self._sync_db.execute('PRAGMA wal_checkpoint(PASSIVE)').fetchone()
+        except (OSError, sqlite3.Error):
+            pass
         for suffix in ('-wal', ''):
             try:
                 fd = os.open(str(self.path) + suffix, os.O_RDONLY)
