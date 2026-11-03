@@ -83,7 +83,7 @@ def heartbeat(camera='1', status='NORMAL', run=RUN, **changes):
         'window_valid_slots': 20,
         'people': 1,
         'event_protocol': 'edge_event',
-        'contract': 'fallscope-edge-event-v1',
+        'contract': 'fall-relay-edge-event-v1',
         'run_id': run,
         'decision_state': 'ALERT' if active else 'IDLE',
         'heartbeat_seq': 1,

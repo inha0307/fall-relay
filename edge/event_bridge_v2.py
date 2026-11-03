@@ -1,4 +1,4 @@
-"""Explicit edge events for the v2 runtime (bridge contract fallscope-edge-event-v1).
+"""Explicit edge events for the v2 runtime (bridge contract fall-relay-edge-event-v1).
 
 The fall decision is unchanged: decision_engine.DecisionEngine with the frozen operating point decides.
 This module only turns its transitions into durable, ordered bridge messages:

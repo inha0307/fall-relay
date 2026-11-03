@@ -20,7 +20,7 @@
     "tflite_sha256": "3ac9c4213cfefd893ac964bc2e7b9ffa8f9b6f44994dcfb4f7cb43d333e0daca"
   },
   "features": {
-    "contract": "fallscope-pose13-feature59-v2",
+    "contract": "fall-relay-pose13-feature59-v2",
     "code_sha256": {
       "features_v2.py": "6b3d2bfcede7b1b29dbbb1216efdca28277cabd2ecfc0cf16ae03cb126b14509",
       "head_point.py": "c18de20a8892653f8a0f23d011336d49ec337be4c07c9aa6438551da77c08957",

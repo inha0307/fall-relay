@@ -60,7 +60,7 @@ def heartbeat(run, **changes):
         'window_min_valid_slots': 10,
         'window_valid_slots': 20,
         'event_protocol': 'edge_event',
-        'contract': 'fallscope-edge-event-v1',
+        'contract': 'fall-relay-edge-event-v1',
         'run_id': run,
         'decision_state': 'IDLE',
         'heartbeat_seq': 1,

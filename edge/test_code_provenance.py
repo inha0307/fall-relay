@@ -41,7 +41,12 @@ def main():
             restored = ast_sha256(path, replace={change['to']: change['from']})
             assert restored == entry['frozen_ast_sha256'], f'{name}: more than the documented description changed'
             assert path.read_text().count('identity_limit') == 1, f'{name}: the description is read somewhere'
-        else:
+        renames = entry.get('constant_renames')
+        if renames:
+            # Documented renames of string constants (labels no computation reads); the rest of the code is unchanged.
+            restored = ast_sha256(path, replace={r['to']: r['from'] for r in renames})
+            assert restored == entry['frozen_ast_sha256'], f'{name}: more than the documented constants changed'
+        if not change and not renames:
             assert 'frozen_ast_sha256' not in entry
     print(f'PASS {len(record)} frozen modules: records agree and the executed code matches the trained version')
 

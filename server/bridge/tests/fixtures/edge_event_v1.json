@@ -1,6 +1,6 @@
 [
   {
-    "contract": "fallscope-edge-event-v1",
+    "contract": "fall-relay-edge-event-v1",
     "event_uid": "5139afe5daf0472e97e5c62c2d333a25:7",
     "camera_id": "1",
     "run_id": "5139afe5daf0472e97e5c62c2d333a25",
@@ -26,7 +26,7 @@
     "sent_at": 1792357332.1
   },
   {
-    "contract": "fallscope-edge-event-v1",
+    "contract": "fall-relay-edge-event-v1",
     "event_uid": "5139afe5daf0472e97e5c62c2d333a25:7",
     "camera_id": "1",
     "run_id": "5139afe5daf0472e97e5c62c2d333a25",
@@ -52,7 +52,7 @@
     "sent_at": 1792357333.1
   },
   {
-    "contract": "fallscope-edge-event-v1",
+    "contract": "fall-relay-edge-event-v1",
     "event_uid": "5139afe5daf0472e97e5c62c2d333a25:7",
     "camera_id": "1",
     "run_id": "5139afe5daf0472e97e5c62c2d333a25",
@@ -78,7 +78,7 @@
     "sent_at": 1792357334.1
   },
   {
-    "contract": "fallscope-edge-event-v1",
+    "contract": "fall-relay-edge-event-v1",
     "event_uid": "5139afe5daf0472e97e5c62c2d333a25:7",
     "camera_id": "1",
     "run_id": "5139afe5daf0472e97e5c62c2d333a25",

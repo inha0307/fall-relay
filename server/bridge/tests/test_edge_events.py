@@ -278,7 +278,7 @@ async def api(root):
     explicit = {
         **legacy,
         'event_protocol': 'edge_event',
-        'contract': 'fallscope-edge-event-v1',
+        'contract': 'fall-relay-edge-event-v1',
         'run_id': RUN,
         'decision_state': 'ALERT',
         'heartbeat_seq': 1,

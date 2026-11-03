@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase 4: event TCN on fallscope-pose13-feature59-v2 windows (20 slots x 59, 10 Hz).
+"""Phase 4: event TCN on fall-relay-pose13-feature59-v2 windows (20 slots x 59, 10 Hz).
 
 Windows end at every slot of every sequence, exactly as the runtime builds them: the last 20 slots,
 cut at the most recent primary reset (history cleared), left zero-padded. A window is scored only

@@ -20,6 +20,7 @@ def refused(item):
 
 assert validate_identity(identity())['contract_version'] == CONTRACT_V2
 assert validate_identity(identity(decision=DECISION))['event_decision']['declared'] == DECISION
+assert validate_identity(identity(contract_version='fallscope-pose13-feature59-v2'))['contract_version'] == 'fallscope-pose13-feature59-v2'  # pre-v1.1.0 string stays valid
 refused(identity(contract_version='fallscope-pose12-feature55-v1'))  # the earlier runtime's contract
 refused(identity(contract_version='fallscope-pose99-feature1-v9'))
 refused(identity(implementation_sha256={k: 'a' * 64 for k in ('ncnn_pose', 'pose_candidates', 'causal_tracker')}))

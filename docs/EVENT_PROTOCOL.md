@@ -25,8 +25,7 @@ Closing an event never resolves its alert, and resolving an alert never changes 
 | Sensor times | `onset_sensor_ns`, `decided_sensor_ns`: the camera's monotonic sensor timestamps |
 | Clock | `clock.offset_s` = server time − device time, `clock.rtt_s` = round trip of the calibration request |
 
-The contract string `fallscope-edge-event-v1` is carried in every message. (The identifier predates the project name and
-is kept so that stored records stay comparable; see the README section "Naming".)
+The contract string `fall-relay-edge-event-v1` is carried in every message.
 
 ## 2. Event messages (`POST /api/edge_event`)
 
@@ -35,7 +34,7 @@ fields, all required:
 
 ```json
 {
-  "contract": "fallscope-edge-event-v1",
+  "contract": "fall-relay-edge-event-v1",
   "event_uid": "5139afe5daf0472e97e5c62c2d333a25:7",
   "message_seq": 1,
   "camera_id": "1",

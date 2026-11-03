@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase 3.1: fallscope-pose13-feature59-v2 slot sequences for TCN training (train + val).
+"""Phase 3.1: fall-relay-pose13-feature59-v2 slot sequences for TCN training (train + val).
 
 prep (CPU, multiprocess):  tracking_v2 clip -> for each 10 Hz phase p: SlotFeaturizer.step per slot
                            (identical call order to the Pi runtime) -> x39, valid, dyn7, t, track, reset

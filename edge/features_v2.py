@@ -1,4 +1,4 @@
-"""fallscope-pose13-feature59-v2 per-slot features, shared by the Pi runtime and training.
+"""fall-relay-pose13-feature59-v2 per-slot features, shared by the Pi runtime and training.
 
 Per 10 Hz slot of the tracked primary (COCO-17 keypoints in 640x360 pixels):
   x39    LPN input: 13 joints (runtime ORDER + head_point) relative to the hip centre / 360,
@@ -17,7 +17,7 @@ from shape_features_v2 import DynamicFeatureState
 
 ORDER = np.array([6, 5, 8, 7, 10, 9, 12, 11, 14, 13, 16, 15])
 W, H, CONF, WIDTH = 640, 360, 0.2, 59
-CONTRACT = "fallscope-pose13-feature59-v2"
+CONTRACT = "fall-relay-pose13-feature59-v2"
 
 
 def lpn_input(k17, table):

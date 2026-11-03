@@ -1,4 +1,4 @@
-"""13th joint for the fallscope-pose13 contract: calibrated head point from YOLO COCO-17 face keypoints.
+"""13th joint for the pose13 contract: calibrated head point from YOLO COCO-17 face keypoints.
 
 Shared by training data builders and the Pi runtime. The calibration table is
 head_point_v2/head_point_v2.json (fit on train subjects; see calibrate_head_point.py).

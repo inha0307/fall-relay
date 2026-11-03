@@ -1,5 +1,5 @@
 {
-  "purpose": "Links the byte hashes recorded when the bundled models were trained and evaluated (training/tcn_v2_meta/frozen_operating_point_v2.json, edge/bundle_manifest.json) to the current files. The files were reformatted and their docstrings edited on 2026-10-23; ast_sha256 (code_identity.py: syntax tree without docstrings) is unchanged, so the executed code is the code that was trained and evaluated.",
+  "purpose": "Links the byte hashes recorded when the bundled models were trained and evaluated (training/tcn_v2_meta/frozen_operating_point_v2.json, edge/bundle_manifest.json) to the current files. The files were reformatted and their docstrings edited on 2026-10-23; ast_sha256 (code_identity.py: syntax tree without docstrings) is unchanged, so the executed code is the code that was trained and evaluated. On 2026-11-03 the contract label in features_v2.py was renamed to the project name (constant_renames); with the old string restored the ast_sha256 equals the frozen one.",
   "checked_by": "edge/test_code_provenance.py",
   "modules": {
     "causal_tracker.py": {
@@ -25,12 +25,20 @@
     },
     "features_v2.py": {
       "frozen_sha256": "6b3d2bfcede7b1b29dbbb1216efdca28277cabd2ecfc0cf16ae03cb126b14509",
-      "current_sha256": "fe49a45901e9fd521043f6f26313db80b94d63c42df4782c4225e732a98a3139",
-      "ast_sha256": "9c9cf76e512c23c5cf68c8cbe238d0d2ad5467366c47b042bcdfac89c52812f5"
+      "current_sha256": "e67aab7aa11ec03cc3f33e85d53f2ed39bd30ef9412a623ab283bb930a9e9a00",
+      "ast_sha256": "63a1d9e61948aabb1867b5c533a4530b9e6730a39ad5e4d23ec024b7b063805e",
+      "frozen_ast_sha256": "9c9cf76e512c23c5cf68c8cbe238d0d2ad5467366c47b042bcdfac89c52812f5",
+      "constant_renames": [
+        {
+          "from": "fallscope-pose13-feature59-v2",
+          "to": "fall-relay-pose13-feature59-v2",
+          "why": "project renamed before the 1.1.0 release; the string is a label that no computation reads"
+        }
+      ]
     },
     "head_point.py": {
       "frozen_sha256": "c18de20a8892653f8a0f23d011336d49ec337be4c07c9aa6438551da77c08957",
-      "current_sha256": "b9b06b49499b8e10c6f7d3a2d5c7b6f193b9e23a9bf18c7a4a711178c1e5ec5b",
+      "current_sha256": "453bf2e000c8222326d35ea0ff1f0650ebc0a96a9562cd3624c896d5b87c6147",
       "ast_sha256": "07f49409613531dc868d37f7ac5562083c9cb9779acfe89b1658eb0e0eb5adc3"
     },
     "pose17.py": {

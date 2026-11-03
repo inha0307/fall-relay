@@ -5,7 +5,9 @@ import json
 import math
 import re
 
-CONTRACT = 'fallscope-edge-event-v1'
+CONTRACT = 'fall-relay-edge-event-v1'
+# Messages and stored records from before v1.1.0 carry the earlier string; they stay valid.
+ACCEPTED_CONTRACTS = {CONTRACT, 'fallscope-edge-event-v1'}
 CAMERA = re.compile(r'^[A-Za-z0-9_-]{1,32}$')
 RUN = re.compile(r'^[0-9a-f]{32}$')
 CLOSE_REASONS = {'recovered', 'timeout', 'track_lost', 'runtime_stop'}
@@ -53,7 +55,7 @@ def validate_edge_event(payload):
         raise ValueError('edge event must be finite JSON') from exc
     if len(raw.encode()) > 32768:
         raise ValueError('edge event exceeds 32 KiB')
-    if payload['contract'] != CONTRACT:
+    if payload['contract'] not in ACCEPTED_CONTRACTS:
         raise ValueError('unsupported edge event contract')
     camera, run, uid = (payload[k] for k in ('camera_id', 'run_id', 'event_uid'))
     if not isinstance(camera, str) or not CAMERA.fullmatch(camera):

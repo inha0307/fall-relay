@@ -1,6 +1,6 @@
 {
- "bundle_id": "fallscope-v2-20261019",
- "contract": "fallscope-pose13-feature59-v2",
+ "bundle_id": "fall-relay-v1-1-0",
+ "contract": "fall-relay-pose13-feature59-v2",
  "decision": {
   "theta": 0.95,
   "k": 3,

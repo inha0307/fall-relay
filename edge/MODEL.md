@@ -22,7 +22,7 @@ camera 1280×720, 30 fps
 
 | Item | Definition |
 |---|---|
-| Model contract | `fallscope-pose13-feature59-v2` (`edge/features_v2.py`) |
+| Model contract | `fall-relay-pose13-feature59-v2` (`edge/features_v2.py`) |
 | Valid slot | Both hips and at least 8 of the 13 joints visible |
 | Eligible slot | The current slot is valid and at least 10 of the last 20 slots are valid |
 | Dynamic features | Vertical and horizontal hip velocity, trunk angular velocity, 1 s hip drop, 1 s trunk tilt change, two validity flags; normalised by body length |

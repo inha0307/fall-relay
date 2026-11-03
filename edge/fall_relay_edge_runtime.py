@@ -6,7 +6,7 @@ open/update/close of a fall event is written to a local outbox (SQLite) and deli
 bridge acknowledges it (event_bridge_v2, docs/EVENT_PROTOCOL.md). Once per decision slot a heartbeat goes to
 /api/edge_result with the decision state, the outbox counters and the chosen person's 13 model joints (stream-frame
 pixels) for the skeleton view; it never creates events. Heartbeats register and refresh a run identity with contract
-fallscope-pose13-feature59-v2 (model_contract.validate_identity), also written to run_identity.json; a separate
+fall-relay-pose13-feature59-v2 (model_contract.validate_identity), also written to run_identity.json; a separate
 latest-wins sender thread posts them, so network stalls never block inference.
 
 Camera images stay on the device. With --clips the device keeps the last few seconds as small JPEGs in memory and

@@ -10,7 +10,9 @@ import re
 
 from decision_block import validate_decision
 
-CONTRACT_V2 = 'fallscope-pose13-feature59-v2'
+CONTRACT_V2 = 'fall-relay-pose13-feature59-v2'
+# Run identities recorded before v1.1.0 carry the earlier contract string; they stay valid.
+ACCEPTED_CONTRACTS = {CONTRACT_V2, 'fallscope-pose13-feature59-v2'}
 # Modules hashed in a run identity: everything between the pose model and the decision.
 IMPLEMENTATIONS = {
     'pose17',
@@ -38,7 +40,7 @@ DECISION_PROVENANCE = {
 def validate_identity(item):
     if not isinstance(item, dict) or len(json.dumps(item, allow_nan=False)) > 8192:
         raise ValueError('invalid model identity')
-    if item.get('schema_version') != 1 or item.get('contract_version') != CONTRACT_V2:
+    if item.get('schema_version') != 1 or item.get('contract_version') not in ACCEPTED_CONTRACTS:
         raise ValueError('unsupported run identity schema/contract')
     if not isinstance(item.get('run_id'), str) or not re.fullmatch('[a-f0-9]{32}', item['run_id']):
         raise ValueError('invalid run_id')

@@ -146,15 +146,6 @@ python3 server/bridge/package_demo.py --output /tmp/fall-relay-review.zip
 
 This is a server/web reproduction package, not a complete Pi software release.
 
-## Naming
-
-The software was developed under the working names FallScope and Neulbom. Identifiers that devices and
-stored records already carry keep those names and are frozen: the model contract
-`fallscope-pose13-feature59-v2`, the event contract `fallscope-edge-event-v1`, bundle IDs such as
-`fallscope-v2-20261019-ev`. Everything else uses the Fall-Relay name: the edge runtime `edge/fall_relay_edge_runtime.py`
-(its former name `fallscope_edge_runtime_v2.py` remains as a shim for installed bundles), `FALLRELAY_*` environment variables, `fall-relay-*` systemd
-units and `fall_relay_*` database files.
-
 ## License and data
 
 The code is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0-only); see [LICENSE](LICENSE) (the same text is in [Licence.txt](Licence.txt), the file name the SoftwareX template asks for).
@@ -167,5 +158,7 @@ the latest version (v1.0.0: [10.5281/zenodo.23719977](https://doi.org/10.5281/ze
 defaults and documentation with the article, the measured behaviour is unchanged; v1.0.2 fixes the web proxy so that
 manual-review alerts appear on the Alerts page; v1.1.0 introduces notification policy version 2, which classifies an
 alert from the latest state of its event instead of its arrival time, see docs/EVENT_PROTOCOL.md §4, and syncs the
-device outbox to storage every second so that a power loss costs at most the last second of committed messages). To cite the software, use
+device outbox to storage every second so that a power loss costs at most the last second of committed messages; the
+contract strings become `fall-relay-edge-event-v1` and `fall-relay-pose13-feature59-v2`, and the server still accepts
+messages and run identities that carry the earlier strings). To cite the software, use
 [CITATION.cff](CITATION.cff) or the "Cite this repository" button on GitHub.
