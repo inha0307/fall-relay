@@ -4,8 +4,8 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23719976.svg)](https://doi.org/10.5281/zenodo.23719976)
 
 Fall-Relay is open-source edge–server software that carries fall events from camera devices to the people who
-respond to them, and records how each alert is handled. A Raspberry Pi runs a fall detector and a latched decision
-engine; every event message is stored in a local outbox before it is sent and is accepted by the server idempotently,
+respond to them, and records how each alert is handled. A Raspberry Pi runs a fall detector and a decision engine
+that opens one event per fall; every event message is stored in a local outbox before it is sent and is accepted by the server idempotently,
 so retries, lost responses and restarts never lose an event or create a second alert. Detection events and responder
 alerts have separate lifecycles: a responder acknowledges an alert and records the on-site outcome, while the event
 keeps what the device observed.
@@ -52,8 +52,8 @@ checked with ruff for Python (`pyproject.toml`: `ruff format --check .`, `ruff c
 application (`server/frontend`: `npm run format:check`).
 
 Use a **new output directory** for each run. The demo starts a loopback-only bridge
-on the same PostgreSQL backend as the laboratory deployment, and two synthetic cameras that run the same post-inference code as the Pi
-(v2 decision engine, explicit-event outbox, heartbeat with the 13-joint skeleton).
+on PostgreSQL, the backend the laboratory deployment also uses, and two synthetic cameras that run the same post-inference code as the Pi
+(decision engine, outbox, heartbeat with the 13-joint skeleton).
 Camera 1 falls, lies down and gets up; camera 2 stays normal. The demo uploads a
 generated fall clip the way the device does and takes the alert through
 acknowledgement and an on-site outcome, checking authentication and per-camera
@@ -131,11 +131,10 @@ hardware-free example does not supply them, and a successful example run does no
 
 ## Checks, CI and local review bundle
 
-The Python runner executes 29 bounded check scripts. The workflow at
+The Python runner executes 30 bounded check scripts. The workflow at
 [`.github/workflows/reproducibility.yml`](.github/workflows/reproducibility.yml)
 adds the real HTTP demo, clean `npm ci`, production build and web API verification.
-It needs no repository secrets or device access. The first hosted run passed on 28 October 2026 (see the badge
-above and the Actions tab).
+It needs no repository secrets or device access; the badge above shows the latest run.
 
 To build a **local review bundle**, which explicitly excludes operational databases,
 credentials, captures and installed dependencies:
@@ -153,12 +152,6 @@ Model files are not in this repository and carry their own terms: the Ultralytic
 and the fall models trained on NTU RGB+D are not redistributed; see [NOTICE](NOTICE). The demo draws artificial
 points with OpenCV; it contains no NTU frames and no recording of a person.
 
-Releases are archived on Zenodo; the DOI [10.5281/zenodo.23719976](https://doi.org/10.5281/zenodo.23719976) resolves to
-the latest version (v1.0.0: [10.5281/zenodo.23719977](https://doi.org/10.5281/zenodo.23719977); v1.0.1 aligns code
-defaults and documentation with the article, the measured behaviour is unchanged; v1.0.2 fixes the web proxy so that
-manual-review alerts appear on the Alerts page; v1.1.0 introduces notification policy version 2, which classifies an
-alert from the latest state of its event instead of its arrival time, see docs/EVENT_PROTOCOL.md §4, and syncs the
-device outbox to storage every second so that a power loss costs at most the last second of committed messages; the
-contract strings become `fall-relay-edge-event-v1` and `fall-relay-pose13-feature59-v2`, and the server still accepts
-messages and run identities that carry the earlier strings). To cite the software, use
+Releases are archived on Zenodo; the DOI [10.5281/zenodo.23719976](https://doi.org/10.5281/zenodo.23719976) always
+resolves to the latest version, and [CHANGELOG.md](CHANGELOG.md) lists the changes between versions. To cite the software, use
 [CITATION.cff](CITATION.cff) or the "Cite this repository" button on GitHub.
