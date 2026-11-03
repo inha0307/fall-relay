@@ -227,8 +227,8 @@ export default function AlertsPage() {
                     <div>
                         <h1 className={ui.title}>Alerts</h1>
                         <p className={ui.subtitle}>
-                            Live alerts need acknowledgement and on-site follow-up. Late events that had already
-                            ended are saved for manual review.
+                            Live alerts need acknowledgement and on-site follow-up. Late events that had already ended
+                            are saved for manual review.
                         </p>
                     </div>
                     <div className={ui.toolbar}>

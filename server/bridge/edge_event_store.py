@@ -249,7 +249,9 @@ class EdgeEventStore:
                     elif trusted:
                         ended = max(event['started_at'], corrected)
                     else:
-                        ended = event['started_at'] + max(0, payload['decided_sensor_ns'] - event['onset_sensor_ns']) / 1e9
+                        ended = (
+                            event['started_at'] + max(0, payload['decided_sensor_ns'] - event['onset_sensor_ns']) / 1e9
+                        )
                     self.db.execute(
                         '''UPDATE events SET edge_state=?,decided_sensor_ns=?,last_received_at=?,last_message_seq=?,max_score=?,ended_at=?,close_reason=? WHERE id=?''',
                         (
@@ -278,7 +280,17 @@ class EdgeEventStore:
                             late_threshold_s=self.max_live_age_s,
                             stale_threshold_s=self.stale_age_s,
                         )
-                        self._classify(alert_id, mode, reason, now, {'latest_kind': payload['kind'], 'close_reason': payload['close_reason'], 'event_age_s': age_now})
+                        self._classify(
+                            alert_id,
+                            mode,
+                            reason,
+                            now,
+                            {
+                                'latest_kind': payload['kind'],
+                                'close_reason': payload['close_reason'],
+                                'event_age_s': age_now,
+                            },
+                        )
                 self.db.execute(
                     'INSERT INTO edge_event_receipts(event_uid,message_seq,kind,semantic_sha256,event_id,alert_id,received_at,payload) VALUES (?,?,?,?,?,?,?,?)',
                     (uid, seq, payload['kind'], digest, event_id, alert_id, now, json.dumps(payload, allow_nan=False)),
@@ -300,7 +312,13 @@ class EdgeEventStore:
             return False
         self.db.execute(
             "INSERT INTO alert_log(alert_id,at,actor,action,detail) VALUES (?,?,'bridge','classified',?)",
-            (alert_id, now, json.dumps({**detail, 'notification_mode': mode, 'classification_reason': reason, 'policy_version': VERSION})),
+            (
+                alert_id,
+                now,
+                json.dumps(
+                    {**detail, 'notification_mode': mode, 'classification_reason': reason, 'policy_version': VERSION}
+                ),
+            ),
         )
         if mode == MANUAL_REVIEW:
             self.db.execute(

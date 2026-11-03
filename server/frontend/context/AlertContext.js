@@ -199,7 +199,12 @@ export function AlertProvider({ children }) {
                     beep(a.type);
                     desktop(a, false);
                 }
-                if (a.review_reminded_at && isManualReview(a) && needsAcknowledgement(a) && !reminded.current.has(a.id)) {
+                if (
+                    a.review_reminded_at &&
+                    isManualReview(a) &&
+                    needsAcknowledgement(a) &&
+                    !reminded.current.has(a.id)
+                ) {
                     reminded.current.add(a.id);
                     desktop(a, false, true);
                 }

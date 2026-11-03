@@ -41,12 +41,21 @@ ADAPTER = ROOT / 'edge' / 'examples' / 'any_detector_adapter.py'
 LINK_GATE = ROOT / 'docs' / 'evidence' / 'link_loss' / 'link_gate.py'
 BENCHMARK_SERVER = ROOT / 'edge' / 'ntu_benchmark' / 'benchmark_server.py'
 CASES = [('lying_still', 'lying_still.csv'), ('recovered_in_cut', 'recovered_in_cut.csv')]
-CUT = (0.0, 180.0)  # (offset from the adapter start, duration) in seconds; 0 = the link is already dead when the adapter starts, so the open at 2.2 s is queued
+CUT = (
+    0.0,
+    180.0,
+)  # (offset from the adapter start, duration) in seconds; 0 = the link is already dead when the adapter starts, so the open at 2.2 s is queued
 CASE_TIMEOUT_S = 262 + 150 + 120  # sequence + adapter drain timeout + margin
 # --local: rehearsal on this host without the device (adapter, gate and "device" folder here; same bridge and
 # analysis). The staged bundle is then edge/ plus the shared outbox modules of server/bridge.
 LOCAL = False
-LOCAL_EXTRA = ['edge_outbox.py', 'edge_event_runtime.py', 'edge_event_contract.py', 'schema_migrations.py', 'migrations']
+LOCAL_EXTRA = [
+    'edge_outbox.py',
+    'edge_event_runtime.py',
+    'edge_event_contract.py',
+    'schema_migrations.py',
+    'migrations',
+]
 
 
 def port():
@@ -63,7 +72,9 @@ def ssh(cmd, **kwargs):
     for attempt in range(12):
         try:
             return subprocess.run(
-                ['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=8', '-i', KEY, DEVICE['target'], cmd], check=True, **kwargs
+                ['ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=8', '-i', KEY, DEVICE['target'], cmd],
+                check=True,
+                **kwargs,
             )
         except subprocess.CalledProcessError as exc:
             if exc.returncode != 255 or attempt == 11:
@@ -217,8 +228,19 @@ def run_case(root, case, scores, bridge_port, token):
         cmd = ['bash', '-c', remote]
     else:
         cmd = [
-            'ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=8', '-o', 'ExitOnForwardFailure=yes', '-i', KEY,
-            '-R', f"127.0.0.1:{DEVICE['tunnel_port']}:127.0.0.1:{bridge_port}", DEVICE['target'], remote,
+            'ssh',
+            '-o',
+            'BatchMode=yes',
+            '-o',
+            'ConnectTimeout=8',
+            '-o',
+            'ExitOnForwardFailure=yes',
+            '-i',
+            KEY,
+            '-R',
+            f"127.0.0.1:{DEVICE['tunnel_port']}:127.0.0.1:{bridge_port}",
+            DEVICE['target'],
+            remote,
         ]
     err = (out / 'ssh.log').open('w')
     plan = {'offset_s': CUT[0], 'duration_s': CUT[1], 'state': 'pending'}
@@ -299,7 +321,10 @@ def create_schema(conninfo, root):
     with psycopg.connect(conninfo) as connection:
         initialize(connection, schema)
     (root / 'database.json').write_text(
-        json.dumps({'conninfo': conninfo, 'schema': schema, 'note': 'dedicated local PostgreSQL instance; no password'}, indent=2)
+        json.dumps(
+            {'conninfo': conninfo, 'schema': schema, 'note': 'dedicated local PostgreSQL instance; no password'},
+            indent=2,
+        )
         + '\n'
     )
     return schema, make_conninfo(conninfo, options='-c search_path=' + schema)
@@ -321,8 +346,13 @@ def main():
     global KEY
     if LOCAL:
         DEVICE.update(
-            device='host', target=None, home=str(root / 'device'), original=str(ROOT / 'edge'), python=sys.executable,
-            gate_port=port(), tunnel_port=bridge_port,
+            device='host',
+            target=None,
+            home=str(root / 'device'),
+            original=str(ROOT / 'edge'),
+            python=sys.executable,
+            gate_port=port(),
+            tunnel_port=bridge_port,
         )
     else:
         setup = json.loads(SETUP_PATH.read_text())
@@ -332,7 +362,14 @@ def main():
     for name in ('lying_still.csv', 'recovered_in_cut.csv'):
         assert (HERE / name).exists(), 'run make_d2_scores.py first'
     (root / 'code_snapshot').mkdir()
-    for path in (Path(__file__), HERE / 'analyze_d2.py', HERE / 'make_d2_scores.py', ADAPTER, LINK_GATE, BENCHMARK_SERVER):
+    for path in (
+        Path(__file__),
+        HERE / 'analyze_d2.py',
+        HERE / 'make_d2_scores.py',
+        ADAPTER,
+        LINK_GATE,
+        BENCHMARK_SERVER,
+    ):
         shutil.copy2(path, root / 'code_snapshot' / path.name)
     hashes = {
         str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
@@ -385,6 +422,7 @@ def main():
         stderr=log,
         start_new_session=True,
     )
+
     def interrupted(*_):
         raise KeyboardInterrupt('controller interrupted')
 
@@ -393,21 +431,37 @@ def main():
     try:
         wait_url(bridge + '/benchmark/time', api)
         token = request(bridge + '/api/admin/cameras/1/token', secret, 'POST', {})['token']
-        (root / 'uptime_start.json').write_text(json.dumps({'device': json.loads(ssh_text(UPTIME)), 'host_now': time.time()}, indent=2) + '\n')
+        (root / 'uptime_start.json').write_text(
+            json.dumps({'device': json.loads(ssh_text(UPTIME)), 'host_now': time.time()}, indent=2) + '\n'
+        )
         result = stage(root)
         staged = True
-        print('STAGED', json.dumps({k: v for k, v in result.items() if k != 'manifest'}), 'bundle', result['manifest'].get('bundle_id'), flush=True)
+        print(
+            'STAGED',
+            json.dumps({k: v for k, v in result.items() if k != 'manifest'}),
+            'bundle',
+            result['manifest'].get('bundle_id'),
+            flush=True,
+        )
         (root / 'gate.json').write_text(gate_start() + '\n')
         print('GATE_STARTED', flush=True)
         for case, scores in cases:
             run_case(root, case, scores, bridge_port, token)
             time.sleep(5)
-        (root / 'uptime_end.json').write_text(json.dumps({'device': json.loads(ssh_text(UPTIME)), 'host_now': time.time()}, indent=2) + '\n')
+        (root / 'uptime_end.json').write_text(
+            json.dumps({'device': json.loads(ssh_text(UPTIME)), 'host_now': time.time()}, indent=2) + '\n'
+        )
         (root / 'completed.json').write_text(
-            json.dumps({'completed_at': time.time(), 'cases': cases, 'cut': CUT, 'device': DEVICE['device'], 'schema': schema}, indent=2) + '\n'
+            json.dumps(
+                {'completed_at': time.time(), 'cases': cases, 'cut': CUT, 'device': DEVICE['device'], 'schema': schema},
+                indent=2,
+            )
+            + '\n'
         )
     except BaseException as exc:
-        (root / 'failure.json').write_text(json.dumps({'at': time.time(), 'error': str(exc), 'type': type(exc).__name__}, indent=2) + '\n')
+        (root / 'failure.json').write_text(
+            json.dumps({'at': time.time(), 'error': str(exc), 'type': type(exc).__name__}, indent=2) + '\n'
+        )
         raise
     finally:
         if staged:

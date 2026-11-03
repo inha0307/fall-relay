@@ -50,7 +50,9 @@ def write(name, recover_at):
         w.writerow(['t_s', 'score', 'eligible', 'upright', 'lying'])
         for t, score, eligible, upright, lying in sequence(recover_at):
             w.writerow([f'{t:.1f}', f'{score:.3f}', eligible, upright, lying])
-            events += [(ev['kind'], ev['t'], ev.get('reason')) for ev in engine.step(t, score, eligible, upright, lying)]
+            events += [
+                (ev['kind'], ev['t'], ev.get('reason')) for ev in engine.step(t, score, eligible, upright, lying)
+            ]
     events += [(ev['kind'], ev['t'], ev.get('reason')) for ev in engine.finish(END_S)]
     assert events[0][:2] == ('open', 2.2) and events[1] == ('close', round(recover_at + 3.0, 1), 'recovered'), events
     assert len(events) == 2, events

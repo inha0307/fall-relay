@@ -130,7 +130,12 @@ def load_server_config(path):
         ('alert_review_reminder_s', 600, 0, 86400),
     ):
         value = config.get(key, default)
-        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value) or not low <= value <= high:
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+            or not low <= value <= high
+        ):
             raise ValueError(f'invalid {key}')
         config[key] = float(value)
     if config['edge_event_stale_age_s'] <= config['edge_event_max_live_age_s']:

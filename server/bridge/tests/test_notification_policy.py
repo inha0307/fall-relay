@@ -91,7 +91,11 @@ def scenarios(events):
         run = uuid.uuid4().hex
         first = copy.deepcopy(fixtures[0])
         first.update(
-            run_id=run, event_uid=run + ':1', decided_at=1000 - age_ms / 1000, sent_at=1000, clock={'offset_s': 0.0, 'rtt_s': rtt}
+            run_id=run,
+            event_uid=run + ':1',
+            decided_at=1000 - age_ms / 1000,
+            sent_at=1000,
+            clock={'offset_s': 0.0, 'rtt_s': rtt},
         )
         transport = {'event_age_ms': age_ms}
         if backlog is not None:
@@ -108,7 +112,11 @@ def scenarios(events):
         assert edge.receive(first, now=5000, transport=transport)['duplicate']
         update = copy.deepcopy(fixtures[1])
         update.update(
-            run_id=run, event_uid=run + ':1', decided_at=max(1001, first['decided_at']), sent_at=5000, clock=first['clock']
+            run_id=run,
+            event_uid=run + ':1',
+            decided_at=max(1001, first['decided_at']),
+            sent_at=5000,
+            clock=first['clock'],
         )
         edge.receive(update, now=5000, transport={'event_age_ms': age_ms + 4_000_000, 'event_backlog': 0})
         after = alerts.get(id, None)['notification_mode']

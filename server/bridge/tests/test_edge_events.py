@@ -71,7 +71,9 @@ def storage(root):
     # Durable across power loss without a sync in the inference loop: commits stay NORMAL and a background thread
     # fsyncs the WAL every second (trial D3: bare NORMAL lost ~30 s; FULL stalled the loop for 9.7 s on the SD card).
     assert box.db.execute('PRAGMA synchronous').fetchone()[0] == 1 and box._syncer.is_alive()
-    assert box.db.execute('PRAGMA wal_autocheckpoint').fetchone()[0] == 0, 'checkpoints belong to the sync thread, not to a commit'
+    assert box.db.execute('PRAGMA wal_autocheckpoint').fetchone()[0] == 0, (
+        'checkpoints belong to the sync thread, not to a commit'
+    )
     box.sync_now()
     assert box.status()['outbox_unsynced'] is False and box.status()['outbox_synced_ago_s'] is not None
     decision = {key: rows[0]['confirm'][key] for key in ('k', 'n', 'm')}

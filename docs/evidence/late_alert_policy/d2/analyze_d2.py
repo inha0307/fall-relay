@@ -64,7 +64,8 @@ def main():
             ev = events[0]
             al = db.execute('SELECT * FROM alerts WHERE event_id=%s', (ev['id'],)).fetchone()
             log = db.execute(
-                'SELECT at,actor,action,from_state,to_state,detail FROM alert_log WHERE alert_id=%s ORDER BY id', (al['id'],)
+                'SELECT at,actor,action,from_state,to_state,detail FROM alert_log WHERE alert_id=%s ORDER BY id',
+                (al['id'],),
             ).fetchall()
             receipts = db.execute(
                 'SELECT message_seq,kind,received_at FROM edge_event_receipts WHERE event_uid=%s ORDER BY received_at',
@@ -97,13 +98,17 @@ def main():
                         'created_s': rel(m['created_at'], started),
                         'created_in_cut': in_cut(m['created_at']),
                         'acked_s': rel(m['acked_at'], started),
-                        'acked_after_restore_s': rel(m['acked_at'], restored_at) if m['acked_at'] and in_cut(m['created_at']) else None,
+                        'acked_after_restore_s': rel(m['acked_at'], restored_at)
+                        if m['acked_at'] and in_cut(m['created_at'])
+                        else None,
                         'attempts': m['attempts'],
                         'blocked': m['blocked_at'] is not None,
                         'server_received_s': rel(ok['body_received_at'], started) if ok else None,
                         'age_header_ms': ok.get('event_age_ms') if ok else None,
                         'backlog_header': ok.get('event_backlog') if ok else None,
-                        'receipt_s': rel(received[m['message_seq']]['received_at'], started) if m['message_seq'] in received else None,
+                        'receipt_s': rel(received[m['message_seq']]['received_at'], started)
+                        if m['message_seq'] in received
+                        else None,
                     }
                 )
             open_rx = first_ok.get(1)
@@ -131,7 +136,9 @@ def main():
                     'clock_usable': ev['clock_usable'],
                     'close_reason': ev['close_reason'],
                     'ended_at_s': rel(ev['ended_at'], started),
-                    'close_received_s': rel(next((r['received_at'] for r in receipts if r['kind'] == 'close'), None), started),
+                    'close_received_s': rel(
+                        next((r['received_at'] for r in receipts if r['kind'] == 'close'), None), started
+                    ),
                 },
                 'alert': {
                     'id': al['id'],
@@ -145,7 +152,13 @@ def main():
                     'classified_s': rel(al['classified_at'], started),
                     'classified_after_open_received_s': rel(al['classified_at'], open_received_at),
                     'log': [
-                        {'at_s': rel(r['at'], started), 'actor': r['actor'], 'action': r['action'], 'to_state': r['to_state'], 'detail': r['detail']}
+                        {
+                            'at_s': rel(r['at'], started),
+                            'actor': r['actor'],
+                            'action': r['action'],
+                            'to_state': r['to_state'],
+                            'detail': r['detail'],
+                        }
                         for r in log
                     ],
                 },
@@ -153,13 +166,17 @@ def main():
                     'total': len(outbox),
                     'kinds': dict(collections.Counter(m['kind'] for m in outbox)),
                     'created_during_cut': len(during),
-                    'acked_after_restore_s': {'min': min(acked_after), 'max': max(acked_after), 'n': len(acked_after)} if acked_after else None,
+                    'acked_after_restore_s': {'min': min(acked_after), 'max': max(acked_after), 'n': len(acked_after)}
+                    if acked_after
+                    else None,
                     'max_attempts': max([m['attempts'] for m in outbox] or [0]),
                     'retried': sum(m['attempts'] > 1 for m in outbox),
                     'blocked': sum(m['blocked_at'] is not None for m in outbox),
                     'unacked': sum(m['acked_at'] is None for m in outbox),
                     'receipts': len(receipts),
-                    'receipts_in_order': seqs == sorted(seqs) and len(seqs) == len(set(seqs)) and len(seqs) == len(outbox),
+                    'receipts_in_order': seqs == sorted(seqs)
+                    and len(seqs) == len(set(seqs))
+                    and len(seqs) == len(outbox),
                     'duplicate_server_rows': sum(len(lst) - 1 for lst in served.values() if len(lst) > 1),
                 },
                 'gate': {
@@ -184,14 +201,26 @@ def main():
     for case, s in report['cases'].items():
         print(
             case,
-            'mode', s['alert']['notification_mode'],
-            'reason', s['alert']['classification_reason'],
-            'open age header ms', s['event']['open_age_header_ms'],
-            'backlog', s['event']['open_backlog_header'],
-            'open after restore s', s['event']['open_received_after_restore_s'],
-            'classified after open s', s['alert']['classified_after_open_received_s'],
-            'messages', s['messages']['total'], 'during cut', s['messages']['created_during_cut'],
-            'in order', s['messages']['receipts_in_order'], 'unacked', s['messages']['unacked'],
+            'mode',
+            s['alert']['notification_mode'],
+            'reason',
+            s['alert']['classification_reason'],
+            'open age header ms',
+            s['event']['open_age_header_ms'],
+            'backlog',
+            s['event']['open_backlog_header'],
+            'open after restore s',
+            s['event']['open_received_after_restore_s'],
+            'classified after open s',
+            s['alert']['classified_after_open_received_s'],
+            'messages',
+            s['messages']['total'],
+            'during cut',
+            s['messages']['created_during_cut'],
+            'in order',
+            s['messages']['receipts_in_order'],
+            'unacked',
+            s['messages']['unacked'],
             'AS EXPECTED' if s['as_expected'] else 'NOT AS EXPECTED',
         )
     return 0 if all(s['as_expected'] for s in report['cases'].values()) else 1

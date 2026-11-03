@@ -142,7 +142,11 @@ class EdgeOutbox:
 
     def close(self):
         self._closing.set()
-        if getattr(self, '_syncer', None) and self._syncer.is_alive() and threading.current_thread() is not self._syncer:
+        if (
+            getattr(self, '_syncer', None)
+            and self._syncer.is_alive()
+            and threading.current_thread() is not self._syncer
+        ):
             self._syncer.join(timeout=10)
         self.sync_now()
         with self.lock:

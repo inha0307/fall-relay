@@ -14,12 +14,12 @@ VERSION = 2
 CLASSIFYING, LIVE, MANUAL_REVIEW = 'classifying', 'live', 'manual_review'
 
 # classification_reason codes, recorded with every decision
-ONGOING = 'ONGOING'                      # the event is still open: the person may still be down
-RECOVERED_RECENT = 'RECOVERED_RECENT'    # closed with recovery, but within the late threshold
-OUTCOME_UNKNOWN = 'OUTCOME_UNKNOWN'      # closed by input loss, maximum age or a runtime stop
-LATE_RECOVERED = 'LATE_RECOVERED'        # closed with recovery and older than the late threshold
-STALE_UNKNOWN = 'STALE_UNKNOWN'          # outcome unknown and older than the stale threshold
-HOLD_TIMEOUT = 'HOLD_TIMEOUT'            # the latest state did not arrive within the hold
+ONGOING = 'ONGOING'  # the event is still open: the person may still be down
+RECOVERED_RECENT = 'RECOVERED_RECENT'  # closed with recovery, but within the late threshold
+OUTCOME_UNKNOWN = 'OUTCOME_UNKNOWN'  # closed by input loss, maximum age or a runtime stop
+LATE_RECOVERED = 'LATE_RECOVERED'  # closed with recovery and older than the late threshold
+STALE_UNKNOWN = 'STALE_UNKNOWN'  # outcome unknown and older than the stale threshold
+HOLD_TIMEOUT = 'HOLD_TIMEOUT'  # the latest state did not arrive within the hold
 
 # suppression_reason values stored with manual-review alerts (version 1 values stay valid in old rows)
 SUPPRESSION = {LATE_RECOVERED: 'late_recovered', STALE_UNKNOWN: 'stale_unknown'}

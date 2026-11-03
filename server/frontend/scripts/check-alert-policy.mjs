@@ -34,7 +34,13 @@ const recovered = {
     classification_reason: 'LATE_RECOVERED',
 };
 const stale = { ...recovered, id: 4, suppression_reason: 'stale_unknown', classification_reason: 'STALE_UNKNOWN' };
-const classifying = { ...normal, id: 5, notification_mode: 'classifying', late_arrival: 1, classification_reason: null };
+const classifying = {
+    ...normal,
+    id: 5,
+    notification_mode: 'classifying',
+    late_arrival: 1,
+    classification_reason: null,
+};
 // Rows written by version 1 keep their reasons.
 const old = { ...recovered, id: 6, suppression_reason: 'event_too_old', classification_reason: null };
 const clock = { ...recovered, id: 7, suppression_reason: 'clock_unreliable', classification_reason: null };
@@ -62,7 +68,9 @@ assert.equal(reviewReason(recovered), 'Late arrival; the person had already reco
 assert.equal(reviewReason(stale), 'Stale event; outcome unknown');
 assert.equal(reviewReason(clock), 'Device clock unreliable');
 assert.equal(reviewReason({ ...recovered, suppression_reason: 'something_new' }), 'Notification policy unavailable');
-assert(liveReason(lateLive).length > 0 && liveReason({ ...lateLive, classification_reason: 'HOLD_TIMEOUT' }).length > 0);
+assert(
+    liveReason(lateLive).length > 0 && liveReason({ ...lateLive, classification_reason: 'HOLD_TIMEOUT' }).length > 0
+);
 // The policy version must travel from the browser through the web proxy to the bridge: without it the bridge treats
 // the client as an old tab and streams settled live alerts only, so classifying and manual-review cases never reach
 // the Alerts page.

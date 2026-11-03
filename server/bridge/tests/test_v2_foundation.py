@@ -34,7 +34,9 @@ def contracts():
     for message in messages:
         validate_edge_event(message)
     assert [message['message_seq'] for message in messages] == [1, 2, 3, 4]
-    validate_edge_event({**messages[0], 'contract': 'fallscope-edge-event-v1'})  # the pre-v1.1.0 contract string stays valid
+    validate_edge_event(
+        {**messages[0], 'contract': 'fallscope-edge-event-v1'}
+    )  # the pre-v1.1.0 contract string stays valid
     retry = {**messages[0], 'attempt': 2, 'sent_at': messages[0]['sent_at'] + 60}
     assert semantic_hash(messages[0]) == semantic_hash(retry)
     changed = {**messages[0], 'max_score': 0.999}

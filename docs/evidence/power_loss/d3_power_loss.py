@@ -96,9 +96,23 @@ def adapter_command(remote_out, scores, server_port):
 
 def ssh_adapter(remote, bridge_port, token, err_path):
     cmd = [
-        'ssh', '-o', 'BatchMode=yes', '-o', 'ConnectTimeout=8', '-o', 'ServerAliveInterval=2', '-o', 'ServerAliveCountMax=3',
-        '-o', 'ExitOnForwardFailure=yes', '-i', d2.KEY, '-R', f"127.0.0.1:{d2.DEVICE['tunnel_port']}:127.0.0.1:{bridge_port}",
-        d2.DEVICE['target'], remote,
+        'ssh',
+        '-o',
+        'BatchMode=yes',
+        '-o',
+        'ConnectTimeout=8',
+        '-o',
+        'ServerAliveInterval=2',
+        '-o',
+        'ServerAliveCountMax=3',
+        '-o',
+        'ExitOnForwardFailure=yes',
+        '-i',
+        d2.KEY,
+        '-R',
+        f"127.0.0.1:{d2.DEVICE['tunnel_port']}:127.0.0.1:{bridge_port}",
+        d2.DEVICE['target'],
+        remote,
     ]
     err = open(err_path, 'w')
     process = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=err, text=True)
@@ -180,7 +194,12 @@ def one_repeat(root, case, bridge_port, token, prober):
     host_before = time.time()
     device_wall = float(d2.ssh_text('date +%s.%N'))
     note(kind='clock_before', device_minus_host_s=device_wall - (host_before + time.time()) / 2)
-    process, err = ssh_adapter(adapter_command(remote_out, 'lying_still.csv', d2.DEVICE['gate_port']), bridge_port, token, out / 'ssh_phase1.log')
+    process, err = ssh_adapter(
+        adapter_command(remote_out, 'lying_still.csv', d2.DEVICE['gate_port']),
+        bridge_port,
+        token,
+        out / 'ssh_phase1.log',
+    )
     started = time.time()
     prober.gap_started = prober.first_ok_after_gap = None
     note(kind='adapter_started', host_started_at=started)
@@ -189,7 +208,10 @@ def one_repeat(root, case, bridge_port, token, prober):
         if not cued and time.time() - started >= PULL_AFTER_S:
             cued = True
             note(kind='power_cue')
-            print(f'\a\n>>> {case}: PULL THE POWER OF THE DEVICE NOW (outbox has been filling for {PULL_AFTER_S:.0f} s) <<<\n', flush=True)
+            print(
+                f'\a\n>>> {case}: PULL THE POWER OF THE DEVICE NOW (outbox has been filling for {PULL_AFTER_S:.0f} s) <<<\n',
+                flush=True,
+            )
         if time.time() - started > 600:
             raise RuntimeError(case + ': the device was not powered off within 10 min')
         time.sleep(0.2)
@@ -213,7 +235,15 @@ def one_repeat(root, case, bridge_port, token, prober):
     post = json.loads(d2.ssh_text('python3 -c ' + shlex.quote(POST_BOOT) + ' ' + shlex.quote(remote_out)))
     (out / 'post_boot.json').write_text(json.dumps(post, indent=2) + '\n')
     note(kind='post_boot', integrity=post['integrity_check'], rows=len(post['rows']), uptime_s=post['uptime_s'])
-    print(case, 'back: integrity', post['integrity_check'], 'rows in outbox', len(post['rows']), 'uptime %.0f s' % post['uptime_s'], flush=True)
+    print(
+        case,
+        'back: integrity',
+        post['integrity_check'],
+        'rows in outbox',
+        len(post['rows']),
+        'uptime %.0f s' % post['uptime_s'],
+        flush=True,
+    )
     resend_and_fetch(root, case, bridge_port, token, note)
 
 
@@ -225,7 +255,9 @@ def resend_and_fetch(root, case, bridge_port, token, note):
     d2.gate_stop()
     marker = out / f'adapter_{Path(IDLE).stem}.json'
     for attempt in range(8):
-        process, err = ssh_adapter(adapter_command(remote_out, IDLE, d2.DEVICE['tunnel_port']), bridge_port, token, out / 'ssh_phase2.log')
+        process, err = ssh_adapter(
+            adapter_command(remote_out, IDLE, d2.DEVICE['tunnel_port']), bridge_port, token, out / 'ssh_phase2.log'
+        )
         note(kind='resend_started', attempt=attempt + 1)
         deadline = time.time() + 400
         while process.poll() is None and time.time() < deadline:
@@ -273,6 +305,7 @@ def timeline_writer(out):
         x = {'wall': time.time(), **x}
         with (out / 'timeline.jsonl').open('a') as f:
             f.write(json.dumps(x) + '\n')
+
     return note
 
 
@@ -282,9 +315,13 @@ def analyze(root):
     from psycopg.rows import dict_row
 
     dbinfo = json.loads((root / 'database.json').read_text())
-    requests = [json.loads(l) for l in (root / 'server_requests.jsonl').read_text().splitlines() if '"/api/edge_event"' in l]
+    requests = [
+        json.loads(l) for l in (root / 'server_requests.jsonl').read_text().splitlines() if '"/api/edge_event"' in l
+    ]
     report = {'root': root.name, 'repeats': {}}
-    with psycopg.connect(make_conninfo(dbinfo['conninfo'], options='-c search_path=' + dbinfo['schema']), row_factory=dict_row) as db:
+    with psycopg.connect(
+        make_conninfo(dbinfo['conninfo'], options='-c search_path=' + dbinfo['schema']), row_factory=dict_row
+    ) as db:
         for folder in sorted(p for p in root.iterdir() if p.is_dir() and p.name.startswith('cut')):
             tl = [json.loads(l) for l in (folder / 'timeline.jsonl').read_text().splitlines()]
             get = lambda kind: next((x for x in tl if x['kind'] == kind), {})  # noqa: E731
@@ -299,29 +336,59 @@ def analyze(root):
             lost_window = power_off - last if last else None
             run_id = rows[0]['event_uid'].split(':')[0] if rows else None
             con = sqlite3.connect('file:' + str(folder / 'outbox.sqlite3') + '?mode=ro', uri=True)
-            final = [dict(zip(('seq', 'kind', 'created_at', 'acked_at', 'attempts'), r)) for r in con.execute('SELECT message_seq,kind,created_at,acked_at,attempts FROM outbox ORDER BY message_seq')]
+            final = [
+                dict(zip(('seq', 'kind', 'created_at', 'acked_at', 'attempts'), r))
+                for r in con.execute(
+                    'SELECT message_seq,kind,created_at,acked_at,attempts FROM outbox ORDER BY message_seq'
+                )
+            ]
             con.close()
             ev = db.execute('SELECT * FROM events WHERE run_id=%s', (run_id,)).fetchall() if run_id else []
             al = db.execute('SELECT * FROM alerts WHERE event_id=%s', (ev[0]['id'],)).fetchone() if ev else None
-            receipts = db.execute('SELECT message_seq,kind,received_at FROM edge_event_receipts WHERE event_uid=%s ORDER BY received_at,message_seq', (rows[0]['event_uid'],)).fetchall() if rows else []
+            receipts = (
+                db.execute(
+                    'SELECT message_seq,kind,received_at FROM edge_event_receipts WHERE event_uid=%s ORDER BY received_at,message_seq',
+                    (rows[0]['event_uid'],),
+                ).fetchall()
+                if rows
+                else []
+            )
             seqs = [r['message_seq'] for r in receipts]
-            resent_open = next((r for r in requests if r.get('run_id') == run_id and r.get('message_seq') == 1 and r.get('status') == 200), None)
+            resent_open = next(
+                (
+                    r
+                    for r in requests
+                    if r.get('run_id') == run_id and r.get('message_seq') == 1 and r.get('status') == 200
+                ),
+                None,
+            )
             report['repeats'][folder.name] = {
                 'power_off_after_start_s': round(power_off - started, 1),
                 'device_back_after_s': round(get('port_back')['first_ok_after_gap'] - power_off, 1),
-                'clock_device_minus_host_s': {'before': get('clock_before').get('device_minus_host_s'), 'after_boot': get('ssh_ready').get('device_minus_host_s')},
+                'clock_device_minus_host_s': {
+                    'before': get('clock_before').get('device_minus_host_s'),
+                    'after_boot': get('ssh_ready').get('device_minus_host_s'),
+                },
                 'chrony_after_boot': post['chrony'].splitlines()[:4],
                 'boot_id_changed': bool(post['origin']) and post['origin'][0]['boot_id'] != post['boot_id'],
                 'integrity_check': post['integrity_check'],
                 'survived_messages': len(rows),
                 'last_committed_before_power_off_s': round(lost_window, 2) if lost_window is not None else None,
                 'message_interval_s': round(interval, 2) if interval else None,
-                'estimated_lost_messages': max(0, int((lost_window - interval) // interval)) if (lost_window is not None and interval) else None,
-                'final_outbox': {'rows': len(final), 'unacked': sum(r['acked_at'] is None for r in final), 'kinds': {k: sum(r['kind'] == k for r in final) for k in ('open', 'update', 'close')}},
+                'estimated_lost_messages': max(0, int((lost_window - interval) // interval))
+                if (lost_window is not None and interval)
+                else None,
+                'final_outbox': {
+                    'rows': len(final),
+                    'unacked': sum(r['acked_at'] is None for r in final),
+                    'kinds': {k: sum(r['kind'] == k for r in final) for k in ('open', 'update', 'close')},
+                },
                 'server': {
                     'events': len(ev),
                     'receipts': len(receipts),
-                    'receipts_in_order': seqs == sorted(seqs) and len(seqs) == len(set(seqs)) and len(seqs) == len(rows) + 1,  # survivors + the runtime_stop close
+                    'receipts_in_order': seqs == sorted(seqs)
+                    and len(seqs) == len(set(seqs))
+                    and len(seqs) == len(rows) + 1,  # survivors + the runtime_stop close
                     'close_reason': ev[0]['close_reason'] if ev else None,
                     'age_source': ev[0]['age_source'] if ev else None,
                     'event_age_on_arrival_ms': ev[0]['event_age_on_arrival_ms'] if ev else None,
@@ -330,16 +397,34 @@ def analyze(root):
                     'open_backlog_header': resent_open.get('event_backlog') if resent_open else None,
                     'notification_mode': al['notification_mode'] if al else None,
                     'classification_reason': al['classification_reason'] if al else None,
-                    'event_started_at_minus_decided_s': round(ev[0]['started_at'] - ev[0]['decided_at'], 1) if ev and ev[0]['decided_at'] else None,
+                    'event_started_at_minus_decided_s': round(ev[0]['started_at'] - ev[0]['decided_at'], 1)
+                    if ev and ev[0]['decided_at']
+                    else None,
                 },
             }
     (root / 'analysis').mkdir(exist_ok=True)
     (root / 'analysis' / 'd3_summary.json').write_text(json.dumps(report, indent=2, default=str) + '\n')
     for k, r in report['repeats'].items():
-        print(k, 'power off at +%s s' % r['power_off_after_start_s'], 'integrity', r['integrity_check'], 'survived', r['survived_messages'],
-              'last commit %.1f s before power off' % (r['last_committed_before_power_off_s'] or -1), 'est. lost', r['estimated_lost_messages'],
-              '| server', r['server']['receipts'], 'receipts in order', r['server']['receipts_in_order'], 'age_source', r['server']['age_source'],
-              'mode', r['server']['notification_mode'], r['server']['classification_reason'])
+        print(
+            k,
+            'power off at +%s s' % r['power_off_after_start_s'],
+            'integrity',
+            r['integrity_check'],
+            'survived',
+            r['survived_messages'],
+            'last commit %.1f s before power off' % (r['last_committed_before_power_off_s'] or -1),
+            'est. lost',
+            r['estimated_lost_messages'],
+            '| server',
+            r['server']['receipts'],
+            'receipts in order',
+            r['server']['receipts_in_order'],
+            'age_source',
+            r['server']['age_source'],
+            'mode',
+            r['server']['notification_mode'],
+            r['server']['classification_reason'],
+        )
 
 
 def main():
@@ -347,7 +432,11 @@ def main():
     ap.add_argument('--root', type=Path, required=True)
     ap.add_argument('--repeats', type=int, default=3)
     ap.add_argument('--analyze', action='store_true', help='only summarise a finished root')
-    ap.add_argument('--resume', action='store_true', help='continue an interrupted root: same schema and stage, missing repeats only')
+    ap.add_argument(
+        '--resume',
+        action='store_true',
+        help='continue an interrupted root: same schema and stage, missing repeats only',
+    )
     a = ap.parse_args()
     root = a.root.resolve()
     if a.analyze:
@@ -378,34 +467,81 @@ def main():
         (root / 'code_snapshot').mkdir()
     for path in (Path(__file__), D2DIR / 'd2_controller.py', d2.ADAPTER, d2.LINK_GATE, d2.BENCHMARK_SERVER):
         shutil.copy2(path, root / 'code_snapshot' / path.name)
-        (root / 'code_hashes.json').write_text(json.dumps({
-            'git_head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=d2.ROOT, text=True).strip(),
-            'git_status': subprocess.check_output(['git', 'status', '--short'], cwd=d2.ROOT, text=True),
-            'files': {str(p.relative_to(d2.ROOT)): hashlib.sha256(p.read_bytes()).hexdigest() for parent in (d2.ROOT / 'edge', d2.BRIDGE) for p in parent.rglob('*.py') if '__pycache__' not in p.parts and 'tests' not in p.parts},
-        }, indent=2) + '\n')
+        (root / 'code_hashes.json').write_text(
+            json.dumps(
+                {
+                    'git_head': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=d2.ROOT, text=True).strip(),
+                    'git_status': subprocess.check_output(['git', 'status', '--short'], cwd=d2.ROOT, text=True),
+                    'files': {
+                        str(p.relative_to(d2.ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
+                        for parent in (d2.ROOT / 'edge', d2.BRIDGE)
+                        for p in parent.rglob('*.py')
+                        if '__pycache__' not in p.parts and 'tests' not in p.parts
+                    },
+                },
+                indent=2,
+            )
+            + '\n'
+        )
         bridge_port = d2.port()
         schema, scoped = d2.create_schema(conninfo, root)
         cfg = {
-            'schema_version': 1, 'host': '127.0.0.1', 'port': bridge_port, 'cameras': [{'id': '1', 'label': 'Pi 5 adapter (D3)'}],
-            'database_url_env': 'BENCHMARK_DATABASE_URL', 'archive_dir': str(root / 'decision_logs_archive'), 'clip_dir': str(root / 'clips'),
-            'clip_pre_s': 3, 'clip_post_s': 2, 'clip_fps': 10, 'clip_retention_days': 30, 'metrics_interval_s': 10, 'metrics_retention_days': 30,
-            'write_token_env': 'BENCHMARK_SERVER_SECRET', 'require_camera_tokens': True, 'require_media_token': True, 'edge_stale_after_s': 3,
+            'schema_version': 1,
+            'host': '127.0.0.1',
+            'port': bridge_port,
+            'cameras': [{'id': '1', 'label': 'Pi 5 adapter (D3)'}],
+            'database_url_env': 'BENCHMARK_DATABASE_URL',
+            'archive_dir': str(root / 'decision_logs_archive'),
+            'clip_dir': str(root / 'clips'),
+            'clip_pre_s': 3,
+            'clip_post_s': 2,
+            'clip_fps': 10,
+            'clip_retention_days': 30,
+            'metrics_interval_s': 10,
+            'metrics_retention_days': 30,
+            'write_token_env': 'BENCHMARK_SERVER_SECRET',
+            'require_camera_tokens': True,
+            'require_media_token': True,
+            'edge_stale_after_s': 3,
             'features': {'alerts': True},
         }
         (root / 'server_config.json').write_text(json.dumps(cfg, indent=2) + '\n')
     bridge = f'http://127.0.0.1:{bridge_port}'
     env = {**os.environ, 'BENCHMARK_SERVER_SECRET': secret, 'BENCHMARK_DATABASE_URL': scoped}
     log = (root / 'server.log').open('a')
-    api = subprocess.Popen([sys.executable, str(d2.BENCHMARK_SERVER), '--config', str(root / 'server_config.json'), '--log-dir', str(root)],
-                           cwd=d2.ROOT, env=env, stdout=log, stderr=log, start_new_session=True)
+    api = subprocess.Popen(
+        [
+            sys.executable,
+            str(d2.BENCHMARK_SERVER),
+            '--config',
+            str(root / 'server_config.json'),
+            '--log-dir',
+            str(root),
+        ],
+        cwd=d2.ROOT,
+        env=env,
+        stdout=log,
+        stderr=log,
+        start_new_session=True,
+    )
     prober = Prober(d2.DEVICE['target'].split('@')[1])
     try:
         d2.wait_url(bridge + '/benchmark/time', api)
         token = d2.request(bridge + '/api/admin/cameras/1/token', secret, 'POST', {})['token']
         if a.resume:
-            print('RESUMING', root.name, 'schema', schema, 'repeats done:', sorted(p.name for p in root.iterdir() if p.is_dir() and p.name.startswith('cut')), flush=True)
+            print(
+                'RESUMING',
+                root.name,
+                'schema',
+                schema,
+                'repeats done:',
+                sorted(p.name for p in root.iterdir() if p.is_dir() and p.name.startswith('cut')),
+                flush=True,
+            )
         else:
-            (root / 'uptime_start.json').write_text(json.dumps({'device': json.loads(d2.ssh_text(d2.UPTIME)), 'host_now': time.time()}, indent=2) + '\n')
+            (root / 'uptime_start.json').write_text(
+                json.dumps({'device': json.loads(d2.ssh_text(d2.UPTIME)), 'host_now': time.time()}, indent=2) + '\n'
+            )
             result = d2.stage(root)
             print('STAGED bundle', result['manifest'].get('bundle_id'), flush=True)
         prober.start()
@@ -420,10 +556,18 @@ def main():
                 shutil.rmtree(root / case)
             one_repeat(root, case, bridge_port, token, prober)
             time.sleep(5)
-        (root / 'completed.json').write_text(json.dumps({'completed_at': time.time(), 'repeats': a.repeats, 'pull_after_s': PULL_AFTER_S, 'schema': schema}, indent=2) + '\n')
+        (root / 'completed.json').write_text(
+            json.dumps(
+                {'completed_at': time.time(), 'repeats': a.repeats, 'pull_after_s': PULL_AFTER_S, 'schema': schema},
+                indent=2,
+            )
+            + '\n'
+        )
         analyze(root)
     except BaseException as exc:
-        (root / 'failure.json').write_text(json.dumps({'at': time.time(), 'error': str(exc), 'type': type(exc).__name__}, indent=2) + '\n')
+        (root / 'failure.json').write_text(
+            json.dumps({'at': time.time(), 'error': str(exc), 'type': type(exc).__name__}, indent=2) + '\n'
+        )
         raise
     finally:
         prober.stop.set()

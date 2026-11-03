@@ -67,7 +67,10 @@ def edge_router(service, authorize, schedule_clips, recorder=None, labels=None):
             return refused
         # Delivery context (edge_outbox.transport): absent or malformed values mean "unknown", never an error.
         transport = {}
-        for name, key in (('x-fall-relay-event-age-ms', 'event_age_ms'), ('x-fall-relay-event-backlog', 'event_backlog')):
+        for name, key in (
+            ('x-fall-relay-event-age-ms', 'event_age_ms'),
+            ('x-fall-relay-event-backlog', 'event_backlog'),
+        ):
             value = request.headers.get(name)
             if value is not None and re.fullmatch(r'[0-9]{1,15}', value):
                 transport[key] = int(value)
