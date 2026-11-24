@@ -17,7 +17,8 @@ keeps what the device observed.
 - **Data minimisation:** camera images stay on the device; the server receives decisions, the 13-joint skeleton the
   model used and, optionally, a short clip around each detected fall.
 - **Device operation:** telemetry, health against per-device profiles, watchdog alerts for cameras that stop detecting
-  and remote actions, on Raspberry Pi 5 and Raspberry Pi 4.
+  and remote actions, on Raspberry Pi 5 and, as an experimental platform, Raspberry Pi 4 (the fall detector runs at
+  about 7 Hz there instead of 10 Hz, and its decision threshold has not been re-validated at that rate).
 - **Replaceable fall detector:** our pose-based fall detector ([edge/MODEL.md](edge/MODEL.md)) is the one whose
   NTU RGB+D results are reported in the article; any fall detector that emits the event contract can be used.
 

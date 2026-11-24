@@ -1,7 +1,8 @@
 # Installing the edge runtime on a device
 
-Tested on Raspberry Pi 5 (Debian 13, system Python 3.13) and Raspberry Pi 4 (Debian 12, Python 3.11 virtual
-environment) with 64-bit Raspberry Pi OS and a CSI camera. The reference devices are described in
+Tested on Raspberry Pi 5 (Debian 13, system Python 3.13) and, as an experimental platform, Raspberry Pi 4
+(Debian 12, Python 3.11 virtual environment; the fall detector runs at about 7 Hz there and its threshold has not been
+re-validated at that rate) with 64-bit Raspberry Pi OS and a CSI camera. The reference devices are described in
 [../ntu_benchmark/README.md](../ntu_benchmark/README.md).
 
 ## 1. Device packages
