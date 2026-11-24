@@ -1,14 +1,14 @@
 cff-version: 1.2.0
 message: "If you use Fall-Relay, please cite it as below."
-title: "Fall-Relay: Edge–server software for reliable fall-event delivery and responder alert handling"
+title: "Fall-Relay: Edge–server software for reliable fall-event delivery and alert management"
 type: software
-version: 1.1.0
-date-released: 2026-11-03
+version: 1.2.0
+date-released: 2026-11-24
 license: AGPL-3.0-only
 repository-code: "https://github.com/inha0307/fall-relay"
 doi: 10.5281/zenodo.23719976
 url: "https://doi.org/10.5281/zenodo.23719976"
-abstract: "Fall-Relay carries fall events from edge cameras to responders and keeps a record of each alert from delivery to outcome: a device-side outbox with per-event sequence numbers, an idempotent server that stores events and returns receipts bound to the stored record, a responder alert whose lifecycle is separate from the detection event, a late-arrival policy that classifies an alert from the latest state of its event, and role-scoped access. A hardware-free example and deterministic checks recreate the failure cases."
+abstract: "Fall-Relay delivers fall alerts from a camera-equipped Raspberry Pi to the web browsers of responders and records how each alert is handled. The device stores each fall event in a local transactional outbox and resends it until the server confirms storage; the server recognises a resent message by its identifier, so a duplicate never raises a second alert. The alert has its own lifecycle, separate from the fall event, and remains unresolved until a responder acknowledges it and records an outcome. A simulated example and automated fault-injection tests run without a camera or a trained model."
 keywords:
   - fall detection
   - edge computing

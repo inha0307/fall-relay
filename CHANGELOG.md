@@ -2,6 +2,20 @@
 
 Each release is archived on Zenodo; the DOI 10.5281/zenodo.23719976 resolves to the latest version.
 
+## 1.2.0 — 2026-11-24
+
+- Broker-based baseline: [tests/baseline_mqtt](tests/baseline_mqtt) injects the faults of the tests A1 and A2 into a
+  baseline built on MQTT QoS 1 with persistent sessions (Mosquitto 2.0.11, Eclipse Paho 2.1.0), with a subscriber that
+  creates one alert per message or deduplicates by event identifier. Results of two runs and the 30 checks on the same
+  host are in [docs/evidence/baseline_mqtt](docs/evidence/baseline_mqtt).
+- [training/rescore_test_scores.py](training/rescore_test_scores.py) recomputes the NTU RGB+D test results from the
+  per-time-step fall scores with the runtime's own decision code; it needs only numpy. The scores are derived from
+  NTU RGB+D and are available from the corresponding author on reasonable request and with permission of the ROSE Lab.
+- The Raspberry Pi 4 is described as an experimental platform (about 7 Hz; the decision threshold has not been
+  re-validated at that rate).
+- `CITATION.cff`: title and abstract aligned with the article.
+- No change to the edge runtime, the bridge or the web application.
+
 ## 1.1.0 — 2026-11-03
 
 - Notification policy version 2: an alert is classified from the latest state of its event (live, manual review or
