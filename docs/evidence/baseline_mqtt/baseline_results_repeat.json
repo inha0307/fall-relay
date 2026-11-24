@@ -1,0 +1,1095 @@
+{
+ "generated_at": "2026-11-24T21:57:02+0900",
+ "versions": {
+  "mosquitto": "mosquitto version 2.0.11",
+  "paho-mqtt": "2.1.0",
+  "psycopg": "3.2.13",
+  "python": "3.10.12"
+ },
+ "results": [
+  {
+   "scenario": "S1",
+   "consumer": "naive",
+   "events_detected": 1,
+   "event_rows": 2,
+   "alerts": 2,
+   "event_lost": false,
+   "duplicate_alerts": 1,
+   "detail": {
+    "device": {
+     "returncode": 0,
+     "log": [
+      {
+       "t": 1795524925.557,
+       "who": "device",
+       "event": "connected",
+       "session_present": false,
+       "reason": "Success"
+      },
+      {
+       "t": 1795524926.557,
+       "who": "device",
+       "event": "published",
+       "event_id": "E-s1-naive",
+       "rc": 0,
+       "mid": 1,
+       "connected": true
+      },
+      {
+       "t": 1795524926.557,
+       "who": "device",
+       "event": "disconnected",
+       "reason": "Unspecified error"
+      },
+      {
+       "t": 1795524927.56,
+       "who": "device",
+       "event": "connected",
+       "session_present": true,
+       "reason": "Success"
+      },
+      {
+       "t": 1795524927.561,
+       "who": "device",
+       "event": "puback",
+       "mid": 1,
+       "reason": "Success"
+      },
+      {
+       "t": 1795524927.561,
+       "who": "device",
+       "event": "result",
+       "puback_received": true
+      },
+      {
+       "t": 1795524927.562,
+       "who": "device",
+       "event": "disconnected",
+       "reason": "Normal disconnection"
+      },
+      {
+       "t": 1795524927.562,
+       "who": "device",
+       "event": "exit"
+      }
+     ]
+    },
+    "consumer": [
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795524924.005,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795524924.005,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795524926.752,
+        "who": "consumer",
+        "event": "stored",
+        "event_id": "E-s1-naive",
+        "new_alert": true,
+        "dup_flag": false,
+        "mid": 1
+       },
+       {
+        "t": 1795524927.594,
+        "who": "consumer",
+        "event": "stored",
+        "event_id": "E-s1-naive",
+        "new_alert": true,
+        "dup_flag": false,
+        "mid": 2
+       },
+       {
+        "t": 1795524938.02,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     }
+    ],
+    "proxy": {
+     "returncode": -15,
+     "log": [
+      {
+       "t": 1795524925.441,
+       "who": "proxy",
+       "event": "listening",
+       "port": 18831,
+       "upstream": 18830
+      },
+      {
+       "t": 1795524926.557,
+       "who": "proxy",
+       "event": "puback_dropped_connection_closed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "S1",
+   "consumer": "idempotent",
+   "events_detected": 1,
+   "event_rows": 1,
+   "alerts": 1,
+   "event_lost": false,
+   "duplicate_alerts": 0,
+   "detail": {
+    "device": {
+     "returncode": 0,
+     "log": [
+      {
+       "t": 1795524940.369,
+       "who": "device",
+       "event": "connected",
+       "session_present": false,
+       "reason": "Success"
+      },
+      {
+       "t": 1795524941.369,
+       "who": "device",
+       "event": "published",
+       "event_id": "E-s1-idempotent",
+       "rc": 0,
+       "mid": 1,
+       "connected": true
+      },
+      {
+       "t": 1795524941.369,
+       "who": "device",
+       "event": "disconnected",
+       "reason": "Unspecified error"
+      },
+      {
+       "t": 1795524942.371,
+       "who": "device",
+       "event": "connected",
+       "session_present": true,
+       "reason": "Success"
+      },
+      {
+       "t": 1795524942.371,
+       "who": "device",
+       "event": "puback",
+       "mid": 1,
+       "reason": "Success"
+      },
+      {
+       "t": 1795524942.371,
+       "who": "device",
+       "event": "result",
+       "puback_received": true
+      },
+      {
+       "t": 1795524942.371,
+       "who": "device",
+       "event": "disconnected",
+       "reason": "Normal disconnection"
+      },
+      {
+       "t": 1795524942.371,
+       "who": "device",
+       "event": "exit"
+      }
+     ]
+    },
+    "consumer": [
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795524938.816,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795524938.816,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795524941.433,
+        "who": "consumer",
+        "event": "stored",
+        "event_id": "E-s1-idempotent",
+        "new_alert": true,
+        "dup_flag": false,
+        "mid": 1
+       },
+       {
+        "t": 1795524942.372,
+        "who": "consumer",
+        "event": "stored",
+        "event_id": "E-s1-idempotent",
+        "new_alert": false,
+        "dup_flag": false,
+        "mid": 2
+       },
+       {
+        "t": 1795524952.83,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     }
+    ],
+    "proxy": {
+     "returncode": -15,
+     "log": [
+      {
+       "t": 1795524940.261,
+       "who": "proxy",
+       "event": "listening",
+       "port": 18831,
+       "upstream": 18830
+      },
+      {
+       "t": 1795524941.369,
+       "who": "proxy",
+       "event": "puback_dropped_connection_closed"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "scenario": "S2",
+   "consumer": "naive",
+   "events_detected": 1,
+   "event_rows": 2,
+   "alerts": 2,
+   "event_lost": false,
+   "duplicate_alerts": 1,
+   "detail": {
+    "device": {
+     "returncode": 0,
+     "log": [
+      {
+       "t": 1795524955.002,
+       "who": "device",
+       "event": "connected",
+       "session_present": false,
+       "reason": "Success"
+      },
+      {
+       "t": 1795524956.003,
+       "who": "device",
+       "event": "published",
+       "event_id": "E-s2-naive",
+       "rc": 0,
+       "mid": 1,
+       "connected": true
+      },
+      {
+       "t": 1795524956.003,
+       "who": "device",
+       "event": "puback",
+       "mid": 1,
+       "reason": "Success"
+      },
+      {
+       "t": 1795524956.003,
+       "who": "device",
+       "event": "result",
+       "puback_received": true
+      },
+      {
+       "t": 1795524956.003,
+       "who": "device",
+       "event": "disconnected",
+       "reason": "Normal disconnection"
+      },
+      {
+       "t": 1795524956.003,
+       "who": "device",
+       "event": "exit"
+      }
+     ]
+    },
+    "consumer": [
+     {
+      "returncode": -9,
+      "log": [
+       {
+        "t": 1795524953.547,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795524953.547,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795524956.043,
+        "who": "consumer",
+        "event": "stored",
+        "event_id": "E-s2-naive",
+        "new_alert": true,
+        "dup_flag": false,
+        "mid": 1
+       },
+       {
+        "t": 1795524956.043,
+        "who": "consumer",
+        "event": "sigkill_before_puback"
+       }
+      ]
+     },
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795524956.163,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": true,
+        "reason": "Success"
+       },
+       {
+        "t": 1795524956.214,
+        "who": "consumer",
+        "event": "stored",
+        "event_id": "E-s2-naive",
+        "new_alert": true,
+        "dup_flag": true,
+        "mid": 1
+       },
+       {
+        "t": 1795524956.214,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795524961.168,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "S2",
+   "consumer": "idempotent",
+   "events_detected": 1,
+   "event_rows": 1,
+   "alerts": 1,
+   "event_lost": false,
+   "duplicate_alerts": 0,
+   "detail": {
+    "device": {
+     "returncode": 0,
+     "log": [
+      {
+       "t": 1795524963.65,
+       "who": "device",
+       "event": "connected",
+       "session_present": false,
+       "reason": "Success"
+      },
+      {
+       "t": 1795524964.65,
+       "who": "device",
+       "event": "published",
+       "event_id": "E-s2-idempotent",
+       "rc": 0,
+       "mid": 1,
+       "connected": true
+      },
+      {
+       "t": 1795524964.65,
+       "who": "device",
+       "event": "puback",
+       "mid": 1,
+       "reason": "Success"
+      },
+      {
+       "t": 1795524964.65,
+       "who": "device",
+       "event": "result",
+       "puback_received": true
+      },
+      {
+       "t": 1795524964.651,
+       "who": "device",
+       "event": "disconnected",
+       "reason": "Normal disconnection"
+      },
+      {
+       "t": 1795524964.651,
+       "who": "device",
+       "event": "exit"
+      }
+     ]
+    },
+    "consumer": [
+     {
+      "returncode": -9,
+      "log": [
+       {
+        "t": 1795524962.199,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795524962.199,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795524964.691,
+        "who": "consumer",
+        "event": "stored",
+        "event_id": "E-s2-idempotent",
+        "new_alert": true,
+        "dup_flag": false,
+        "mid": 1
+       },
+       {
+        "t": 1795524964.691,
+        "who": "consumer",
+        "event": "sigkill_before_puback"
+       }
+      ]
+     },
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795524964.8,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": true,
+        "reason": "Success"
+       },
+       {
+        "t": 1795524964.801,
+        "who": "consumer",
+        "event": "stored",
+        "event_id": "E-s2-idempotent",
+        "new_alert": false,
+        "dup_flag": true,
+        "mid": 1
+       },
+       {
+        "t": 1795524964.801,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795524969.805,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "S3",
+   "consumer": "naive",
+   "events_detected": 1,
+   "event_rows": 0,
+   "alerts": 0,
+   "event_lost": true,
+   "duplicate_alerts": 0,
+   "detail": {
+    "device": [
+     {
+      "returncode": -9,
+      "log": [
+       {
+        "t": 1795524971.453,
+        "who": "device",
+        "event": "published",
+        "event_id": "E-s3-naive",
+        "rc": 4,
+        "mid": 1,
+        "connected": false
+       },
+       {
+        "t": 1795524971.453,
+        "who": "device",
+        "event": "sigkill_after_publish"
+       }
+      ]
+     },
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795524973.114,
+        "who": "device",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795524979.119,
+        "who": "device",
+        "event": "disconnected",
+        "reason": "Normal disconnection"
+       },
+       {
+        "t": 1795524979.119,
+        "who": "device",
+        "event": "exit"
+       }
+      ]
+     }
+    ],
+    "consumer": [
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795524971.658,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795524971.658,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795524979.667,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "S3",
+   "consumer": "idempotent",
+   "events_detected": 1,
+   "event_rows": 0,
+   "alerts": 0,
+   "event_lost": true,
+   "duplicate_alerts": 0,
+   "detail": {
+    "device": [
+     {
+      "returncode": -9,
+      "log": [
+       {
+        "t": 1795524981.367,
+        "who": "device",
+        "event": "published",
+        "event_id": "E-s3-idempotent",
+        "rc": 4,
+        "mid": 1,
+        "connected": false
+       },
+       {
+        "t": 1795524981.367,
+        "who": "device",
+        "event": "sigkill_after_publish"
+       }
+      ]
+     },
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795524983.015,
+        "who": "device",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795524989.021,
+        "who": "device",
+        "event": "disconnected",
+        "reason": "Normal disconnection"
+       },
+       {
+        "t": 1795524989.021,
+        "who": "device",
+        "event": "exit"
+       }
+      ]
+     }
+    ],
+    "consumer": [
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795524981.562,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795524981.562,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795524989.571,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "scenario": "S4",
+   "consumer": "naive",
+   "events_detected": 1,
+   "event_rows": 0,
+   "alerts": 0,
+   "event_lost": true,
+   "duplicate_alerts": 0,
+   "detail": {
+    "device": {
+     "returncode": 0,
+     "log": [
+      {
+       "t": 1795524991.477,
+       "who": "device",
+       "event": "connected",
+       "session_present": false,
+       "reason": "Success"
+      },
+      {
+       "t": 1795524992.478,
+       "who": "device",
+       "event": "published",
+       "event_id": "E-s4-naive",
+       "rc": 0,
+       "mid": 1,
+       "connected": true
+      },
+      {
+       "t": 1795524992.479,
+       "who": "device",
+       "event": "puback",
+       "mid": 1,
+       "reason": "Success"
+      },
+      {
+       "t": 1795524992.479,
+       "who": "device",
+       "event": "result",
+       "puback_received": true
+      },
+      {
+       "t": 1795524992.48,
+       "who": "device",
+       "event": "disconnected",
+       "reason": "Normal disconnection"
+      },
+      {
+       "t": 1795524992.48,
+       "who": "device",
+       "event": "exit"
+      }
+     ]
+    },
+    "consumer": [
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795524990.414,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795524990.414,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795524991.416,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     },
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795524992.688,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795524992.688,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795524997.693,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     }
+    ],
+    "broker_stop": "SIGKILL"
+   }
+  },
+  {
+   "scenario": "S4",
+   "consumer": "idempotent",
+   "events_detected": 1,
+   "event_rows": 0,
+   "alerts": 0,
+   "event_lost": true,
+   "duplicate_alerts": 0,
+   "detail": {
+    "device": {
+     "returncode": 0,
+     "log": [
+      {
+       "t": 1795524999.674,
+       "who": "device",
+       "event": "connected",
+       "session_present": false,
+       "reason": "Success"
+      },
+      {
+       "t": 1795525000.674,
+       "who": "device",
+       "event": "published",
+       "event_id": "E-s4-idempotent",
+       "rc": 0,
+       "mid": 1,
+       "connected": true
+      },
+      {
+       "t": 1795525000.674,
+       "who": "device",
+       "event": "puback",
+       "mid": 1,
+       "reason": "Success"
+      },
+      {
+       "t": 1795525000.675,
+       "who": "device",
+       "event": "result",
+       "puback_received": true
+      },
+      {
+       "t": 1795525000.675,
+       "who": "device",
+       "event": "disconnected",
+       "reason": "Normal disconnection"
+      },
+      {
+       "t": 1795525000.675,
+       "who": "device",
+       "event": "exit"
+      }
+     ]
+    },
+    "consumer": [
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795524998.61,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795524998.61,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795524999.612,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     },
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795525000.891,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795525000.892,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795525005.896,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     }
+    ],
+    "broker_stop": "SIGKILL"
+   }
+  },
+  {
+   "scenario": "S4-control",
+   "consumer": "naive",
+   "events_detected": 1,
+   "event_rows": 1,
+   "alerts": 1,
+   "event_lost": false,
+   "duplicate_alerts": 0,
+   "detail": {
+    "device": {
+     "returncode": 0,
+     "log": [
+      {
+       "t": 1795525007.927,
+       "who": "device",
+       "event": "connected",
+       "session_present": false,
+       "reason": "Success"
+      },
+      {
+       "t": 1795525008.927,
+       "who": "device",
+       "event": "published",
+       "event_id": "E-s4-control-naive",
+       "rc": 0,
+       "mid": 1,
+       "connected": true
+      },
+      {
+       "t": 1795525008.927,
+       "who": "device",
+       "event": "puback",
+       "mid": 1,
+       "reason": "Success"
+      },
+      {
+       "t": 1795525008.927,
+       "who": "device",
+       "event": "result",
+       "puback_received": true
+      },
+      {
+       "t": 1795525008.927,
+       "who": "device",
+       "event": "disconnected",
+       "reason": "Normal disconnection"
+      },
+      {
+       "t": 1795525008.927,
+       "who": "device",
+       "event": "exit"
+      }
+     ]
+    },
+    "consumer": [
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795525006.834,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795525006.835,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795525007.836,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     },
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795525009.342,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": true,
+        "reason": "Success"
+       },
+       {
+        "t": 1795525009.373,
+        "who": "consumer",
+        "event": "stored",
+        "event_id": "E-s4-control-naive",
+        "new_alert": true,
+        "dup_flag": false,
+        "mid": 1
+       },
+       {
+        "t": 1795525009.373,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795525014.348,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     }
+    ],
+    "broker_stop": "SIGTERM"
+   }
+  },
+  {
+   "scenario": "S4-control",
+   "consumer": "idempotent",
+   "events_detected": 1,
+   "event_rows": 1,
+   "alerts": 1,
+   "event_lost": false,
+   "duplicate_alerts": 0,
+   "detail": {
+    "device": {
+     "returncode": 0,
+     "log": [
+      {
+       "t": 1795525016.278,
+       "who": "device",
+       "event": "connected",
+       "session_present": false,
+       "reason": "Success"
+      },
+      {
+       "t": 1795525017.278,
+       "who": "device",
+       "event": "published",
+       "event_id": "E-s4-control-idempotent",
+       "rc": 0,
+       "mid": 1,
+       "connected": true
+      },
+      {
+       "t": 1795525017.279,
+       "who": "device",
+       "event": "puback",
+       "mid": 1,
+       "reason": "Success"
+      },
+      {
+       "t": 1795525017.279,
+       "who": "device",
+       "event": "result",
+       "puback_received": true
+      },
+      {
+       "t": 1795525017.279,
+       "who": "device",
+       "event": "disconnected",
+       "reason": "Normal disconnection"
+      },
+      {
+       "t": 1795525017.279,
+       "who": "device",
+       "event": "exit"
+      }
+     ]
+    },
+    "consumer": [
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795525015.204,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": false,
+        "reason": "Success"
+       },
+       {
+        "t": 1795525015.205,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795525016.206,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     },
+     {
+      "returncode": 0,
+      "log": [
+       {
+        "t": 1795525017.7,
+        "who": "consumer",
+        "event": "connected",
+        "session_present": true,
+        "reason": "Success"
+       },
+       {
+        "t": 1795525017.756,
+        "who": "consumer",
+        "event": "stored",
+        "event_id": "E-s4-control-idempotent",
+        "new_alert": true,
+        "dup_flag": false,
+        "mid": 1
+       },
+       {
+        "t": 1795525017.757,
+        "who": "consumer",
+        "event": "subscribed"
+       },
+       {
+        "t": 1795525022.705,
+        "who": "consumer",
+        "event": "exit"
+       }
+      ]
+     }
+    ],
+    "broker_stop": "SIGTERM"
+   }
+  }
+ ]
+}

@@ -29,7 +29,7 @@ Server host of the trials: the laboratory workstation that also runs the bridge 
 
 ## Table E2. Deterministic checks: conditions and observations
 
-**Table E2.** Full conditions, observations and scope of the checks summarised in Table 3(A) of the article (SoftwareX submission). All 29 check scripts passed on 27 October 2026 (local time; the report records 2026-10-27T10:49 UTC) in an isolated environment with temporary databases; `server/bridge/run_checks.py --report` writes the report included with this page.
+**Table E2.** Full conditions, observations and scope of the checks summarised in Table 2 of the article (SoftwareX submission). All 29 check scripts passed on 27 October 2026 (local time; the report records 2026-10-27T10:49 UTC) in an isolated environment with temporary databases; `server/bridge/run_checks.py --report` writes the report included with this page.
 
 | Check | Condition | Observed result | Scope |
 |---|---|---|---|
@@ -146,6 +146,26 @@ synchronised) and the adapter resent within 20 s of boot. With the synced-clock 
 `started_at` − `decided_at` = 0.0 s) and classified the alerts live; in the `normal/` trial, made before that header
 existed, the age was unknown and the alert was live as well. All resent messages were stored once and in sequence
 order (`d3_summary.json`, `timeline.jsonl` per repeat).
+
+## Broker-based baseline (24 November 2026)
+
+`baseline_mqtt/` holds the comparison with a baseline built on a message broker (Table 3 of the article). The device
+publishes each fall event with MQTT QoS 1 over a persistent session (Eclipse Paho 2.1.0, no local outbox), Mosquitto
+2.0.11 forwards it, and a subscriber stores the event and its alert in PostgreSQL and acknowledges the message only
+after its commit. The subscriber creates one alert per message (`naive`) or deduplicates by event identifier
+(`idempotent`). Scripts and instructions: [../../tests/baseline_mqtt](../../tests/baseline_mqtt).
+
+| Scenario | Injected fault | One alert per message | Deduplication by event identifier |
+|---|---|---|---|
+| S1 | Broker's PUBACK to the device dropped, connection closed; the device reconnects and resends | 2 events, 2 alerts | 1 event, 1 alert |
+| S2 | Subscriber killed (SIGKILL) after its commit, before its PUBACK; restarts with the same session | 2 events, 2 alerts | 1 event, 1 alert |
+| S3 | Device process killed after `publish()` while the broker is unreachable (`publish()` returned `MQTT_ERR_NO_CONN`); restarts later | event lost | event lost |
+| S4 | Broker (`persistence true`, `autosave_interval 1800`) killed after its PUBACK while the subscriber is offline | event lost | event lost |
+| S4-control | As S4, broker stopped with SIGTERM | 1 event, 1 alert | 1 event, 1 alert |
+
+Every scenario was run twice on the same host with the same result (`baseline_results.json`,
+`baseline_results_repeat.json`, with the log of every process). The 30 Fall-Relay check scripts passed on the same
+host (`fall_relay_checks_same_host.json`); their A1 and A2 cover the corresponding faults.
 
 ## Files
 
