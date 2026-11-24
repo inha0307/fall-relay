@@ -109,3 +109,13 @@ On the NTU60 cross-subject test split, with the 314 rule labels, the published m
 241 of 272 fall sequences in 91 capture groups (recall 0.886, 95% CI 0.839–0.930 by capture
 group), produced 1.38 false alarms per hour (16 in 11.58 h) and alerted a median 0.07 s after
 impact. The evaluation used a 30 s cooldown; the deployed runtime uses 0 s.
+
+`rescore_test_scores.py` recomputes these values from the per-time-step fall scores of this test
+evaluation with the runtime's own `edge/decision_engine.py`, without the trained models; it needs
+only numpy. The scores and the rule-generated fall times are derived from NTU RGB+D and are therefore
+not in this repository (see [NOTICE](../NOTICE)). They are available from the corresponding author on
+reasonable request and with permission of the ROSE Lab.
+
+```bash
+python training/rescore_test_scores.py test_scores_v2.npz
+```
